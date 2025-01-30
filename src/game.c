@@ -53,7 +53,7 @@ void processEvents(GameState* gameState, SDL_Window* window) {
 */
 void loadGame(GameState* game, SDL_Window* window, SDL_Renderer* renderer)
 {
-    printf("LOAD_GAME");
+    log_info("LOAD_GAME");
     SDL_Init(SDL_INIT_VIDEO);
     window = SDL_CreateWindow(
         "RPG",
@@ -69,7 +69,7 @@ void loadGame(GameState* game, SDL_Window* window, SDL_Renderer* renderer)
 */
 void exitGame(GameState* gameState, SDL_Window* window)
 {
-    printf("EXIT_GAME");
+    log_info("TERMINATE_GAME");
     SDL_DestroyWindow(window);
     SDL_Quit();
     exit(0);
@@ -89,8 +89,7 @@ void renderGame(GameState* gameState, SDL_Window* window, SDL_Renderer* renderer
 */
 void updateGame(GameState* gameState) 
 {
-    printf("IMPLEMENT_TODO");
-    //log_debug("IMPLEMENT_TODO");
+    // TODO 
 }
 
 /*
@@ -98,6 +97,7 @@ void updateGame(GameState* gameState)
 */
 void loopGame(GameState* gameState, SDL_Window* window, SDL_Renderer* renderer)
 {
+    log_info("START_GAME_LOOP");
     int frameDelay = 1000000 / TARGET_FPS;
     int run = 1;
     while (run) {
