@@ -10,8 +10,9 @@ int main(int argc, char *argv[])
     SDL_Renderer *renderer;
     GameState* gameState;
 
-    loadGame(window, renderer, gameState);
-    
-    exitGame(window, gameState);
+    loadGame(gameState, window, renderer);
+    loopGame(gameState, window, renderer);
+    exitGame(gameState, window);
+
     return 0;
 }

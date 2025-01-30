@@ -3,16 +3,18 @@
 #include <windows.h>
 #include "game.h"
 #include "log.h"
+#include <time.h>
 
+// ---- GAME SYSTEM ----
 const int NES_PIXEL_WIDTH = 256;
 const int NES_PIXEL_HEIGHT = 240;
 const int TILE_PIXEL_SIZE_B = 16;
 const int TILE_PIXEL_SIZE_S = 8;
-
+const int TARGET_FPS = 60;
 /*
 * Handels SDL Events and Key inputs
 */
-int processEvents(SDL_Window* window, GameState* gameState) {
+int processEvents(GameState* gameState, SDL_Window* window) {
     SDL_Event event;
     int done = 0;
     while (SDL_PollEvent(&event))
@@ -22,7 +24,7 @@ int processEvents(SDL_Window* window, GameState* gameState) {
         case SDL_EVENT_WINDOW_CLOSE_REQUESTED:
         {
             if (window) {
-                exitGame(window, gameState);
+                exitGame(gameState, window);
             }
         }
         break;
@@ -50,7 +52,7 @@ int processEvents(SDL_Window* window, GameState* gameState) {
 /*
 * Inits: SDL Lib, SDL Window, SDL Renderer, GameState
 */
-void loadGame(SDL_Window* window, SDL_Renderer* renderer, GameState* game)
+void loadGame(GameState* game, SDL_Window* window, SDL_Renderer* renderer)
 {
     SDL_Init(SDL_INIT_VIDEO);
     window = SDL_CreateWindow(
@@ -66,9 +68,48 @@ void loadGame(SDL_Window* window, SDL_Renderer* renderer, GameState* game)
 /*
 * Destroys Windows, Terminates SDL, closes GameState
 */
-void exitGame(SDL_Window* window, GameState* gameState)
+void exitGame(GameState* gameState, SDL_Window* window)
 {
     SDL_DestroyWindow(window);
     SDL_Quit();
     exit(0);
+}
+
+/*
+* Render Graphics from room with postion.
+*/
+void renderGame(GameState* gameState, SDL_Window* window, SDL_Renderer* renderer)
+{ 
+    SDL_RenderClear(renderer);
+    SDL_RenderPresent(renderer);
+}
+
+/*
+* Update GameState logic.
+*/
+void updateGame(GameState* gameState) 
+{
+    log_debug("IMPLEMENT_TODO");
+}
+
+/*
+* Game Loop.
+*/
+void loopGame(GameState* gameState, SDL_Window* window, SDL_Renderer* renderer)
+{
+
+    int frameDelay = 1000000 / TARGET_FPS;
+    int run = 1;
+    while (run) {
+        double start = GetCurrentTime();
+        processEvents(gameState, window);
+        updateGame(gameState);
+        renderGame(gameState, window, renderer);
+        sleep(start + frameDelay - GetCurrentTime());
+    }
+}
+
+// ---- ROOM SYSTEM ----
+Room* loadRoom(char* tilesetJSONPath) {
+    log_debug("IMPLEMENT_TODO");
 }

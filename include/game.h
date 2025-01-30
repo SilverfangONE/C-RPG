@@ -3,15 +3,7 @@
 
 #include <SDL3/SDL.h>	
 
-typedef struct {
-	
-} GameState;
-
-int processEvents(SDL_Window*, GameState*);
-void loadGame(SDL_Window*, SDL_Renderer*, GameState*);
-void exitGame(SDL_Window* window, GameState* gameState);
-
-// ROOM SYSTEM
+// ---- ROOM SYSTEM ----
 typedef struct {
 	int x;
 	int y;
@@ -30,6 +22,18 @@ typedef struct {
 	RoomType type;
 } Room;
 
-Room* loadRoom();
+Room* loadRoom(char*);
+
+// ---- GAME SYSTEM ----
+typedef struct {
+	Room* currentRoom;
+} GameState;
+
+int processEvents(GameState*, SDL_Window*);
+void loadGame(GameState*, SDL_Window*, SDL_Renderer*);
+void exitGame(GameState*, SDL_Window*);
+void loopGame(GameState*, SDL_Window*, SDL_Renderer*);
+void updateGame(GameState*);
+void renderGame(GameState*, SDL_Window*, SDL_Renderer*);
 
 #endif
