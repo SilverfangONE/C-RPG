@@ -1,26 +1,90 @@
 #include <SDL3/SDL.h>
 #include <stdio.h>
 #include <windows.h>
+#include "game.h"
+#include "log.h"
 
-int main(int argc, char *argv[]) {
-    printf("HelloWOlrd");
+const int NES_PIXEL_WIDTH = 256;
+const int NES_PIXEL_HEIGHT = 240;
+const int TILE_PIXEL_SIZE_B = 16;
+const int TILE_PIXEL_SIZE_S = 8;
 
-    // SDL initialisieren
-    SDL_Init(SDL_INIT_VIDEO);
-
-    // Fenster erstellen
-    SDL_Window *window = SDL_CreateWindow("SDL 3 Fenster", 800, 600, 0);
-    if (!window) {
-        printf("Fehler beim Erstellen des Fensters: %s\n", SDL_GetError());
-        SDL_Quit();
-        return 1;
+/*
+* Handels SDL Events and Key inputs
+*/
+int processEvents(SDL_Window *window, GameState *gameState) {
+    SDL_Event event;
+    int done = 0;
+    while(SDL_PollEvent(&event))
+    {
+        switch(event.type) 
+        {
+            case SDL_EVENT_WINDOW_CLOSE_REQUESTED:
+            {
+                if(window) {
+                    exitGame(window, gameState);
+                }
+            }
+            break;
+            case SDL_EVENT_KEY_DOWN:
+            {
+                switch (event.key.scancode) 
+                {
+                    case SDL_SCANCODE_UP:
+                        LOG_TRACE("KEY:UP");
+                        break;
+                    case SDL_SCANCODE_DOWN:
+                        LOG_TRACE("KEY:DOWN");
+                        break;
+                    case SDL_SCANCODE_LEFT:
+                        LOG_TRACE("KEY:LEFT");
+                        break;
+                    case SDL_SCANCODE_RIGHT:
+                        LOG_TRACE("KEY:RIGHT");
+                }
+            }
+        }
     }
-    
-    printf("Eppy Sleepy");
-    Sleep(3000);
+}
 
-    // Aufräumen
+/*
+* Inits: SDL Lib, SDL Window, SDL Renderer, GameState
+*/
+void loadGame(SDL_Window *window, SDL_Renderer *renderer, GameState* game) 
+{
+    SDL_Init(SDL_INIT_VIDEO);
+    window = SDL_CreateWindow(
+        "RPG",
+        NES_PIXEL_WIDTH,
+        NES_PIXEL_HEIGHT,
+        0
+    );
+    renderer = SDL_CreateRenderer(window, NULL);
+    GameState gameTemp;
+}
+
+/*
+* Destroys Windows, Terminates SDL, closes GameState
+*/
+void exitGame(SDL_Window* window, GameState* gameState) 
+{
     SDL_DestroyWindow(window);
     SDL_Quit();
+    exit(0);
+}
+
+int main(int argc, char *argv[]) 
+{
+    SDL_Window *window;
+    SDL_Renderer *renderer;
+    GameState* gameState;
+
+    loadGame(window, renderer, gameState);
+
+    while(!done) {
+
+    }
+    
+    exitGame(window, gameState);
     return 0;
 }

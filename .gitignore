@@ -15,6 +15,9 @@ CMakeUserPresets.json
 # External projects
 *-prefix/
 
+## VisualStudio
+.vs/*
+
 ### VisualStudioCode ###
 /.vscode
 .vscode/*
