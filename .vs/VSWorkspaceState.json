@@ -1,12 +1,13 @@
 {
   "ExpandedNodes": [
     "",
-    "\\build",
     "\\include",
     "\\lib",
-    "\\lib\\SDL3-3.2.0",
+    "\\lib\\SDL3",
+    "\\lib\\SDL3\\i686-w64-mingw32",
+    "\\res",
     "\\src"
   ],
-  "SelectedNode": "\\lib\\SDL3-3.2.0\\i686-w64-mingw32",
+  "SelectedNode": "\\src\\main.c",
   "PreviewInSolutionExplorer": false
 }
