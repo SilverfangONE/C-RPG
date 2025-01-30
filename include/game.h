@@ -8,7 +8,7 @@ typedef struct {
 } GameState;
 
 int processEvents(SDL_Window*, GameState*);
-void load(SDL_Window*, SDL_Renderer*, GameState*);
+void loadGame(SDL_Window*, SDL_Renderer*, GameState*);
 void exitGame(SDL_Window* window, GameState* gameState);
 
 // ROOM SYSTEM
