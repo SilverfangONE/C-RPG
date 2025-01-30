@@ -31,16 +31,16 @@ int processEvents(SDL_Window *window, GameState *gameState) {
                 switch (event.key.scancode) 
                 {
                     case SDL_SCANCODE_UP:
-                        LOG_TRACE("KEY:UP");
+                        log_trace("KEY:UP");
                         break;
                     case SDL_SCANCODE_DOWN:
-                        LOG_TRACE("KEY:DOWN");
+                        log_trace("KEY:DOWN");
                         break;
                     case SDL_SCANCODE_LEFT:
-                        LOG_TRACE("KEY:LEFT");
+                        log_trace("KEY:LEFT");
                         break;
                     case SDL_SCANCODE_RIGHT:
-                        LOG_TRACE("KEY:RIGHT");
+                        log_trace("KEY:RIGHT");
                 }
             }
         }
@@ -80,10 +80,6 @@ int main(int argc, char *argv[])
     GameState* gameState;
 
     loadGame(window, renderer, gameState);
-
-    while(!done) {
-
-    }
     
     exitGame(window, gameState);
     return 0;

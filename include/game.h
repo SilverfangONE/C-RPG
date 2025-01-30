@@ -9,5 +9,5 @@ typedef struct {
 
 int processEvents(SDL_Window*, GameState*);
 void load(SDL_Window*, GameState*);
-
+void exitGame(SDL_Window* window, GameState* gameState);
 #endif
