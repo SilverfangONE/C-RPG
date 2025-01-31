@@ -2,12 +2,9 @@
   "ExpandedNodes": [
     "",
     "\\include",
-    "\\lib",
-    "\\lib\\SDL3",
-    "\\lib\\SDL3\\i686-w64-mingw32",
     "\\res",
     "\\src"
   ],
-  "SelectedNode": "\\src\\main.c",
+  "SelectedNode": "\\include\\game.h",
   "PreviewInSolutionExplorer": false
 }

@@ -22,6 +22,7 @@ typedef struct {
 	RoomType type;
 } Room;
 
+
 Room* loadRoom(char*);
 
 // ---- GAME SYSTEM ----

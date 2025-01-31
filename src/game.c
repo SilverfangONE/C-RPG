@@ -1,3 +1,4 @@
+
 #include <SDL3/SDL.h>
 #include <stdio.h>
 #include<windows.h>
@@ -11,6 +12,7 @@ const int NES_PIXEL_HEIGHT = 240;
 const int TILE_PIXEL_SIZE_B = 16;
 const int TILE_PIXEL_SIZE_S = 8;
 const int TARGET_FPS = 60;
+
 /*
 * Handels SDL Events and Key inputs
 */
@@ -98,16 +100,54 @@ void updateGame(GameState* gameState)
 void loopGame(GameState* gameState, SDL_Window* window, SDL_Renderer* renderer)
 {
     log_info("START_GAME_LOOP");
+    log_info("AFTER_WAIT");
     int frameDelay = 1000000 / TARGET_FPS;
     int run = 1;
     while (run) {
+        double start = GetCurrentTime();
         processEvents(gameState, window);
         updateGame(gameState);
         renderGame(gameState, window, renderer);
+        Sleep(start + frameDelay - GetCurrentTime());
     }
 }
 
 // ---- ROOM SYSTEM ----
 Room* loadRoom(char* tilesetJSONPath) {
     log_debug("IMPLEMENT_TODO");
+    Room room;
+    return &room;
+}
+
+// ---- TILES & SPRITE ----
+typedef struct {
+    int w; // pixel width
+    int h; // pixel height
+} Dimension;
+
+typedef struct {
+    SDL_Texture** tilesset;
+    int** tilemap;
+    Dimension tileDim;
+} Tilesheet;
+
+SDL_Point getsize(SDL_Texture* texture) {
+    Dimension dim;
+    SDL_QueryTexture(texture, NULL, NULL, &dim.x, &dim.y);
+    return dim;
+}
+
+/*
+* 
+*/
+Tilesheet* createTilesheet(SDL_Renderer* renderer, char* tilesheetJSON, char* tilesheetIMG) {
+
+}
+
+SDL_Texture** tiles createTileset(SDL_Renderer* renderer, char* path, int dimension)
+{
+    log_trace("CREATE_TILESET:->%s", path);
+    SDL_Texture* tilesheet = IMG_LoadTexture(renderer, path);
+    // SDL_Texture* tiles[] = 
+    return void**;
 }
