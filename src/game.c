@@ -60,19 +60,22 @@ void processEvents(GameState* gameState, SDL_Window* window) {
 /*
 * Inits: SDL Lib, SDL Window, SDL Renderer, GameState
 */
-void loadGame(GameState* game, SDL_Window* window, SDL_Renderer* renderer)
+void loadGame(GameState* game, SDL_Window** window, SDL_Renderer** renderer)
 {
     log_info("LOAD_GAME");
     SDL_Init(SDL_INIT_VIDEO);
-    window = SDL_CreateWindow(
-        "RPG",
-        NES_PIXEL_WIDTH,
-        NES_PIXEL_HEIGHT,
-        0
-    );
-    renderer = SDL_CreateRenderer(window, NULL);
-    SDL_SetRenderTarget(renderer, NULL);
-    Room room = loadRoom(renderer, "res/tilesheet.png");
+    if(!SDL_CreateWindowAndRenderer(
+        "C-RPG",
+        500,
+        500,
+        0,
+        window,
+        renderer
+    )) {
+        log_error("%s", SDL_GetError());
+        exitGame(game, *window);
+    }
+    Room room = loadRoom(*renderer, "./res/tilesheet.png");
     game->currentRoom = &room;
 }
 
@@ -93,11 +96,11 @@ void exitGame(GameState* gameState, SDL_Window* window)
 void renderGame(GameState* gameState, SDL_Window* window, SDL_Renderer* renderer)
 { 
     // log_trace("Render:");
-    for(int y = 0; y < 30; y++ ) {
+    /* for(int y = 0; y < 30; y++ ) {
         for(int x = 0; x < 32; x++) {
             renderTile(renderer, gameState->currentRoom->tilesheet, 0, x * TILE_SIZE, y * TILE_SIZE);
         }
-    }
+    }*/
     SDL_RenderPresent(renderer);
 }
 
@@ -114,6 +117,21 @@ void updateGame(GameState* gameState)
 */
 void loopGame(GameState* gameState, SDL_Window* window, SDL_Renderer* renderer)
 {
+    // test 
+    SDL_Texture* img = IMG_LoadTexture(renderer, "./res/Bang_Manga_Profile.png");
+    SDL_FRect texture_rect;
+    texture_rect.x = 0; //the x coordinate
+    texture_rect.y = 0; //the y coordinate
+    texture_rect.w = 500; //the width of the texture
+    texture_rect.h = 500; //the height of the texture
+    SDL_RenderClear(renderer); //clears the renderer
+    SDL_SetRenderDrawColor(renderer, 255, 175, 195, 255);
+    SDL_RenderRect(renderer, &texture_rect);
+    if(!SDL_RenderTexture(renderer, img, NULL, &texture_rect)) {
+        log_error("%s", SDL_GetError());
+    }
+    SDL_RenderPresent(renderer); //updates the renderer
+
     log_info("START_GAME_LOOP");
     log_info("AFTER_WAIT");
     int frameDelay = 1000000 / TARGET_FPS;
@@ -122,7 +140,7 @@ void loopGame(GameState* gameState, SDL_Window* window, SDL_Renderer* renderer)
         // double start = GetCurrentTime();
         processEvents(gameState, window);
         updateGame(gameState);
-        renderGame(gameState, window, renderer);
+        // renderGame(gameState, window, renderer);
         // Sleep(start + frameDelay - GetCurrentTime());
     }
 }

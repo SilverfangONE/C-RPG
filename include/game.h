@@ -40,7 +40,7 @@ typedef struct {
 } GameState;
 
 void processEvents(GameState*, SDL_Window*);
-void loadGame(GameState*, SDL_Window*, SDL_Renderer*);
+void loadGame(GameState*, SDL_Window**, SDL_Renderer**);
 void exitGame(GameState*, SDL_Window*);
 void loopGame(GameState*, SDL_Window*, SDL_Renderer*);
 void updateGame(GameState*);
