@@ -14,9 +14,9 @@ int main()
     GameState gameState;
 
     // game.
-    // loadGame(&gameState, window, renderer);
-    // loopGame(&gameState, window, renderer);
-    // exitGame(&gameState, window);
+    loadGame(&gameState, window, renderer);
+    loopGame(&gameState, window, renderer);
+    exitGame(&gameState, window);
 
     return 0;
 }
