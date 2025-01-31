@@ -97,7 +97,7 @@ void renderGame(GameState* gameState, SDL_Window* window, SDL_Renderer* renderer
             // renderTile(renderer, gameState->currentRoom->tilesheet, 0, x * TILE_SIZE, y * TILE_SIZE);
         }
     }
-    SDL_RenderClear(renderer);
+    // SDL_RenderClear(renderer);
     SDL_RenderPresent(renderer);
 }
 
