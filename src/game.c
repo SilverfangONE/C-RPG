@@ -33,9 +33,7 @@ void processEvents(GameState* gameState, SDL_Window* window) {
         {
             case SDL_EVENT_WINDOW_CLOSE_REQUESTED:
             {
-                if (window) {
-                    exitGame(gameState, window);
-                }
+                exitGame(gameState, window);
             }
             break;
             case SDL_EVENT_KEY_DOWN:
@@ -73,6 +71,7 @@ void loadGame(GameState* game, SDL_Window* window, SDL_Renderer* renderer)
         0
     );
     renderer = SDL_CreateRenderer(window, NULL);
+    SDL_SetRenderTarget(renderer, NULL);
     Room room = loadRoom(renderer, "res/tilesheet.png");
     game->currentRoom = &room;
 }
@@ -94,7 +93,6 @@ void exitGame(GameState* gameState, SDL_Window* window)
 void renderGame(GameState* gameState, SDL_Window* window, SDL_Renderer* renderer)
 { 
     // log_trace("Render:");
-    SDL_RenderClear(renderer);
     for(int y = 0; y < 30; y++ ) {
         for(int x = 0; x < 32; x++) {
             renderTile(renderer, gameState->currentRoom->tilesheet, 0, x * TILE_SIZE, y * TILE_SIZE);

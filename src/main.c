@@ -5,7 +5,6 @@
 
 int main() 
 {
-    log_set_level(LOG_TRACE);
     log_debug("LOLOL");
     log_info("LAUNCH_GAME");
     // setup.
