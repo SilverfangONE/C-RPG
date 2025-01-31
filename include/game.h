@@ -3,27 +3,37 @@
 
 #include <SDL3/SDL.h>	
 
+// ---- CONSTANTS ----
+const int NES_PIXEL_WIDTH = 256;
+const int NES_PIXEL_HEIGHT = 240;
+const int TILE_PIXEL_SIZE_B = 16;
+const int TILE_PIXEL_SIZE_S = 8;
+const int TARGET_FPS = 60;
+const int TILES_X = 6;
+const int TILES_Y = 6;
+const int TILE_COUNT = 6 * 6;
+const int TILE_SIZE = 8;
+
 // ---- ROOM SYSTEM ----
 typedef struct {
 	int x;
 	int y;
 } GameObj;
 
-typedef enum {
+enum RoomType{
 	MENU,
 	WORLD,
 	COMBAT
-} RoomType;
+};
 
 typedef struct {
 	long long id;
-	char* tilesetPath;
-	int** tilesetMap;
-	RoomType type;
+	SDL_Texture* tilesheet;
+	enum RoomType type;
 } Room;
 
 
-Room* loadRoom(char*);
+Room loadRoom(SDL_Renderer* renderer, char* imgPath);
 
 // ---- GAME SYSTEM ----
 typedef struct {

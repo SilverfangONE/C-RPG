@@ -1,17 +1,15 @@
 
 #include <SDL3/SDL.h>
 #include <stdio.h>
-#include<windows.h>
+#include <windows.h>
 #include "game.h"
 #include "log.h"
 #include <time.h>
 
 // ---- GAME SYSTEM ----
-const int NES_PIXEL_WIDTH = 256;
-const int NES_PIXEL_HEIGHT = 240;
-const int TILE_PIXEL_SIZE_B = 16;
-const int TILE_PIXEL_SIZE_S = 8;
-const int TARGET_FPS = 60;
+
+// temp
+int roomIDCounter = 0;
 
 /*
 * Handels SDL Events and Key inputs
@@ -64,6 +62,8 @@ void loadGame(GameState* game, SDL_Window* window, SDL_Renderer* renderer)
         0
     );
     renderer = SDL_CreateRenderer(window, NULL);
+    Room room = loadRoom(renderer, "./res/tilesheet.png");
+    game->currentRoom = &room;
 }
 
 /*
@@ -82,6 +82,11 @@ void exitGame(GameState* gameState, SDL_Window* window)
 */
 void renderGame(GameState* gameState, SDL_Window* window, SDL_Renderer* renderer)
 { 
+    for(int y = 0; y < 30; y++ ) {
+        for(int x = 0; x < 32; x++) {
+            renderTile(renderer, gameState->currentRoom->tilesheet, 0, x * TILE_SIZE, y * TILE_SIZE);
+        }
+    }
     SDL_RenderClear(renderer);
     SDL_RenderPresent(renderer);
 }
@@ -91,7 +96,7 @@ void renderGame(GameState* gameState, SDL_Window* window, SDL_Renderer* renderer
 */
 void updateGame(GameState* gameState) 
 {
-    // TODO 
+    // TODO
 }
 
 /*
@@ -113,41 +118,23 @@ void loopGame(GameState* gameState, SDL_Window* window, SDL_Renderer* renderer)
 }
 
 // ---- ROOM SYSTEM ----
-Room* loadRoom(char* tilesetJSONPath) {
-    log_debug("IMPLEMENT_TODO");
+Room loadRoom(SDL_Renderer* renderer, char* imgPath)
+{
+    log_debug("LOAD->ROOM:Tilesheet->%s", imgPath);
     Room room;
-    return &room;
+    room.id = roomIDCounter++;
+    room.tilesheet = IMG_LoadTexture(renderer, imgPath);
+    room.type = MENU;
+    return room;
+}
+
+void DestoryRoom(Room* room) {
+    SDL_DestroyTexture(room->tilesheet);
 }
 
 // ---- TILES & SPRITE ----
-typedef struct {
-    int w; // pixel width
-    int h; // pixel height
-} Dimension;
-
-typedef struct {
-    SDL_Texture** tilesset;
-    int** tilemap;
-    Dimension tileDim;
-} Tilesheet;
-
-SDL_Point getsize(SDL_Texture* texture) {
-    Dimension dim;
-    SDL_QueryTexture(texture, NULL, NULL, &dim.x, &dim.y);
-    return dim;
-}
-
-/*
-* 
-*/
-Tilesheet* createTilesheet(SDL_Renderer* renderer, char* tilesheetJSON, char* tilesheetIMG) {
-
-}
-
-SDL_Texture** tiles createTileset(SDL_Renderer* renderer, char* path, int dimension)
-{
-    log_trace("CREATE_TILESET:->%s", path);
-    SDL_Texture* tilesheet = IMG_LoadTexture(renderer, path);
-    // SDL_Texture* tiles[] = 
-    return void**;
+void renderTile(SDL_Renderer* renderer, SDL_Texture* tilesheet, int tileIndex, int x, int y) {
+    SDL_Rect srcRect = { (tileIndex % TILES_X) * TILE_SIZE, (tileIndex / TILES_X) * TILE_SIZE, TILE_SIZE, TILE_SIZE };
+    SDL_Rect destRect = { x, y, TILE_SIZE, TILE_SIZE };
+    SDL_RenderCopy(renderer, tilesheet, &srcRect, &destRect);
 }
