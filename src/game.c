@@ -1,5 +1,6 @@
 
 #include <SDL3/SDL.h>
+#include <SDL3_image/SDL_image.h>
 #include <stdio.h>
 #include <windows.h>
 #include "game.h"
@@ -72,7 +73,7 @@ void loadGame(GameState* game, SDL_Window* window, SDL_Renderer* renderer)
         0
     );
     renderer = SDL_CreateRenderer(window, NULL);
-    Room room = loadRoom(renderer, "./res/tilesheet.png");
+    Room room = loadRoom(renderer, "res/tilesheet.png");
     game->currentRoom = &room;
 }
 
@@ -92,12 +93,13 @@ void exitGame(GameState* gameState, SDL_Window* window)
 */
 void renderGame(GameState* gameState, SDL_Window* window, SDL_Renderer* renderer)
 { 
+    // log_trace("Render:");
+    SDL_RenderClear(renderer);
     for(int y = 0; y < 30; y++ ) {
         for(int x = 0; x < 32; x++) {
-            // renderTile(renderer, gameState->currentRoom->tilesheet, 0, x * TILE_SIZE, y * TILE_SIZE);
+            renderTile(renderer, gameState->currentRoom->tilesheet, 0, x * TILE_SIZE, y * TILE_SIZE);
         }
     }
-    // SDL_RenderClear(renderer);
     SDL_RenderPresent(renderer);
 }
 
@@ -119,21 +121,22 @@ void loopGame(GameState* gameState, SDL_Window* window, SDL_Renderer* renderer)
     int frameDelay = 1000000 / TARGET_FPS;
     int run = 1;
     while (run) {
-        double start = GetCurrentTime();
+        // double start = GetCurrentTime();
         processEvents(gameState, window);
         updateGame(gameState);
         renderGame(gameState, window, renderer);
-        Sleep(start + frameDelay - GetCurrentTime());
+        // Sleep(start + frameDelay - GetCurrentTime());
     }
 }
 
 // ---- ROOM SYSTEM ----
 Room loadRoom(SDL_Renderer* renderer, char* imgPath)
 {
-    // log_debug("LOAD->ROOM:Tilesheet->%s", imgPath);
+    log_debug("LOAD->ROOM:Tilesheet->%s", imgPath);
     Room room;
     room.id = roomIDCounter++;
-    // room.tilesheet = IMG_LoadTexture(renderer, imgPath);
+    SDL_Texture * lol = IMG_LoadTexture(renderer, imgPath);
+    room.tilesheet = lol;
     room.type = MENU;
     return room;
 }
@@ -144,7 +147,7 @@ void DestoryRoom(Room* room) {
 
 // ---- TILES & SPRITE ----
 void renderTile(SDL_Renderer* renderer, SDL_Texture* tilesheet, int tileIndex, int x, int y) {
-    SDL_Rect srcRect = { (tileIndex % TILES_X) * TILE_SIZE, (tileIndex / TILES_X) * TILE_SIZE, TILE_SIZE, TILE_SIZE };
-    SDL_Rect destRect = { x, y, TILE_SIZE, TILE_SIZE };
-    // SDL_RenderCopy(renderer, tilesheet, &srcRect, &destRect);
+    SDL_FRect  srcRect = { (tileIndex % TILES_X) * TILE_SIZE, (tileIndex / TILES_X) * TILE_SIZE, TILE_SIZE, TILE_SIZE };
+    SDL_FRect  destRect = { x, y, TILE_SIZE, TILE_SIZE };
+    SDL_RenderTexture(renderer, tilesheet, &srcRect, &destRect);
 }

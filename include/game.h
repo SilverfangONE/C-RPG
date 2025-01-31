@@ -28,7 +28,7 @@ enum RoomType{
 
 typedef struct {
 	long long id;
-	SDL_Texture* tilesheet;
+	SDL_Texture *tilesheet;
 	enum RoomType type;
 } Room;
 
@@ -44,6 +44,7 @@ void loadGame(GameState*, SDL_Window*, SDL_Renderer*);
 void exitGame(GameState*, SDL_Window*);
 void loopGame(GameState*, SDL_Window*, SDL_Renderer*);
 void updateGame(GameState*);
-void renderGame(GameState*, SDL_Window*, SDL_Renderer*);
+void renderGame(GameState* gameState, SDL_Window* window, SDL_Renderer* renderer);
+void renderTile(SDL_Renderer* renderer, SDL_Texture* tilesheet, int tileIndex, int x, int y);
 
 #endif
