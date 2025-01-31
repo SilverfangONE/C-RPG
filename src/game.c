@@ -1,4 +1,4 @@
-
+// @author: SilverfangOne 
 #include <SDL3/SDL.h>
 #include <SDL3_image/SDL_image.h>
 #include <stdio.h>
@@ -66,8 +66,8 @@ void loadGame(GameState* game, SDL_Window** window, SDL_Renderer** renderer)
     SDL_Init(SDL_INIT_VIDEO);
     if(!SDL_CreateWindowAndRenderer(
         "C-RPG",
-        500,
-        500,
+        NES_PIXEL_WIDTH,
+        NES_PIXEL_HEIGHT,
         0,
         window,
         renderer
@@ -95,12 +95,13 @@ void exitGame(GameState* gameState, SDL_Window* window)
 */
 void renderGame(GameState* gameState, SDL_Window* window, SDL_Renderer* renderer)
 { 
+    SDL_RenderClear(renderer);
     // log_trace("Render:");
-    /* for(int y = 0; y < 30; y++ ) {
+    for(int y = 0; y < 30; y++ ) {
         for(int x = 0; x < 32; x++) {
             renderTile(renderer, gameState->currentRoom->tilesheet, 0, x * TILE_SIZE, y * TILE_SIZE);
         }
-    }*/
+    }
     SDL_RenderPresent(renderer);
 }
 
@@ -122,8 +123,8 @@ void loopGame(GameState* gameState, SDL_Window* window, SDL_Renderer* renderer)
     SDL_FRect texture_rect;
     texture_rect.x = 0; //the x coordinate
     texture_rect.y = 0; //the y coordinate
-    texture_rect.w = 500; //the width of the texture
-    texture_rect.h = 500; //the height of the texture
+    texture_rect.w = NES_PIXEL_WIDTH; //the width of the texture
+    texture_rect.h = NES_PIXEL_HEIGHT; //the height of the texture
     SDL_RenderClear(renderer); //clears the renderer
     SDL_SetRenderDrawColor(renderer, 255, 175, 195, 255);
     SDL_RenderRect(renderer, &texture_rect);
@@ -131,6 +132,9 @@ void loopGame(GameState* gameState, SDL_Window* window, SDL_Renderer* renderer)
         log_error("%s", SDL_GetError());
     }
     SDL_RenderPresent(renderer); //updates the renderer
+    Sleep(5000);
+    SDL_RenderClear(renderer);
+    // start.
 
     log_info("START_GAME_LOOP");
     log_info("AFTER_WAIT");
@@ -140,7 +144,7 @@ void loopGame(GameState* gameState, SDL_Window* window, SDL_Renderer* renderer)
         // double start = GetCurrentTime();
         processEvents(gameState, window);
         updateGame(gameState);
-        // renderGame(gameState, window, renderer);
+        renderGame(gameState, window, renderer);
         // Sleep(start + frameDelay - GetCurrentTime());
     }
 }
@@ -151,7 +155,15 @@ Room loadRoom(SDL_Renderer* renderer, char* imgPath)
     log_debug("LOAD->ROOM:Tilesheet->%s", imgPath);
     Room room;
     room.id = roomIDCounter++;
-    SDL_Texture * lol = IMG_LoadTexture(renderer, imgPath);
+    SDL_Texture *lol = IMG_LoadTexture(renderer, imgPath);
+    SDL_PropertiesID props = SDL_GetTextureProperties(lol);
+    if(!props) {
+        log_error("%s", SDL_GetError());
+    } else {
+        int width = SDL_GetNumberProperty(props, "SDL.texture.width", 0);
+        int height = SDL_GetNumberProperty(props, "SDL.texture.height", 0);
+        log_debug("Tilesheet: w=%d | h=%d", width, height);
+    }
     room.tilesheet = lol;
     room.type = MENU;
     return room;
