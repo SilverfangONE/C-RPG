@@ -7,6 +7,16 @@
 #include <time.h>
 
 // ---- GAME SYSTEM ----
+// ---- CONSTANTS ----
+const int NES_PIXEL_WIDTH = 256;
+const int NES_PIXEL_HEIGHT = 240;
+const int TILE_PIXEL_SIZE_B = 16;
+const int TILE_PIXEL_SIZE_S = 8;
+const int TARGET_FPS = 60;
+const int TILES_X = 6;
+const int TILES_Y = 6;
+const int TILE_COUNT = 6 * 6;
+const int TILE_SIZE = 8;
 
 // temp
 int roomIDCounter = 0;
@@ -84,7 +94,7 @@ void renderGame(GameState* gameState, SDL_Window* window, SDL_Renderer* renderer
 { 
     for(int y = 0; y < 30; y++ ) {
         for(int x = 0; x < 32; x++) {
-            renderTile(renderer, gameState->currentRoom->tilesheet, 0, x * TILE_SIZE, y * TILE_SIZE);
+            // renderTile(renderer, gameState->currentRoom->tilesheet, 0, x * TILE_SIZE, y * TILE_SIZE);
         }
     }
     SDL_RenderClear(renderer);
@@ -120,10 +130,10 @@ void loopGame(GameState* gameState, SDL_Window* window, SDL_Renderer* renderer)
 // ---- ROOM SYSTEM ----
 Room loadRoom(SDL_Renderer* renderer, char* imgPath)
 {
-    log_debug("LOAD->ROOM:Tilesheet->%s", imgPath);
+    // log_debug("LOAD->ROOM:Tilesheet->%s", imgPath);
     Room room;
     room.id = roomIDCounter++;
-    room.tilesheet = IMG_LoadTexture(renderer, imgPath);
+    // room.tilesheet = IMG_LoadTexture(renderer, imgPath);
     room.type = MENU;
     return room;
 }
@@ -136,5 +146,5 @@ void DestoryRoom(Room* room) {
 void renderTile(SDL_Renderer* renderer, SDL_Texture* tilesheet, int tileIndex, int x, int y) {
     SDL_Rect srcRect = { (tileIndex % TILES_X) * TILE_SIZE, (tileIndex / TILES_X) * TILE_SIZE, TILE_SIZE, TILE_SIZE };
     SDL_Rect destRect = { x, y, TILE_SIZE, TILE_SIZE };
-    SDL_RenderCopy(renderer, tilesheet, &srcRect, &destRect);
+    // SDL_RenderCopy(renderer, tilesheet, &srcRect, &destRect);
 }

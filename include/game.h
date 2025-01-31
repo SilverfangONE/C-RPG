@@ -4,15 +4,15 @@
 #include <SDL3/SDL.h>	
 
 // ---- CONSTANTS ----
-const int NES_PIXEL_WIDTH = 256;
-const int NES_PIXEL_HEIGHT = 240;
-const int TILE_PIXEL_SIZE_B = 16;
-const int TILE_PIXEL_SIZE_S = 8;
-const int TARGET_FPS = 60;
-const int TILES_X = 6;
-const int TILES_Y = 6;
-const int TILE_COUNT = 6 * 6;
-const int TILE_SIZE = 8;
+extern const int NES_PIXEL_WIDTH;
+extern const int NES_PIXEL_HEIGHT;
+extern const int TILE_PIXEL_SIZE_B;
+extern const int TILE_PIXEL_SIZE_S;
+extern const int TARGET_FPS;
+extern const int TILES_X;
+extern const int TILES_Y;
+extern const int TILE_COUNT;
+extern const int TILE_SIZE;
 
 // ---- ROOM SYSTEM ----
 typedef struct {
@@ -31,7 +31,6 @@ typedef struct {
 	SDL_Texture* tilesheet;
 	enum RoomType type;
 } Room;
-
 
 Room loadRoom(SDL_Renderer* renderer, char* imgPath);
 
