@@ -56,10 +56,12 @@ enum Tilesize {
 
 typedef struct {
 	unsigned int ID;
-	SDL_Texture* tileset;
+	SDL_Texture* texture;
 	char textPath[50];
-	int sizeX;
-	int sizeY;
+	int cols;
+	int rows;
+	int tileSizeX;
+	int tileSizeY;
 } Tileset;
 
 enum RoomType{
@@ -88,7 +90,7 @@ typedef struct {
 GameState* loadGame();
 void loadRoom(GameState*, char*, enum RoomType);
 void loadDisplay(GameState*);
-void loadTileset(GameState*);
+void loadTileset(GameState*, char* ,int, int, int , int , unsigned int);
 
 void exitGame(GameState*);
 void destoryRoom(Room*);
@@ -103,12 +105,15 @@ void updateGame(GameState*);
 
 // ---- GAME RENDER ---- 
 void renderGame(GameState*);
-void renderTile(GameState*, SDL_Texture*, int, int, int);
+void renderTileFromRoom(GameState*, SDL_Texture*, int, int, int);
 
 // ---- PRINT STRUCTS ----
 void printGameState(GameState*);
 void printDisplay(Display*);
 void printRoom(Room*);
 char* printRoomType(enum RoomType);
+
+// ---- SMOKE-TEST ----
+void smokeTestIMGRender(GameState* game);
 
 #endif

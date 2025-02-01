@@ -54,27 +54,18 @@ GameState* loadGame()
     log_debug("LOAD: GAME: init SDL3");
     // init game state.
     loadDisplay(game);
-    loadRoom(game, "./res/tilesheet.png", WORLD);
+    loadTileset(game, "./res/tilesheet.png", 6, 6, 0);
+    loadRoom(game, WORLD, 0, 0);
     log_debug("LOAD: GAME: init GameState");
     return game;
 }
 
-void loadRoom(GameState* game, char* tilesetTexturePath, enum RoomType type, unsigned int tilesetID)
+void loadRoom(GameState* game, enum RoomType type, unsigned int roomID, unsigned int tilesetID)
 {
     Room room;
-    SDL_Texture *texture = IMG_LoadTexture(game->renderer, tilesetTexturePath);
-    if(!texture) {
-        log_error("%s", SDL_GetError());
-        exitGame(game);
-    }
-    // Setze die Textur auf "Nearest Neighbor" (pixelgenaue Skalierung)
-    if(!SDL_SetTextureScaleMode(texture, SDL_SCALEMODE_NEAREST)) {
-        log_error("%s", SDL_GetError());
-        exitGame(game);
-    }
-    room.tileset = texture;
-    strncpy(room.tilesetPath, tilesetTexturePath, sizeof(room.tilesetPath) - 1);
+    room.ID = roomID;
     room.type = type;
+    room.tileset = lookupTileset(game, tilesetID);
     game->room=room;
     printRoom(&room);
 }
@@ -122,40 +113,49 @@ void loadDisplay(GameState* game)
 }
 
 // TODO: später steht das alles in einer json datei. => dan nur pfad zur json datei und zur texture
-void loadTileset(GameState* game, char* tilesetTexturePath, int sizeX, int sizeY, unsigned int ID) {
+void loadTileset(GameState* game, char* tilesetTexturePath, int tileSizeX, int tileSizeY, int cols, int rows, unsigned int ID) {
     Tileset** slotPtr = getTilesetSaveSlot(game);
     if(slotPtr == NULL) {  
         log_error("GAME_STATE: Can't load new TILESET:{path=%s;ID=%u}, because no slot is free!", tilesetTexturePath, ID);
     }   
-
-    Tileset tileset;
-    tileset.ID = ID;
+    Tileset* tileset = (Tileset*)malloc(sizeof(Tileset));
+    tileset->ID = ID;
     SDL_Texture *texture = IMG_LoadTexture(game->renderer, tilesetTexturePath);
     if(!texture) {
         log_error("%s", SDL_GetError());
         exitGame(game);
     }
+    tileset->texture = texture;
+    tileset->cols = cols;
+    tileset->rows = rows;
+    tileset->tileSizeX = tileSizeX;
+    tileset->tileSizeY = tileSizeY;
+    strncpy(tileset->textPath, tilesetTexturePath, sizeof(tileset->textPath) - 1);
     // Setze die Textur auf "Nearest Neighbor" (pixelgenaue Skalierung)
     if(!SDL_SetTextureScaleMode(texture, SDL_SCALEMODE_NEAREST)) {
         log_error("%s", SDL_GetError());
         exitGame(game);
     }
-  
+    *slotPtr = tileset;
 }
 
 void exitGame(GameState* game)
 {
     log_info("TERMINATE_GAME");
-    destoryGameState(game);
     SDL_DestroyWindow(game->window);
     SDL_Quit();
-    free(game); 
+    destoryGameState(game);
     exit(0);
 }
 
 void destoryGameState(GameState* game) {
     destoryRoom(&game->room);
     destoryDisplay(&game->display);
+    // free SDL_Textures;
+    for(int i = 0; i < TILESET_SLOT_SIZE; i++) {
+        free(game->sets[i]);
+    }
+    free(game);
 }
 
 void destoryDisplay(Display* display) {
@@ -229,23 +229,9 @@ void updateGame(GameState* game)
 
 void loopGame(GameState* game)
 {
-    // test 
-    SDL_Texture* img = IMG_LoadTexture(game->renderer, "./res/Bang_Manga_Profile.png");
-    SDL_FRect texture_rect;
-    texture_rect.x = 0; //the x coordinate
-    texture_rect.y = 0; //the y coordinate
-    texture_rect.w = NES_PIXEL_WIDTH; //the width of the texture
-    texture_rect.h = NES_PIXEL_HEIGHT; //the height of the texture
-    SDL_RenderClear(game->renderer); //clears the renderer
-    SDL_RenderRect(game->renderer, &texture_rect);
-    if(!SDL_RenderTexture(game->renderer, img, NULL, &texture_rect)) {
-        log_error("%s", SDL_GetError());
-    }
-    SDL_RenderPresent(game->renderer); //updates the renderer
-    Sleep(1000);
-    
+    smokeTestIMGRender(game);
     // start.
-    log_info("GAME_LOOP: START");
+    log_info("GAME_LOOP:START");
     int frameDelay = 1000000 / TARGET_FPS;
     int run = 1;
     while (run) {
@@ -259,50 +245,60 @@ void loopGame(GameState* game)
 
 // ---- GAME RENDER ---- 
 void renderGame(GameState* game) {
-        // reset.
-        if(!SDL_RenderClear(game->renderer)) {
-            log_error("%s", SDL_GetError());
-        }
-        // set render target to display.
-        SDL_SetRenderTarget(game->renderer, game->display.texture);
+    // reset.
+    if(!SDL_RenderClear(game->renderer)) {
+        log_error("%s", SDL_GetError());
+    }
+    // set render target to display.
+    SDL_SetRenderTarget(game->renderer, game->display.texture);
 
-        // actuall render stuff. 
-        for(int y = 0; y < NES_PIXEL_HEIGHT / TILE_SIZE; y++) {
-            for(int x = 0; x < NES_PIXEL_WIDTH / TILE_SIZE; x++) {
-                renderTile(game, game->room.tileset, 0, x * TILE_SIZE, y * TILE_SIZE);
-            }
+    // actuall render stuff. 
+    for(int y = 0; y < NES_PIXEL_HEIGHT / game->room.tileset->tileSizeY; y++) 
+    {
+        for(int x = 0; x < NES_PIXEL_WIDTH / game->room.tileset->tileSizeX; x++) 
+        {
+            renderTile(
+                game, 
+                game->room.tileset, 
+                0, 
+                x * game->room.tileset->tileSizeX, 
+                y * game->room.tileset->tileSizeY
+            );
         }
+    }
 
-        SDL_SetRenderTarget(game->renderer, NULL);
-        if(!SDL_RenderTexture(game->renderer, game->display.texture, NULL, &game->display.destRect)) {
-            log_error("%s", SDL_GetError());
-        }
-        
-        // switch buffer.
-        SDL_RenderPresent(game->renderer); //updates the renderer
+    SDL_SetRenderTarget(game->renderer, NULL);
+    if(!SDL_RenderTexture(game->renderer, game->display.texture, NULL, &game->display.destRect)) {
+        log_error("%s", SDL_GetError());
+    }
+    
+    // switch buffer.
+    SDL_RenderPresent(game->renderer); //updates the renderer
 }
 
 // ---- TILES & SPRITE ----
-void renderTile(GameState* game, SDL_Texture* tilesetTexture, int tileIndex, int x, int y) {
+void renderTileFromRoom(GameState* game, int tileIndex, int x, int y) {
+    const int TILE_SIZE_Y = game->room.tileset->tileSizeY;
+    const int TILE_SIZE_X = game->room.tileset->tileSizeX;
+    
     // calc index.
-    int tileY = tileIndex / TILES_X; 
-    int tileX = tileIndex % TILES_X;
-    // log_trace("tileY=%d | tileX=%d", tileY, tileX);
+    // int tileY = tileIndex / game->room.tileset->cols; 
+    // int tileX = tileIndex % game->room.tileset->cols;
     
     // render stuff.
     SDL_FRect srcR;
-    srcR.w = TILE_SIZE;
-    srcR.h = TILE_SIZE;
-    srcR.x = tileX * TILE_SIZE;
-    srcR.y = tileY * TILE_SIZE;
+    srcR.w = TILE_SIZE_X;
+    srcR.h = TILE_SIZE_Y;
+    srcR.x = (tileIndex % game->room.tileset->cols) * TILE_SIZE_X;
+    srcR.y = (tileIndex / game->room.tileset->cols) * TILE_SIZE_Y;
 
     SDL_FRect destR;
-    destR.w = TILE_SIZE;
-    destR.h = TILE_SIZE;
+    destR.w = TILE_SIZE_X;
+    destR.h = TILE_SIZE_Y;
     destR.x = x;
     destR.y = y;
 
-    if(!SDL_RenderTexture(game->renderer, tilesetTexture, &srcR, &destR)) {
+    if(!SDL_RenderTexture(game->renderer, game->room.tileset->texture, &srcR, &destR)) {
         log_error("%s", SDL_GetError());
         exitGame(game);
     }
@@ -310,11 +306,11 @@ void renderTile(GameState* game, SDL_Texture* tilesetTexture, int tileIndex, int
 
 // ---- PRINT STRUCTS ----
 void printTileset(Tileset* tileset) {
-    log_debug("TILESET:\n{\n\tID=%u;\n\ttextPath=%s;\n\tsizeX=%d;\n\tsizeY=%d\n}", 
+    log_debug("TILESET:\n{\n\tID=%u;\n\ttextPath=%s;\n\tcols=%d;\n\trows=%d\n}", 
         tileset->ID,
         tileset->textPath,
-        tileset->sizeX,
-        tileset->sizeY    
+        tileset->cols,
+        tileset->rows    
     );
 }
 
@@ -352,4 +348,22 @@ void printGameState(GameState* game) {
     printDisplay(&game->display);
     printRoom(&game->room);
     log_debug("}");
+}
+
+// ---- SMOKE-TESTS ----
+void smokeTestIMGRender(GameState* game) {
+    // test 
+    SDL_Texture* img = IMG_LoadTexture(game->renderer, "./res/Bang_Manga_Profile.png");
+    SDL_FRect texture_rect;
+    texture_rect.x = 0; //the x coordinate
+    texture_rect.y = 0; //the y coordinate
+    texture_rect.w = NES_PIXEL_WIDTH; //the width of the texture
+    texture_rect.h = NES_PIXEL_HEIGHT; //the height of the texture
+    SDL_RenderClear(game->renderer); //clears the renderer
+    SDL_RenderRect(game->renderer, &texture_rect);
+    if(!SDL_RenderTexture(game->renderer, img, NULL, &texture_rect)) {
+        log_error("%s", SDL_GetError());
+    }
+    SDL_RenderPresent(game->renderer); //updates the renderer
+    Sleep(1000);
 }
