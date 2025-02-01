@@ -88,9 +88,9 @@ typedef struct {
 // -------- FUNCTIONS --------
 // ---- LOAD/DESTROY SYSTEMS ----
 GameState* loadGame();
-void loadRoom(GameState*, char*, enum RoomType);
+void loadRoom(GameState* , enum RoomType , unsigned int , unsigned int );
 void loadDisplay(GameState*);
-void loadTileset(GameState*, char* ,int, int, int , int , unsigned int);
+void loadTileset(GameState* , char* , int , int , int , int , unsigned int);
 
 void exitGame(GameState*);
 void destoryRoom(Room*);
@@ -99,15 +99,18 @@ void destoryDisplay(Display*);
 void destoryGameState(GameState*);
 
 // ---- GAME SYSTEM ----
+Tileset** getTilesetSaveSlot(GameState* );
+Tileset* lookupTileset(GameState* , unsigned int);
 void processEventsSDL(GameState*);
 void loopGame(GameState*);
 void updateGame(GameState*);
 
 // ---- GAME RENDER ---- 
 void renderGame(GameState*);
-void renderTileFromRoom(GameState*, SDL_Texture*, int, int, int);
+void renderTileFromRoom(GameState* , int, int, int);
 
 // ---- PRINT STRUCTS ----
+void printTileset(Tileset*);
 void printGameState(GameState*);
 void printDisplay(Display*);
 void printRoom(Room*);

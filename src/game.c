@@ -54,7 +54,7 @@ GameState* loadGame()
     log_debug("LOAD: GAME: init SDL3");
     // init game state.
     loadDisplay(game);
-    loadTileset(game, "./res/tilesheet.png", 6, 6, 0);
+    loadTileset(game, "./res/tilesheet.png", 8, 8, 6, 6, 0);
     loadRoom(game, WORLD, 0, 0);
     log_debug("LOAD: GAME: init GameState");
     return game;
@@ -163,7 +163,7 @@ void destoryDisplay(Display* display) {
 }
 
 void destoryRoom(Room* room) {
-    SDL_DestroyTexture(room->tileset);
+    // NOTHING TO DESTROY YET.
 }
 
 // ---- GAME SYSTEM ----
@@ -182,10 +182,10 @@ Tileset* lookupTileset(GameState* game, unsigned int tilesetID) {
     // currently gamestate can hold for 4 tilesets
     for(int i = 0; i < 4; i++) {
         if(game->sets[i]->ID == tilesetID) {
-            return &game->sets[i];
+            return game->sets[i];
         }
     }
-    log_error("Tilset with ID=%u not found in gameState!", tilesetID);
+    log_error("Tilset with ID=%u not found in GameState!", tilesetID);
     exitGame(game);
 }
 
@@ -257,9 +257,8 @@ void renderGame(GameState* game) {
     {
         for(int x = 0; x < NES_PIXEL_WIDTH / game->room.tileset->tileSizeX; x++) 
         {
-            renderTile(
+            renderTileFromRoom(
                 game, 
-                game->room.tileset, 
                 0, 
                 x * game->room.tileset->tileSizeX, 
                 y * game->room.tileset->tileSizeY
@@ -306,7 +305,7 @@ void renderTileFromRoom(GameState* game, int tileIndex, int x, int y) {
 
 // ---- PRINT STRUCTS ----
 void printTileset(Tileset* tileset) {
-    log_debug("TILESET:\n{\n\tID=%u;\n\ttextPath=%s;\n\tcols=%d;\n\trows=%d\n}", 
+    log_debug("\nTILESET:\n{\n\tID=%u;\n\ttextPath=%s;\n\tcols=%d;\n\trows=%d\n}", 
         tileset->ID,
         tileset->textPath,
         tileset->cols,
@@ -315,7 +314,7 @@ void printTileset(Tileset* tileset) {
 }
 
 void printRoom(Room* room) {
-    log_debug("ROOM:\n{\n\tID=%u;\n\ttype=%s;",
+    log_debug("\nROOM:\n{\n\tID=%u;\n\ttype=%s;",
         room->ID,
         printRoomType(room->type)
     );
@@ -333,7 +332,7 @@ char* printRoomType(enum RoomType type) {
 }
 
 void printDisplay(Display* disp) {
-    log_debug("DISPLAY:\n{\n\twidth=%d;\n\theight=%d;\n\tscaleX=%f;\n\tscaleY=%f;\n\tx=%f;\n\ty=%f\n}",
+    log_debug("\nDISPLAY:\n{\n\twidth=%d;\n\theight=%d;\n\tscaleX=%f;\n\tscaleY=%f;\n\tx=%f;\n\ty=%f\n}",
         disp->width, 
         disp->height, 
         disp->scaleX, 
@@ -344,7 +343,7 @@ void printDisplay(Display* disp) {
 }
 
 void printGameState(GameState* game) {
-    log_debug("GAME_STATE:\n{");
+    log_debug("\nGAME_STATE:\n{");
     printDisplay(&game->display);
     printRoom(&game->room);
     log_debug("}");
