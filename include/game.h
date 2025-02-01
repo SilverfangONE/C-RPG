@@ -48,9 +48,12 @@ typedef struct {
 // -------- FUNCTIONS --------
 // ---- LOAD/DESTROY SYSTEMS ----
 void loadGame(GameState**, SDL_Window**, SDL_Renderer**);
-void loadRoom(GameState*, SDL_Window*, SDL_Renderer* renderer, char* tilesetTexturePath, enum RoomType type);
+void loadRoom(GameState*, SDL_Window*, SDL_Renderer*, char*, enum RoomType);
+void loadDisplay(GameState* , SDL_Renderer* );
+
 void exitGame(GameState*, SDL_Window*);
-void destoryRoom(Room* room);
+void destoryRoom(Room*);
+void destoryDisplay(Display*);
 void destoryGameState(GameState*);
 
 // ---- GAME SYSTEM ----
@@ -59,8 +62,8 @@ void loopGame(GameState*, SDL_Window*, SDL_Renderer*);
 void updateGame(GameState*);
 
 // ---- GAME RENDER ---- 
-void renderGame(GameState* gameState, SDL_Window* window, SDL_Renderer* renderer);
-void renderTile(SDL_Renderer* renderer, SDL_Texture* tilesetTexture, int tileIndex, int x, int y);
+void renderGame(GameState*, SDL_Window*, SDL_Renderer*);
+void renderTile(SDL_Renderer*, SDL_Texture*, int, int, int);
 
 // ---- PRINT STRUCTS ----
 void printGameState(GameState*);

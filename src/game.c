@@ -44,7 +44,7 @@ void loadGame(GameState** gamePtr, SDL_Window** window, SDL_Renderer** renderer)
     
     // init game state.
     GameState game;
-    loadDisplay(&game, &renderer, NES_PIXEL_HEIGHT * scaleHeight, NES_PIXEL_WIDTH * scaleWidth);
+    loadDisplay(&game, &renderer);
     loadRoom(&game, window, &renderer, "./res/tilesheet.png", WORLD);
 }
 
@@ -64,7 +64,7 @@ void loadRoom(GameState* gameState, SDL_Window* window, SDL_Renderer* renderer, 
     printRoom(&room);
 }
 
-void loadDisplay(GameState* gameState, SDL_Renderer* renderer, int height, int width) 
+void loadDisplay(GameState* gameState, SDL_Renderer* renderer) 
 {
     Display disp;
     disp.texture = SDL_CreateTexture(
@@ -86,7 +86,7 @@ void loadDisplay(GameState* gameState, SDL_Renderer* renderer, int height, int w
     destR.h = disp.height;
     destR.x = WINDOW_WIDTH / 2 - (disp.width / 2);
     destR.y = WINDOW_HEIGHT / 2 - (disp.height / 2);
-    disp.destRec = destR;
+    disp.destRect = destR;
 
     gameState->display=disp;
     printDisplay(&disp);
@@ -187,7 +187,7 @@ void renderGame(GameState* gameState, SDL_Window* window, SDL_Renderer* renderer
         SDL_SetRenderTarget(renderer, NULL);
         SDL_SetRenderScale(renderer, (float)gameState->display.scaleX, (float)gameState->display.scaleY);
         
-        if(!SDL_RenderTexture(renderer, gameState->display.texture, NULL, &gameState->display.destRec)) {
+        if(!SDL_RenderTexture(renderer, gameState->display.texture, NULL, &gameState->display.destRect)) {
             log_error("%s", SDL_GetError());
         }
         
@@ -243,8 +243,8 @@ void printDisplay(Display* disp) {
         disp->height, 
         disp->scaleX, 
         disp->scaleY,
-        disp->destRec.x,
-        disp->destRec.y
+        disp->destRect.x,
+        disp->destRect.y
     );
 }
 
