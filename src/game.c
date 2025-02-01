@@ -38,8 +38,8 @@ void loadGame(GameState** gamePtr)
         WINDOW_WIDTH,
         WINDOW_HEIGHT,
         0,
-        window,
-        renderer
+        &window,
+        &renderer
     )) {
         log_error("%s", SDL_GetError());
         exitGame(*gamePtr);
@@ -156,14 +156,14 @@ void processEventsSDL(GameState* game)
     }
 }
 
-void loopGame(GameState* game, SDL_Window* window, SDL_Renderer* renderer)
+void loopGame(GameState* game)
 {
     // start.
     log_info("START:GAME_LOOP");
     int frameDelay = 1000000 / TARGET_FPS;
     int run = 1;
     while (run) {
-        SDL_RenderClear(renderer);
+        SDL_RenderClear(game->renderer);
         
         // double start = GetCurrentTime();
         processEventsSDL(game);
@@ -187,9 +187,9 @@ void renderGame(GameState* game) {
         SDL_SetRenderTarget(game->renderer, game->display.texture);
 
         // actuall render stuff. 
-        renderTile(game->renderer, game->room.tileset, 6, 0, 0);
-        renderTile(game->renderer, game->room.tileset, 7, 8, 0);
-        renderTile(game->renderer, game->room.tileset, 0, 16, 0);
+        renderTile(game, game->room.tileset, 6, 0, 0);
+        renderTile(game, game->room.tileset, 7, 8, 0);
+        renderTile(game, game->room.tileset, 0, 16, 0);
 
         // set render target to window.
         SDL_SetRenderTarget(game->renderer, NULL);

@@ -5,17 +5,14 @@
 
 int main() 
 {
-    log_debug("LOLOL");
-    log_info("LAUNCH_GAME");
+    log_info("SETUP: GAME");
     // setup.
-    SDL_Window *window;
-    SDL_Renderer *renderer;
-    GameState* gameState;
+    GameState* game;
 
     // game.
-    loadGame(&gameState, &window, &renderer);
-    loopGame(gameState, window, renderer);
-    exitGame(gameState, window);
+    loadGame(&game);
+    loopGame(game);
+    exitGame(game);
 
     return 0;
 }
