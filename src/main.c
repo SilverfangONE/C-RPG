@@ -10,12 +10,12 @@ int main()
     // setup.
     SDL_Window *window;
     SDL_Renderer *renderer;
-    GameState gameState;
+    GameState* gameState;
 
     // game.
     loadGame(&gameState, &window, &renderer);
-    loopGame(&gameState, window, renderer);
-    exitGame(&gameState, window);
+    loopGame(gameState, window, renderer);
+    exitGame(gameState, window);
 
     return 0;
 }

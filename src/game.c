@@ -39,13 +39,14 @@ void loadGame(GameState** gamePtr, SDL_Window** window, SDL_Renderer** renderer)
         renderer
     )) {
         log_error("%s", SDL_GetError());
-        exitGame(&gamePtr, *window);
+        exitGame(*gamePtr, *window);
     }
     
     // init game state.
     GameState game;
-    loadDisplay(&game, &renderer);
-    loadRoom(&game, window, &renderer, "./res/tilesheet.png", WORLD);
+    loadDisplay(&game, *renderer);
+    loadRoom(&game, *window, *renderer, "./res/tilesheet.png", WORLD);
+    *gamePtr = &game;
 }
 
 void loadRoom(GameState* gameState, SDL_Window* window, SDL_Renderer* renderer, char* tilesetTexturePath, enum RoomType type)
@@ -68,7 +69,7 @@ void loadDisplay(GameState* gameState, SDL_Renderer* renderer)
 {
     Display disp;
     disp.texture = SDL_CreateTexture(
-        &renderer, 
+        renderer, 
         SDL_PIXELFORMAT_RGBA8888, 
         SDL_TEXTUREACCESS_TARGET, 
         NES_PIXEL_WIDTH, 
@@ -158,7 +159,7 @@ void loopGame(GameState* gameState, SDL_Window* window, SDL_Renderer* renderer)
         SDL_RenderClear(renderer);
         
         // double start = GetCurrentTime();
-        processEvents(gameState, window);
+        processEventsSDL(gameState, window);
         updateGame(gameState);
         renderGame(gameState, window, renderer);
         // Sleep(start + frameDelay - GetCurrentTime());
