@@ -25,10 +25,13 @@ const int TILE_SIZE = 8;
 int roomIDCounter = 0;
 
 // ---- LOAD/DESTROY SYSTEMS ----
-void loadGame(GameState** gamePtr, SDL_Window** window, SDL_Renderer** renderer)
+void loadGame(GameState** gamePtr)
 {
-    // setup SDL3.
     log_info("LOAD: GAME");
+
+    // setup SDL3.
+    SDL_Window *window;
+    SDL_Renderer *renderer;
     SDL_Init(SDL_INIT_VIDEO);
     if(!SDL_CreateWindowAndRenderer(
         "C-RPG",
@@ -39,37 +42,41 @@ void loadGame(GameState** gamePtr, SDL_Window** window, SDL_Renderer** renderer)
         renderer
     )) {
         log_error("%s", SDL_GetError());
-        exitGame(*gamePtr, *window);
+        exitGame(*gamePtr);
     }
-    
+    log_debug("LOAD: GAME: init SDL3");
     // init game state.
     GameState game;
-    loadDisplay(&game, *renderer);
-    loadRoom(&game, *window, *renderer, "./res/tilesheet.png", WORLD);
+    game.renderer = renderer;
+    game.window = window;
+    loadDisplay(&game);
+    loadRoom(&game, "./res/tilesheet.png", WORLD);
     *gamePtr = &game;
+
+    log_debug("LOAD: GAME: init GameState");
 }
 
-void loadRoom(GameState* gameState, SDL_Window* window, SDL_Renderer* renderer, char* tilesetTexturePath, enum RoomType type)
+void loadRoom(GameState* game, char* tilesetTexturePath, enum RoomType type)
 {
     log_debug("LOAD:ROOM:Tilesheet->%s", tilesetTexturePath);
     Room room;
-    SDL_Texture *texture = IMG_LoadTexture(renderer, tilesetTexturePath);
+    SDL_Texture *texture = IMG_LoadTexture(game->renderer, tilesetTexturePath);
     if(!texture) {
         log_error("%s", SDL_GetError());
-        exitGame(gameState, window);
+        exitGame(game);
     }
     room.tileset = texture;
     room.tilesetPath = tilesetTexturePath;
     room.type = type;
-    gameState->room=room;
+    game->room=room;
     printRoom(&room);
 }
 
-void loadDisplay(GameState* gameState, SDL_Renderer* renderer) 
+void loadDisplay(GameState* game) 
 {
     Display disp;
     disp.texture = SDL_CreateTexture(
-        renderer, 
+        game->renderer, 
         SDL_PIXELFORMAT_RGBA8888, 
         SDL_TEXTUREACCESS_TARGET, 
         NES_PIXEL_WIDTH, 
@@ -89,22 +96,22 @@ void loadDisplay(GameState* gameState, SDL_Renderer* renderer)
     destR.y = WINDOW_HEIGHT / 2 - (disp.height / 2);
     disp.destRect = destR;
 
-    gameState->display=disp;
+    game->display=disp;
     printDisplay(&disp);
 }
 
-void exitGame(GameState* gameState, SDL_Window* window)
+void exitGame(GameState* game)
 {
     log_info("TERMINATE_GAME");
-    destoryGameState(gameState);
-    SDL_DestroyWindow(window);
+    destoryGameState(game);
+    SDL_DestroyWindow(game->window);
     SDL_Quit();
     exit(0);
 }
 
-void destoryGameState(GameState* gameState) {
-    destoryRoom(&gameState->room);
-    destoryDisplay(&gameState->display);
+void destoryGameState(GameState* game) {
+    destoryRoom(&game->room);
+    destoryDisplay(&game->display);
 }
 
 void destoryDisplay(Display* display) {
@@ -116,7 +123,7 @@ void destoryRoom(Room* room) {
 }
 
 // ---- GAME SYSTEM ----
-void processEventsSDL(GameState* gameState, SDL_Window* window) 
+void processEventsSDL(GameState* game) 
 {
     SDL_Event event;
     while (SDL_PollEvent(&event))
@@ -125,7 +132,7 @@ void processEventsSDL(GameState* gameState, SDL_Window* window)
         {
             case SDL_EVENT_WINDOW_CLOSE_REQUESTED:
             {
-                exitGame(gameState, window);
+                exitGame(game);
             }
             break;
             case SDL_EVENT_KEY_DOWN:
@@ -149,7 +156,7 @@ void processEventsSDL(GameState* gameState, SDL_Window* window)
     }
 }
 
-void loopGame(GameState* gameState, SDL_Window* window, SDL_Renderer* renderer)
+void loopGame(GameState* game, SDL_Window* window, SDL_Renderer* renderer)
 {
     // start.
     log_info("START:GAME_LOOP");
@@ -159,45 +166,45 @@ void loopGame(GameState* gameState, SDL_Window* window, SDL_Renderer* renderer)
         SDL_RenderClear(renderer);
         
         // double start = GetCurrentTime();
-        processEventsSDL(gameState, window);
-        updateGame(gameState);
-        renderGame(gameState, window, renderer);
+        processEventsSDL(game);
+        updateGame(game);
+        renderGame(game);
         // Sleep(start + frameDelay - GetCurrentTime());
     }
 }
 
-void updateGame(GameState* gameState) 
+void updateGame(GameState* game) 
 {
     // TODO
 }
 
 // ---- GAME RENDER ---- 
-void renderGame(GameState* gameState, SDL_Window* window, SDL_Renderer* renderer) {
-        SDL_RenderClear(renderer);
-        SDL_SetRenderScale(renderer, 0, 0);
+void renderGame(GameState* game) {
+        SDL_RenderClear(game->renderer);
+        SDL_SetRenderScale(game->renderer, 0, 0);
     
         // set render target to display.
-        SDL_SetRenderTarget(renderer, gameState->display.texture);
+        SDL_SetRenderTarget(game->renderer, game->display.texture);
 
         // actuall render stuff. 
-        renderTile(renderer, gameState->room.tileset, 6, 0, 0);
-        renderTile(renderer, gameState->room.tileset, 7, 8, 0);
-        renderTile(renderer, gameState->room.tileset, 0, 16, 0);
+        renderTile(game->renderer, game->room.tileset, 6, 0, 0);
+        renderTile(game->renderer, game->room.tileset, 7, 8, 0);
+        renderTile(game->renderer, game->room.tileset, 0, 16, 0);
 
         // set render target to window.
-        SDL_SetRenderTarget(renderer, NULL);
-        SDL_SetRenderScale(renderer, (float)gameState->display.scaleX, (float)gameState->display.scaleY);
+        SDL_SetRenderTarget(game->renderer, NULL);
+        SDL_SetRenderScale(game->renderer, (float)game->display.scaleX, (float)game->display.scaleY);
         
-        if(!SDL_RenderTexture(renderer, gameState->display.texture, NULL, &gameState->display.destRect)) {
+        if(!SDL_RenderTexture(game->renderer, game->display.texture, NULL, &game->display.destRect)) {
             log_error("%s", SDL_GetError());
         }
         
         // switch buffer.
-        SDL_RenderPresent(renderer); //updates the renderer
+        SDL_RenderPresent(game->renderer); //updates the renderer
 }
 
 // ---- TILES & SPRITE ----
-void renderTile(SDL_Renderer* renderer, SDL_Texture* tilesetTexture, int tileIndex, int x, int y) {
+void renderTile(GameState* game, SDL_Texture* tilesetTexture, int tileIndex, int x, int y) {
     // calc index.
     int tileY = tileIndex / TILES_X; 
     int tileX = tileIndex % TILES_X;
@@ -216,8 +223,9 @@ void renderTile(SDL_Renderer* renderer, SDL_Texture* tilesetTexture, int tileInd
     destR.x = x;
     destR.y = y;
 
-    if(!SDL_RenderTexture(renderer, tilesetTexture, &srcR, &destR)) {
+    if(!SDL_RenderTexture(game->renderer, tilesetTexture, &srcR, &destR)) {
         log_error("%s", SDL_GetError());
+        exitGame(game);
     }
 }
 
@@ -249,9 +257,9 @@ void printDisplay(Display* disp) {
     );
 }
 
-void printGameState(GameState* gameState) {
+void printGameState(GameState* game) {
     log_debug("GAME_STATE:{");
-    printDisplay(&gameState->display);
-    printRoom(&gameState->room);
+    printDisplay(&game->display);
+    printRoom(&game->room);
     log_debug("}");
 }
