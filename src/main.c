@@ -6,13 +6,7 @@
 int main() 
 {
     log_info("SETUP: GAME");
-    // setup.
-    GameState* game;
-
     // game.
-    loadGame(&game);
-    loopGame(game);
-    exitGame(game);
-
+    loopGame(loadGame());
     return 0;
 }

@@ -25,40 +25,33 @@ const int TILE_SIZE = 8;
 int roomIDCounter = 0;
 
 // ---- LOAD/DESTROY SYSTEMS ----
-void loadGame(GameState** gamePtr)
+GameState* loadGame()
 {
+    GameState* game = (GameState*)malloc(sizeof(GameState));
     log_info("LOAD: GAME");
-
     // setup SDL3.
-    SDL_Window *window;
-    SDL_Renderer *renderer;
     SDL_Init(SDL_INIT_VIDEO);
     if(!SDL_CreateWindowAndRenderer(
         "C-RPG",
         WINDOW_WIDTH,
         WINDOW_HEIGHT,
         0,
-        &window,
-        &renderer
+        &game->window,
+        &game->renderer
     )) {
         log_error("%s", SDL_GetError());
-        exitGame(*gamePtr);
+        exitGame(game);
     }
     log_debug("LOAD: GAME: init SDL3");
     // init game state.
-    GameState game;
-    game.renderer = renderer;
-    game.window = window;
-    loadDisplay(&game);
-    loadRoom(&game, "./res/tilesheet.png", WORLD);
-    *gamePtr = &game;
-
+    loadDisplay(game);
+    loadRoom(game, "./res/tilesheet.png", WORLD);
     log_debug("LOAD: GAME: init GameState");
+    return game;
 }
 
 void loadRoom(GameState* game, char* tilesetTexturePath, enum RoomType type)
 {
-    log_debug("LOAD:ROOM:Tilesheet->%s", tilesetTexturePath);
     Room room;
     SDL_Texture *texture = IMG_LoadTexture(game->renderer, tilesetTexturePath);
     if(!texture) {
@@ -66,7 +59,7 @@ void loadRoom(GameState* game, char* tilesetTexturePath, enum RoomType type)
         exitGame(game);
     }
     room.tileset = texture;
-    room.tilesetPath = tilesetTexturePath;
+    strncpy(room.tilesetPath, tilesetTexturePath, sizeof(room.tilesetPath) - 1);
     room.type = type;
     game->room=room;
     printRoom(&room);
@@ -85,15 +78,17 @@ void loadDisplay(GameState* game)
     // scaling.
     disp.height = NES_PIXEL_HEIGHT;
     disp.width = NES_PIXEL_WIDTH;
-    disp.scaleX = WINDOW_WIDTH / NES_PIXEL_WIDTH;
-    disp.scaleY = WINDOW_HEIGHT / NES_PIXEL_HEIGHT;
+    log_info("%d", WINDOW_WIDTH / NES_PIXEL_WIDTH);
+    disp.scaleX = (float) WINDOW_WIDTH / NES_PIXEL_WIDTH;
+    disp.scaleY = (float) WINDOW_HEIGHT / NES_PIXEL_HEIGHT;
     
+    log_info("%f", (float) WINDOW_WIDTH / 2 - (disp.width / 2));
     // placement from display in window
     SDL_FRect destR;
-    destR.w = disp.width;
-    destR.h = disp.height;
-    destR.x = WINDOW_WIDTH / 2 - (disp.width / 2);
-    destR.y = WINDOW_HEIGHT / 2 - (disp.height / 2);
+    destR.w = (float) disp.width;
+    destR.h = (float) disp.height;
+    destR.x = (float) WINDOW_WIDTH / 2 - (disp.width / 2);
+    destR.y = (float) WINDOW_HEIGHT / 2 - (disp.height / 2);
     disp.destRect = destR;
 
     game->display=disp;
@@ -106,6 +101,7 @@ void exitGame(GameState* game)
     destoryGameState(game);
     SDL_DestroyWindow(game->window);
     SDL_Quit();
+    free(game); 
     exit(0);
 }
 
@@ -156,15 +152,33 @@ void processEventsSDL(GameState* game)
     }
 }
 
+void updateGame(GameState* game) 
+{
+    // TODO
+}
+
 void loopGame(GameState* game)
 {
+    // test 
+    SDL_Texture* img = IMG_LoadTexture(game->renderer, "./res/Bang_Manga_Profile.png");
+    SDL_FRect texture_rect;
+    texture_rect.x = 0; //the x coordinate
+    texture_rect.y = 0; //the y coordinate
+    texture_rect.w = NES_PIXEL_WIDTH; //the width of the texture
+    texture_rect.h = NES_PIXEL_HEIGHT; //the height of the texture
+    SDL_RenderClear(game->renderer); //clears the renderer
+    SDL_RenderRect(game->renderer, &texture_rect);
+    if(!SDL_RenderTexture(game->renderer, img, NULL, &texture_rect)) {
+        log_error("%s", SDL_GetError());
+    }
+    SDL_RenderPresent(game->renderer); //updates the renderer
+    Sleep(5000);
+    
     // start.
     log_info("START:GAME_LOOP");
     int frameDelay = 1000000 / TARGET_FPS;
     int run = 1;
     while (run) {
-        SDL_RenderClear(game->renderer);
-        
         // double start = GetCurrentTime();
         processEventsSDL(game);
         updateGame(game);
@@ -173,14 +187,11 @@ void loopGame(GameState* game)
     }
 }
 
-void updateGame(GameState* game) 
-{
-    // TODO
-}
-
 // ---- GAME RENDER ---- 
 void renderGame(GameState* game) {
-        SDL_RenderClear(game->renderer);
+        if(!SDL_RenderClear(game->renderer)) {
+            log_error("%s", SDL_GetError());
+        }
         SDL_SetRenderScale(game->renderer, 0, 0);
     
         // set render target to display.
@@ -231,7 +242,7 @@ void renderTile(GameState* game, SDL_Texture* tilesetTexture, int tileIndex, int
 
 // ---- PRINT STRUCTS ----
 void printRoom(Room* room) {
-     log_debug("ROOM:{type=%s;tilesetPath=%d}",
+     log_debug("ROOM:{type=%s;tilesetPath=%s}",
         printRoomType(room->type),
         room->tilesetPath
     );
@@ -247,7 +258,7 @@ char* printRoomType(enum RoomType type) {
 }
 
 void printDisplay(Display* disp) {
-    log_debug("DISPLAY:{width=%d;height=%d;scaleX=%d;scaleY=%d;x=%d;y=%d}",
+    log_debug("DISPLAY:{width=%d;height=%d;scaleX=%f;scaleY=%f;x=%f;y=%f}",
         disp->width, 
         disp->height, 
         disp->scaleX, 

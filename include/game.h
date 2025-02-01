@@ -22,8 +22,8 @@ typedef struct {
 	SDL_Texture* texture;
 	int width;
 	int height;
-	int scaleX;
-	int scaleY;
+	float scaleX;
+	float scaleY;
 	SDL_FRect destRect;
 } Display;
 
@@ -36,7 +36,7 @@ enum RoomType{
 typedef struct {
 	SDL_Texture* tileset;
 	enum RoomType type;
-	char* tilesetPath;
+	char tilesetPath[50];
 } Room;
 
 // ---- GAME SYSTEM ----
@@ -49,7 +49,7 @@ typedef struct {
 
 // -------- FUNCTIONS --------
 // ---- LOAD/DESTROY SYSTEMS ----
-void loadGame(GameState**);
+GameState* loadGame();
 void loadRoom(GameState*, char*, enum RoomType);
 void loadDisplay(GameState*);
 
