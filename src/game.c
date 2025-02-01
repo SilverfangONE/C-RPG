@@ -85,12 +85,20 @@ void loadDisplay(GameState* game)
         log_error("%s", SDL_GetError());
         exitGame(game);
     }
- 
     // scaling.
     disp.height = NES_PIXEL_HEIGHT;
     disp.width = NES_PIXEL_WIDTH;
-    disp.scaleX = (float) WINDOW_WIDTH / NES_PIXEL_WIDTH;
-    disp.scaleY = (float) WINDOW_HEIGHT / NES_PIXEL_HEIGHT;
+    // quadrtic scale;
+    int scaleXInt = WINDOW_WIDTH / NES_PIXEL_WIDTH;
+    int scaleYInt = WINDOW_HEIGHT / NES_PIXEL_HEIGHT;
+    if(scaleXInt < scaleYInt) {
+        scaleYInt = scaleXInt;
+    } else {
+        scaleXInt = scaleYInt;
+    }
+    
+    disp.scaleX = (float) scaleXInt;
+    disp.scaleY = (float) scaleYInt;
     
     // placement from display in window
     SDL_FRect destR;

@@ -18,6 +18,23 @@ extern const int TILE_SIZE;
 
 // -------- STRUCTS --------
 // ---- GAME RENDER ----
+enum GameObjTypes {
+	PLAYER,
+	ITEMS,	
+};
+
+enum textureTypes {
+	STATIC,
+	ANIMATION
+};
+
+typedef struct {
+	SDL_Texture* spriteset;
+	int spritesX; // cols of spritesheet
+	int spirtesY; // rows of spritesheet
+} GameObj;
+
+
 typedef struct {
 	SDL_Texture* texture;
 	int width;
