@@ -79,6 +79,15 @@ void loadDisplay(GameState* gameState, SDL_Renderer* renderer, int height, int w
     disp.width = NES_PIXEL_WIDTH;
     disp.scaleX = WINDOW_WIDTH / NES_PIXEL_WIDTH;
     disp.scaleY = WINDOW_HEIGHT / NES_PIXEL_HEIGHT;
+    
+    // placement from display in window
+    SDL_FRect destR;
+    destR.w = disp.width;
+    destR.h = disp.height;
+    destR.x = WINDOW_WIDTH / 2 - (disp.width / 2);
+    destR.y = WINDOW_HEIGHT / 2 - (disp.height / 2);
+    disp.destRec = destR;
+
     gameState->display=disp;
     printDisplay(&disp);
 }
@@ -164,19 +173,24 @@ void updateGame(GameState* gameState)
 // ---- GAME RENDER ---- 
 void renderGame(GameState* gameState, SDL_Window* window, SDL_Renderer* renderer) {
         SDL_RenderClear(renderer);
-        SDL_SetRenderScale(&renderer, 0, 0);
+        SDL_SetRenderScale(renderer, 0, 0);
     
         // set render target to display.
         SDL_SetRenderTarget(renderer, gameState->display.texture);
 
         // actuall render stuff. 
-        renderTile(renderer, gameState->room.tilesetTexture, 6, 0, 0);
+        renderTile(renderer, gameState->room.tileset, 6, 0, 0);
+        renderTile(renderer, gameState->room.tileset, 7, 8, 0);
+        renderTile(renderer, gameState->room.tileset, 0, 16, 0);
 
         // set render target to window.
         SDL_SetRenderTarget(renderer, NULL);
-        SDL_SetRenderScale(&renderer, (float)scaleWidth, (float)scaleHeight);
-   
-    
+        SDL_SetRenderScale(renderer, (float)gameState->display.scaleX, (float)gameState->display.scaleY);
+        
+        if(!SDL_RenderTexture(renderer, gameState->display.texture, NULL, &gameState->display.destRec)) {
+            log_error("%s", SDL_GetError());
+        }
+        
         // switch buffer.
         SDL_RenderPresent(renderer); //updates the renderer
 }
@@ -224,11 +238,13 @@ char* printRoomType(enum RoomType type) {
 }
 
 void printDisplay(Display* disp) {
-    log_debug("DISPLAY:{width=%d;height=%d;scaleX=%d;scaleY=%d}",
+    log_debug("DISPLAY:{width=%d;height=%d;scaleX=%d;scaleY=%d;x=%d;y=%d}",
         disp->width, 
         disp->height, 
         disp->scaleX, 
-        disp->scaleY
+        disp->scaleY,
+        disp->destRec.x,
+        disp->destRec.y
     );
 }
 

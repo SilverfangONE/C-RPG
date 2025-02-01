@@ -24,6 +24,7 @@ typedef struct {
 	int height;
 	int scaleX;
 	int scaleY;
+	SDL_FRect destRect;
 } Display;
 
 enum RoomType{
