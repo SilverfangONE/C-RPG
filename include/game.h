@@ -16,11 +16,15 @@ extern const int TILES_Y;
 extern const int TILE_COUNT;
 extern const int TILE_SIZE;
 
-// ---- ROOM SYSTEM ----
+// -------- STRUCTS --------
+// ---- GAME RENDER ----
 typedef struct {
-	int x;
-	int y;
-} GameObj;
+	SDL_Texture* texture;
+	int width;
+	int height;
+	int scaleX;
+	int scaleY;
+} Display;
 
 enum RoomType{
 	MENU,
@@ -34,23 +38,13 @@ typedef struct {
 	char* tilesetPath;
 } Room;
 
-
-// ---- RENDER_SYSTEM ----
-typedef struct {
-	SDL_Texture* texture;
-	int width;
-	int height;
-	int scaleX;
-	int scaleY;
-} Display;
-
-
 // ---- GAME SYSTEM ----
 typedef struct {
 	Room room;
 	Display display;
 } GameState;
 
+// -------- FUNCTIONS --------
 // ---- GAME RENDER ---- 
 void renderGame(GameState* gameState, SDL_Window* window, SDL_Renderer* renderer);
 void renderTile(SDL_Renderer* renderer, SDL_Texture* tilesetTexture, int tileIndex, int x, int y);
@@ -61,8 +55,10 @@ void loopGame(GameState*, SDL_Window*, SDL_Renderer*);
 void updateGame(GameState*);
 
 // ---- PRINT STRUCTS ----
-
-
+void printGameState(GameState*);
+void printDisplay(Display*);
+void printRoom(Room*);
+char* printRoomType(enum RoomType);
 
 // ---- LOAD/DESTROY SYSTEMS ----
 void loadGame(GameState**, SDL_Window**, SDL_Renderer**);
@@ -70,7 +66,5 @@ void loadRoom(GameState*, SDL_Window*, SDL_Renderer* renderer, char* tilesetText
 void exitGame(GameState*, SDL_Window*);
 void destoryRoom(Room* room);
 void destoryGameState(GameState*);
-
-
 
 #endif
