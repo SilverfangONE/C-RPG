@@ -9,8 +9,8 @@
 
 // ---- GAME SYSTEM ----
 // ---- CONSTANTS ----
-const int WINDOW_HEIGHT = 500;
-const int WINDOW_WIDTH = 500;
+const int WINDOW_HEIGHT = 1200;
+const int WINDOW_WIDTH = 1200;
 const int NES_PIXEL_WIDTH = 256;
 const int NES_PIXEL_HEIGHT = 240;
 const int TILE_PIXEL_SIZE_B = 16;
@@ -58,6 +58,11 @@ void loadRoom(GameState* game, char* tilesetTexturePath, enum RoomType type)
         log_error("%s", SDL_GetError());
         exitGame(game);
     }
+    // Setze die Textur auf "Nearest Neighbor" (pixelgenaue Skalierung)
+    if(!SDL_SetTextureScaleMode(texture, SDL_SCALEMODE_NEAREST)) {
+        log_error("%s", SDL_GetError());
+        exitGame(game);
+    }
     room.tileset = texture;
     strncpy(room.tilesetPath, tilesetTexturePath, sizeof(room.tilesetPath) - 1);
     room.type = type;
@@ -75,21 +80,27 @@ void loadDisplay(GameState* game)
         NES_PIXEL_WIDTH, 
         NES_PIXEL_HEIGHT
     );
+    // Setze die Textur auf "Nearest Neighbor" (pixelgenaue Skalierung)
+    if(!SDL_SetTextureScaleMode(disp.texture, SDL_SCALEMODE_NEAREST)) {
+        log_error("%s", SDL_GetError());
+        exitGame(game);
+    }
+ 
     // scaling.
     disp.height = NES_PIXEL_HEIGHT;
     disp.width = NES_PIXEL_WIDTH;
-    log_info("%d", WINDOW_WIDTH / NES_PIXEL_WIDTH);
     disp.scaleX = (float) WINDOW_WIDTH / NES_PIXEL_WIDTH;
     disp.scaleY = (float) WINDOW_HEIGHT / NES_PIXEL_HEIGHT;
     
-    log_info("%f", (float) WINDOW_WIDTH / 2 - (disp.width / 2));
     // placement from display in window
     SDL_FRect destR;
-    destR.w = (float) disp.width;
-    destR.h = (float) disp.height;
-    destR.x = (float) WINDOW_WIDTH / 2 - (disp.width / 2);
-    destR.y = (float) WINDOW_HEIGHT / 2 - (disp.height / 2);
+    destR.w = (float) disp.width * disp.scaleX;
+    destR.h = (float) disp.height * disp.scaleY;
+    destR.x = (float) (WINDOW_WIDTH - destR.w) / 2;
+    destR.y = (float) (WINDOW_HEIGHT - destR.h) / 2;
     disp.destRect = destR;
+
+    log_trace("DESR: X=%f | Y=%f", destR.x, destR.y);
 
     game->display=disp;
     printDisplay(&disp);
@@ -172,7 +183,7 @@ void loopGame(GameState* game)
         log_error("%s", SDL_GetError());
     }
     SDL_RenderPresent(game->renderer); //updates the renderer
-    Sleep(5000);
+    Sleep(1000);
     
     // start.
     log_info("START:GAME_LOOP");
@@ -189,23 +200,25 @@ void loopGame(GameState* game)
 
 // ---- GAME RENDER ---- 
 void renderGame(GameState* game) {
+        // reset.
         if(!SDL_RenderClear(game->renderer)) {
             log_error("%s", SDL_GetError());
         }
-        SDL_SetRenderScale(game->renderer, 0, 0);
-    
         // set render target to display.
         SDL_SetRenderTarget(game->renderer, game->display.texture);
 
         // actuall render stuff. 
-        renderTile(game, game->room.tileset, 6, 0, 0);
-        renderTile(game, game->room.tileset, 7, 8, 0);
-        renderTile(game, game->room.tileset, 0, 16, 0);
-
-        // set render target to window.
+        // render full canvas nes res.
+        for(int y = 0; y < NES_PIXEL_HEIGHT / TILE_SIZE; y++) {
+            for(int x = 0; x < NES_PIXEL_WIDTH / TILE_SIZE; x++) {
+                renderTile(game, game->room.tileset, 0, x * TILE_SIZE, y * TILE_SIZE);
+            }
+        }
         SDL_SetRenderTarget(game->renderer, NULL);
-        SDL_SetRenderScale(game->renderer, (float)game->display.scaleX, (float)game->display.scaleY);
+        // skalieren.
         
+
+
         if(!SDL_RenderTexture(game->renderer, game->display.texture, NULL, &game->display.destRect)) {
             log_error("%s", SDL_GetError());
         }
@@ -219,7 +232,7 @@ void renderTile(GameState* game, SDL_Texture* tilesetTexture, int tileIndex, int
     // calc index.
     int tileY = tileIndex / TILES_X; 
     int tileX = tileIndex % TILES_X;
-    log_debug("tileY=%d | tileX=%d", tileY, tileX);
+    // log_trace("tileY=%d | tileX=%d", tileY, tileX);
     
     // render stuff.
     SDL_FRect srcR;
