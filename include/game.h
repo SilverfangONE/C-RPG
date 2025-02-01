@@ -92,6 +92,7 @@ void loadRoom(GameState* , enum RoomType , unsigned int , unsigned int );
 void loadDisplay(GameState*);
 void loadTileset(GameState* , char* , int , int , int , int , unsigned int);
 
+
 void exitGame(GameState*);
 void destoryRoom(Room*);
 void destoryTileset(Tileset*);
