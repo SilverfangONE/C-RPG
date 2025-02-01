@@ -4,6 +4,8 @@
 #include <SDL3/SDL.h>	
 
 // ---- CONSTANTS ----
+extern const int WINDOW_HEIGHT;
+extern const int WINDOW_WIDTH;
 extern const int NES_PIXEL_WIDTH;
 extern const int NES_PIXEL_HEIGHT;
 extern const int TILE_PIXEL_SIZE_B;
@@ -27,24 +29,34 @@ enum RoomType{
 };
 
 typedef struct {
-	long long id;
-	SDL_Texture *tilesheet;
+	SDL_Texture* tilesetTexture;
 	enum RoomType type;
 } Room;
 
-Room loadRoom(SDL_Renderer* renderer, char* imgPath);
+
+// ---- RENDER_SYSTEM ----
+
+
 
 // ---- GAME SYSTEM ----
 typedef struct {
-	Room* currentRoom;
+	Room room;
+	SDL_Texture* display;
 } GameState;
 
+void destoryRoom(Room* room);
+void loadRoom(GameState*, SDL_Window*, SDL_Renderer* renderer, char* tilesetTexturePath, enum RoomType type);
+
 void processEvents(GameState*, SDL_Window*);
-void loadGame(GameState*, SDL_Window**, SDL_Renderer**);
+
+void destoryGameState(GameState*);
+void loadGame(GameState**, SDL_Window**, SDL_Renderer**);
 void exitGame(GameState*, SDL_Window*);
+
 void loopGame(GameState*, SDL_Window*, SDL_Renderer*);
 void updateGame(GameState*);
+
 void renderGame(GameState* gameState, SDL_Window* window, SDL_Renderer* renderer);
-void renderTile(SDL_Renderer* renderer, SDL_Texture* tilesheet, int tileIndex, int x, int y);
+void renderTile(SDL_Renderer* renderer, SDL_Texture* tilesetTexture, int tileIndex, int x, int y);
 
 #endif

@@ -9,6 +9,8 @@
 
 // ---- GAME SYSTEM ----
 // ---- CONSTANTS ----
+const int WINDOW_HEIGHT = 500;
+const int WINDOW_WIDTH = 500;
 const int NES_PIXEL_WIDTH = 256;
 const int NES_PIXEL_HEIGHT = 240;
 const int TILE_PIXEL_SIZE_B = 16;
@@ -60,23 +62,39 @@ void processEvents(GameState* gameState, SDL_Window* window) {
 /*
 * Inits: SDL Lib, SDL Window, SDL Renderer, GameState
 */
-void loadGame(GameState* game, SDL_Window** window, SDL_Renderer** renderer)
+void loadGame(GameState** gamePtr, SDL_Window** window, SDL_Renderer** renderer)
 {
-    log_info("LOAD_GAME");
+    log_info("LOAD: GAME");
     SDL_Init(SDL_INIT_VIDEO);
     if(!SDL_CreateWindowAndRenderer(
         "C-RPG",
-        NES_PIXEL_WIDTH,
-        NES_PIXEL_HEIGHT,
+        WINDOW_WIDTH,
+        WINDOW_HEIGHT,
         0,
         window,
         renderer
     )) {
         log_error("%s", SDL_GetError());
-        exitGame(game, *window);
+        exitGame(&gamePtr, *window);
     }
-    Room room = loadRoom(*renderer, "./res/tilesheet.png");
-    game->currentRoom = &room;
+
+    // init game state.
+    // scalling.
+    int scaleHeight = WINDOW_HEIGHT / NES_PIXEL_HEIGHT; 
+    int scaleWidth = WINDOW_WIDTH / NES_PIXEL_WIDTH;
+    log_trace("scaleH:%d | scaleW:%d", scaleHeight, scaleWidth);
+    log_trace("DisplayDim: width:%d | height:%d", NES_PIXEL_HEIGHT * scaleHeight, NES_PIXEL_WIDTH * scaleWidth);
+    SDL_SetRenderScale(&renderer, (float)scaleWidth, (float)scaleHeight);
+
+    GameState game;
+    game.display = SDL_CreateTexture(
+        &renderer, 
+        SDL_PIXELFORMAT_RGBA8888, 
+        SDL_TEXTUREACCESS_TARGET, 
+        NES_PIXEL_WIDTH * scaleWidth, 
+        NES_PIXEL_HEIGHT * scaleHeight
+    );
+    
 }
 
 /*
@@ -85,24 +103,10 @@ void loadGame(GameState* game, SDL_Window** window, SDL_Renderer** renderer)
 void exitGame(GameState* gameState, SDL_Window* window)
 {
     log_info("TERMINATE_GAME");
+    destoryGameState(gameState);
     SDL_DestroyWindow(window);
     SDL_Quit();
     exit(0);
-}
-
-/*
-* Render Graphics from room with postion.
-*/
-void renderGame(GameState* gameState, SDL_Window* window, SDL_Renderer* renderer)
-{ 
-    SDL_RenderClear(renderer);
-    // log_trace("Render:");
-    for(int y = 0; y < 30; y++ ) {
-        for(int x = 0; x < 32; x++) {
-            renderTile(renderer, gameState->currentRoom->tilesheet, 0, x * TILE_SIZE, y * TILE_SIZE);
-        }
-    }
-    SDL_RenderPresent(renderer);
 }
 
 /*
@@ -119,63 +123,97 @@ void updateGame(GameState* gameState)
 void loopGame(GameState* gameState, SDL_Window* window, SDL_Renderer* renderer)
 {
     // test 
-    SDL_Texture* img = IMG_LoadTexture(renderer, "./res/Bang_Manga_Profile.png");
-    SDL_FRect texture_rect;
-    texture_rect.x = 0; //the x coordinate
-    texture_rect.y = 0; //the y coordinate
-    texture_rect.w = NES_PIXEL_WIDTH; //the width of the texture
-    texture_rect.h = NES_PIXEL_HEIGHT; //the height of the texture
-    SDL_RenderClear(renderer); //clears the renderer
-    SDL_SetRenderDrawColor(renderer, 255, 175, 195, 255);
-    SDL_RenderRect(renderer, &texture_rect);
-    if(!SDL_RenderTexture(renderer, img, NULL, &texture_rect)) {
-        log_error("%s", SDL_GetError());
-    }
-    SDL_RenderPresent(renderer); //updates the renderer
-    Sleep(5000);
-    SDL_RenderClear(renderer);
+    SDL_Texture* img = IMG_LoadTexture(renderer, "./res/tilesheet.png");
     // start.
-
-    log_info("START_GAME_LOOP");
-    log_info("AFTER_WAIT");
+    log_info("START:GAME_LOOP");
     int frameDelay = 1000000 / TARGET_FPS;
     int run = 1;
     while (run) {
+        SDL_RenderClear(renderer);
+        
         // double start = GetCurrentTime();
         processEvents(gameState, window);
         updateGame(gameState);
-        renderGame(gameState, window, renderer);
+        // renderGame(gameState, window, renderer);
+        
+        SDL_FRect srcRect;
+        srcRect.x = 0; //the x coordinate
+        srcRect.y = 0; //the y coordinate
+        srcRect.w = TILE_SIZE; //the width of the texture
+        srcRect.h = TILE_SIZE; //the height of the texture
+
+        SDL_FRect destRect;
+        destRect.x = 0; //the x coordinate
+        destRect.y = 0; //the y coordinate
+        destRect.w = TILE_SIZE; //the width of the texture
+        destRect.h = TILE_SIZE; //the height of the texture
+
+        renderTile(renderer, img, 6, 0, 0);
+        
+        SDL_RenderPresent(renderer); //updates the renderer
+        
         // Sleep(start + frameDelay - GetCurrentTime());
     }
 }
 
 // ---- ROOM SYSTEM ----
-Room loadRoom(SDL_Renderer* renderer, char* imgPath)
+void loadRoom(GameState* gameState, SDL_Window* window, SDL_Renderer* renderer, char* tilesetTexturePath, enum RoomType type)
 {
-    log_debug("LOAD->ROOM:Tilesheet->%s", imgPath);
+    log_debug("LOAD:ROOM:Tilesheet->%s", tilesetTexturePath);
     Room room;
-    room.id = roomIDCounter++;
-    SDL_Texture *lol = IMG_LoadTexture(renderer, imgPath);
-    SDL_PropertiesID props = SDL_GetTextureProperties(lol);
-    if(!props) {
+    SDL_Texture *texture = IMG_LoadTexture(renderer, tilesetTexturePath);
+    if(!texture) {
         log_error("%s", SDL_GetError());
-    } else {
-        int width = SDL_GetNumberProperty(props, "SDL.texture.width", 0);
-        int height = SDL_GetNumberProperty(props, "SDL.texture.height", 0);
-        log_debug("Tilesheet: w=%d | h=%d", width, height);
+        exitGame(gameState, window);
     }
-    room.tilesheet = lol;
-    room.type = MENU;
-    return room;
+    room.tilesetTexture = texture;
+    room.type = type;
+    gameState->room=room;
 }
 
-void DestoryRoom(Room* room) {
-    SDL_DestroyTexture(room->tilesheet);
+void destoryRoom(Room* room) {
+    SDL_DestroyTexture(room->tilesetTexture);
+}
+
+void destoryGameState(GameState* gameState) {
+    destoryRoom(&gameState->room);
+    SDL_DestroyTexture(gameState->display);
+}
+
+
+// 
+
+// .... RENDER_SYSTEM ....
+// ---- SCREEN ----
+/*
+* by sccuess returns 1; 
+*/
+int renderGame(SDL_Renderer* renderer, SDL_Texture* tilesetTexture) {
+
+
 }
 
 // ---- TILES & SPRITE ----
-void renderTile(SDL_Renderer* renderer, SDL_Texture* tilesheet, int tileIndex, int x, int y) {
-    SDL_FRect  srcRect = { (tileIndex % TILES_X) * TILE_SIZE, (tileIndex / TILES_X) * TILE_SIZE, TILE_SIZE, TILE_SIZE };
-    SDL_FRect  destRect = { x, y, TILE_SIZE, TILE_SIZE };
-    SDL_RenderTexture(renderer, tilesheet, &srcRect, &destRect);
+void renderTile(SDL_Renderer* renderer, SDL_Texture* tilesetTexture, int tileIndex, int x, int y) {
+    // calc index.
+    int tileY = tileIndex / TILES_X; 
+    int tileX = tileIndex % TILES_X;
+    log_debug("tileY=%d | tileX=%d", tileY, tileX);
+    
+    // render stuff.
+    SDL_FRect srcR;
+    srcR.w = TILE_SIZE;
+    srcR.h = TILE_SIZE;
+    srcR.x = tileX * TILE_SIZE;
+    srcR.y = tileY * TILE_SIZE;
+
+    SDL_FRect destR;
+    destR.w = TILE_SIZE;
+    destR.h = TILE_SIZE;
+    destR.x = x;
+    destR.y = y;
+
+    if(!SDL_RenderTexture(renderer, tilesetTexture, &srcR, &destR)) {
+        log_error("%s", SDL_GetError());
+    }
 }
