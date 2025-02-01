@@ -15,6 +15,9 @@ extern const int TILES_X;
 extern const int TILES_Y;
 extern const int TILE_COUNT;
 extern const int TILE_SIZE;
+extern const int TILESET_SLOT_SIZE;
+// KEIN USECASE DAFÜR:
+// const int TILE_SIZE_ARR
 
 // -------- STRUCTS --------
 // ---- GAME RENDER ----
@@ -44,6 +47,21 @@ typedef struct {
 	SDL_FRect destRect;
 } Display;
 
+/* bis jetzt noch kein use case dafür.
+enum Tilesize {
+	TILE_SIZE_SMALL,
+	TILE_SIZE_BIG
+};
+*/
+
+typedef struct {
+	unsigned int ID;
+	SDL_Texture* tileset;
+	char textPath[50];
+	int sizeX;
+	int sizeY;
+} Tileset;
+
 enum RoomType{
 	MENU,
 	WORLD,
@@ -51,13 +69,14 @@ enum RoomType{
 };
 
 typedef struct {
-	SDL_Texture* tileset;
+	unsigned int ID;
 	enum RoomType type;
-	char tilesetPath[50];
+	Tileset* tileset;
 } Room;
 
 // ---- GAME SYSTEM ----
 typedef struct {
+	Tileset* sets[4]; // cann hold for tilessets in memory (vorerst) TILE_SLOT_SIZE
 	Room room;
 	Display display;
 	SDL_Window* window;
@@ -69,9 +88,11 @@ typedef struct {
 GameState* loadGame();
 void loadRoom(GameState*, char*, enum RoomType);
 void loadDisplay(GameState*);
+void loadTileset(GameState*);
 
 void exitGame(GameState*);
 void destoryRoom(Room*);
+void destoryTileset(Tileset*);
 void destoryDisplay(Display*);
 void destoryGameState(GameState*);
 

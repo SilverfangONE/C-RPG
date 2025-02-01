@@ -20,6 +20,9 @@ const int TILES_X = 6;
 const int TILES_Y = 6;
 const int TILE_COUNT = 6 * 6;
 const int TILE_SIZE = 8;
+const int TILESET_SLOT_SIZE = 4;
+// KEIN USECASE DAFÜR:
+// const int TILE_SIZE_ARR[2] = { 8, 16 }; // mapped to tilesize enums.
 
 // temp
 int roomIDCounter = 0;
@@ -28,6 +31,12 @@ int roomIDCounter = 0;
 GameState* loadGame()
 {
     GameState* game = (GameState*)malloc(sizeof(GameState));
+    // set sets to NULL default
+    for(int i = 0; i < TILESET_SLOT_SIZE; i++)
+    {
+        game->sets[i] = NULL;
+    }
+ 
     log_info("LOAD: GAME");
     // setup SDL3.
     SDL_Init(SDL_INIT_VIDEO);
@@ -50,7 +59,7 @@ GameState* loadGame()
     return game;
 }
 
-void loadRoom(GameState* game, char* tilesetTexturePath, enum RoomType type)
+void loadRoom(GameState* game, char* tilesetTexturePath, enum RoomType type, unsigned int tilesetID)
 {
     Room room;
     SDL_Texture *texture = IMG_LoadTexture(game->renderer, tilesetTexturePath);
@@ -108,10 +117,30 @@ void loadDisplay(GameState* game)
     destR.y = (float) (WINDOW_HEIGHT - destR.h) / 2;
     disp.destRect = destR;
 
-    log_trace("DESR: X=%f | Y=%f", destR.x, destR.y);
-
     game->display=disp;
     printDisplay(&disp);
+}
+
+// TODO: später steht das alles in einer json datei. => dan nur pfad zur json datei und zur texture
+void loadTileset(GameState* game, char* tilesetTexturePath, int sizeX, int sizeY, unsigned int ID) {
+    Tileset** slotPtr = getTilesetSaveSlot(game);
+    if(slotPtr == NULL) {  
+        log_error("GAME_STATE: Can't load new TILESET:{path=%s;ID=%u}, because no slot is free!", tilesetTexturePath, ID);
+    }   
+
+    Tileset tileset;
+    tileset.ID = ID;
+    SDL_Texture *texture = IMG_LoadTexture(game->renderer, tilesetTexturePath);
+    if(!texture) {
+        log_error("%s", SDL_GetError());
+        exitGame(game);
+    }
+    // Setze die Textur auf "Nearest Neighbor" (pixelgenaue Skalierung)
+    if(!SDL_SetTextureScaleMode(texture, SDL_SCALEMODE_NEAREST)) {
+        log_error("%s", SDL_GetError());
+        exitGame(game);
+    }
+  
 }
 
 void exitGame(GameState* game)
@@ -138,6 +167,28 @@ void destoryRoom(Room* room) {
 }
 
 // ---- GAME SYSTEM ----
+Tileset** getTilesetSaveSlot(GameState* game) {
+    // checks if a free slot is avaiable 
+    for(int i = 0; i < TILESET_SLOT_SIZE; i++) {
+        if(game->sets[i] == NULL) {
+            return &game->sets[i];
+        }
+    }
+    log_warn("GAME_STATE: NO slot is free for loading new Tilesset!");
+    return NULL;
+}
+
+Tileset* lookupTileset(GameState* game, unsigned int tilesetID) {
+    // currently gamestate can hold for 4 tilesets
+    for(int i = 0; i < 4; i++) {
+        if(game->sets[i]->ID == tilesetID) {
+            return &game->sets[i];
+        }
+    }
+    log_error("Tilset with ID=%u not found in gameState!", tilesetID);
+    exitGame(game);
+}
+
 void processEventsSDL(GameState* game) 
 {
     SDL_Event event;
@@ -194,7 +245,7 @@ void loopGame(GameState* game)
     Sleep(1000);
     
     // start.
-    log_info("START:GAME_LOOP");
+    log_info("GAME_LOOP: START");
     int frameDelay = 1000000 / TARGET_FPS;
     int run = 1;
     while (run) {
@@ -216,17 +267,13 @@ void renderGame(GameState* game) {
         SDL_SetRenderTarget(game->renderer, game->display.texture);
 
         // actuall render stuff. 
-        // render full canvas nes res.
         for(int y = 0; y < NES_PIXEL_HEIGHT / TILE_SIZE; y++) {
             for(int x = 0; x < NES_PIXEL_WIDTH / TILE_SIZE; x++) {
                 renderTile(game, game->room.tileset, 0, x * TILE_SIZE, y * TILE_SIZE);
             }
         }
+
         SDL_SetRenderTarget(game->renderer, NULL);
-        // skalieren.
-        
-
-
         if(!SDL_RenderTexture(game->renderer, game->display.texture, NULL, &game->display.destRect)) {
             log_error("%s", SDL_GetError());
         }
@@ -262,11 +309,22 @@ void renderTile(GameState* game, SDL_Texture* tilesetTexture, int tileIndex, int
 }
 
 // ---- PRINT STRUCTS ----
-void printRoom(Room* room) {
-     log_debug("ROOM:{type=%s;tilesetPath=%s}",
-        printRoomType(room->type),
-        room->tilesetPath
+void printTileset(Tileset* tileset) {
+    log_debug("TILESET:\n{\n\tID=%u;\n\ttextPath=%s;\n\tsizeX=%d;\n\tsizeY=%d\n}", 
+        tileset->ID,
+        tileset->textPath,
+        tileset->sizeX,
+        tileset->sizeY    
     );
+}
+
+void printRoom(Room* room) {
+    log_debug("ROOM:\n{\n\tID=%u;\n\ttype=%s;",
+        room->ID,
+        printRoomType(room->type)
+    );
+    printTileset(room->tileset);
+    log_debug("}");
 }
 
 char* printRoomType(enum RoomType type) {
@@ -279,7 +337,7 @@ char* printRoomType(enum RoomType type) {
 }
 
 void printDisplay(Display* disp) {
-    log_debug("DISPLAY:{width=%d;height=%d;scaleX=%f;scaleY=%f;x=%f;y=%f}",
+    log_debug("DISPLAY:\n{\n\twidth=%d;\n\theight=%d;\n\tscaleX=%f;\n\tscaleY=%f;\n\tx=%f;\n\ty=%f\n}",
         disp->width, 
         disp->height, 
         disp->scaleX, 
@@ -290,7 +348,7 @@ void printDisplay(Display* disp) {
 }
 
 void printGameState(GameState* game) {
-    log_debug("GAME_STATE:{");
+    log_debug("GAME_STATE:\n{");
     printDisplay(&game->display);
     printRoom(&game->room);
     log_debug("}");
