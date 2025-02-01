@@ -25,9 +25,6 @@ const int TILE_SIZE = 8;
 int roomIDCounter = 0;
 
 // ---- LOAD/DESTROY SYSTEMS ----
-/*
-* Inits: SDL Lib, SDL Window, SDL Renderer, GameState
-*/
 void loadGame(GameState** gamePtr, SDL_Window** window, SDL_Renderer** renderer)
 {
     // setup SDL3.
@@ -44,12 +41,6 @@ void loadGame(GameState** gamePtr, SDL_Window** window, SDL_Renderer** renderer)
         log_error("%s", SDL_GetError());
         exitGame(&gamePtr, *window);
     }
-
-    
-    // scalling.
-    int scaleHeight = WINDOW_HEIGHT / NES_PIXEL_HEIGHT; 
-    int scaleWidth = WINDOW_WIDTH / NES_PIXEL_WIDTH;
-     SDL_SetRenderScale(&renderer, (float)scaleWidth, (float)scaleHeight);
     
     // init game state.
     GameState game;
@@ -66,12 +57,15 @@ void loadRoom(GameState* gameState, SDL_Window* window, SDL_Renderer* renderer, 
         log_error("%s", SDL_GetError());
         exitGame(gameState, window);
     }
-    room.tilesetTexture = texture;
+    room.tileset = texture;
+    room.tilesetPath = tilesetTexturePath;
     room.type = type;
     gameState->room=room;
+    printRoom(&room);
 }
 
-void loadDisplay(GameState* gameState, SDL_Renderer* renderer, int height, int width) {
+void loadDisplay(GameState* gameState, SDL_Renderer* renderer, int height, int width) 
+{
     Display disp;
     disp.texture = SDL_CreateTexture(
         &renderer, 
@@ -80,16 +74,15 @@ void loadDisplay(GameState* gameState, SDL_Renderer* renderer, int height, int w
         NES_PIXEL_WIDTH, 
         NES_PIXEL_HEIGHT
     );
+    // scaling.
     disp.height = NES_PIXEL_HEIGHT;
     disp.width = NES_PIXEL_WIDTH;
     disp.scaleX = WINDOW_WIDTH / NES_PIXEL_WIDTH;
     disp.scaleY = WINDOW_HEIGHT / NES_PIXEL_HEIGHT;
     gameState->display=disp;
-   }
+    printDisplay(&disp);
+}
 
-/*
-* Destroys Windows, Terminates SDL, closes GameState
-*/
 void exitGame(GameState* gameState, SDL_Window* window)
 {
     log_info("TERMINATE_GAME");
@@ -109,14 +102,12 @@ void destoryDisplay(Display* display) {
 }
 
 void destoryRoom(Room* room) {
-    SDL_DestroyTexture(room->tilesetTexture);
+    SDL_DestroyTexture(room->tileset);
 }
 
-
-/*
-* Handels SDL Events and Key inputs
-*/
-void processEvents(GameState* gameState, SDL_Window* window) {
+// ---- GAME SYSTEM ----
+void processEventsSDL(GameState* gameState, SDL_Window* window) 
+{
     SDL_Event event;
     while (SDL_PollEvent(&event))
     {
@@ -148,9 +139,6 @@ void processEvents(GameState* gameState, SDL_Window* window) {
     }
 }
 
-/*
-* Game Loop.
-*/
 void loopGame(GameState* gameState, SDL_Window* window, SDL_Renderer* renderer)
 {
     // start.
@@ -173,9 +161,7 @@ void updateGame(GameState* gameState)
     // TODO
 }
 
-/*
-* by sccuess returns 1; 
-*/
+// ---- GAME RENDER ---- 
 void renderGame(GameState* gameState, SDL_Window* window, SDL_Renderer* renderer) {
         SDL_RenderClear(renderer);
         SDL_SetRenderScale(&renderer, 0, 0);
@@ -190,7 +176,6 @@ void renderGame(GameState* gameState, SDL_Window* window, SDL_Renderer* renderer
         SDL_SetRenderTarget(renderer, NULL);
         SDL_SetRenderScale(&renderer, (float)scaleWidth, (float)scaleHeight);
    
-        
     
         // switch buffer.
         SDL_RenderPresent(renderer); //updates the renderer

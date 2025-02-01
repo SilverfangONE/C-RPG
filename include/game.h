@@ -45,26 +45,26 @@ typedef struct {
 } GameState;
 
 // -------- FUNCTIONS --------
-// ---- GAME RENDER ---- 
-void renderGame(GameState* gameState, SDL_Window* window, SDL_Renderer* renderer);
-void renderTile(SDL_Renderer* renderer, SDL_Texture* tilesetTexture, int tileIndex, int x, int y);
-
-// ---- GAME SYSTEM ----
-void processEvents(GameState*, SDL_Window*);
-void loopGame(GameState*, SDL_Window*, SDL_Renderer*);
-void updateGame(GameState*);
-
-// ---- PRINT STRUCTS ----
-void printGameState(GameState*);
-void printDisplay(Display*);
-void printRoom(Room*);
-char* printRoomType(enum RoomType);
-
 // ---- LOAD/DESTROY SYSTEMS ----
 void loadGame(GameState**, SDL_Window**, SDL_Renderer**);
 void loadRoom(GameState*, SDL_Window*, SDL_Renderer* renderer, char* tilesetTexturePath, enum RoomType type);
 void exitGame(GameState*, SDL_Window*);
 void destoryRoom(Room* room);
 void destoryGameState(GameState*);
+
+// ---- GAME SYSTEM ----
+void processEventsSDL(GameState*, SDL_Window*);
+void loopGame(GameState*, SDL_Window*, SDL_Renderer*);
+void updateGame(GameState*);
+
+// ---- GAME RENDER ---- 
+void renderGame(GameState* gameState, SDL_Window* window, SDL_Renderer* renderer);
+void renderTile(SDL_Renderer* renderer, SDL_Texture* tilesetTexture, int tileIndex, int x, int y);
+
+// ---- PRINT STRUCTS ----
+void printGameState(GameState*);
+void printDisplay(Display*);
+void printRoom(Room*);
+char* printRoomType(enum RoomType);
 
 #endif
