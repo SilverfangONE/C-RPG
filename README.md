@@ -1,15 +1,21 @@
-## C-RPG
+## <code>C-RPG</code>
 # @author: SilverfangOne
 
 ### Allgemein
-- Diese RPG Game engine verwedet Sprites/Tiles mit der groeße von 16x16 pixeln.
-- Nutzt SNES auflösung für Tiles/Sprites: 256 x 224.
-- Die eigentliche Auflösung soll dan übers Game konfiguriert werden.
+- Diese RPG Game engine verwedet Sprites/Tiles mit der groeï¿½e von 16x16 pixeln.
+- Nutzt SNES auflï¿½sung fï¿½r Tiles/Sprites: 256 x 224.
+- Die eigentliche Auflï¿½sung soll dan ï¿½bers Game konfiguriert werden.
 
 ### Projekt bauen:
-Einfach im Projekt Ordner <code>make</code> in der cmd ausführen.
+Einfach im Projekt Ordner <code>make</code> in der cmd ausfï¿½hren.
 
 ### Libs die Verwendet werden:
 - https://github.com/DaveGamble/cJSON/tree/master
 - https://github.com/rxi/log.c
 - https://www.libsdl.org/
+
+### <code>Setup C ENV in Windows:</code>
+> 1. download zip mingw64: https://winlibs.com/
+> 2. put into C:\ (system drive)
+> 3. set env path var to mingw64 bin
+> 4. rename ming32-make to make 
