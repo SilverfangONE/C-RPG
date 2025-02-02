@@ -20,7 +20,7 @@ const int TILES_X = 6;
 const int TILES_Y = 6;
 const int TILE_COUNT = 6 * 6;
 const int TILE_SIZE = 8;
-const int TILESET_SLOT_SIZE = 4;
+const int TILESET_SLOT_SIZE = 6;
 // KEIN USECASE DAFÜR:
 // const int TILE_SIZE_ARR[2] = { 8, 16 }; // mapped to tilesize enums.
 

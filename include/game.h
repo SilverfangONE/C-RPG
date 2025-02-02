@@ -78,7 +78,7 @@ typedef struct {
 
 // ---- GAME SYSTEM ----
 typedef struct {
-	Tileset* sets[4]; // cann hold for tilessets in memory (vorerst) TILE_SLOT_SIZE
+	Tileset* sets[6]; // cann hold for tilessets in memory (vorerst) TILE_SLOT_SIZE
 	Room room;
 	Display display;
 	SDL_Window* window;
@@ -88,10 +88,9 @@ typedef struct {
 // -------- FUNCTIONS --------
 // ---- LOAD/DESTROY SYSTEMS ----
 GameState* loadGame();
-void loadRoom(GameState* , enum RoomType , unsigned int , unsigned int );
+void loadRoom(GameState* , enum RoomType, unsigned int, unsigned int);
 void loadDisplay(GameState*);
 void loadTileset(GameState* , char* , int , int , int , int , unsigned int);
-
 
 void exitGame(GameState*);
 void destoryRoom(Room*);
@@ -108,7 +107,7 @@ void updateGame(GameState*);
 
 // ---- GAME RENDER ---- 
 void renderGame(GameState*);
-void renderTileFromRoom(GameState* , int, int, int);
+void renderTileFromRoom(GameState*, int, int, int);
 
 // ---- PRINT STRUCTS ----
 void printTileset(Tileset*);
