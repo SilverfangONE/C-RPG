@@ -6,19 +6,19 @@
 #include "util.h"
 
 // ---- CONSTANTS ----
-extern const int UI_ELEMENT_SLOT_SIZE;
+extern const int GLOBAL_UI_SIZE;
 
 // -------- UI-MENU-SYSTEM --------
 // Determines if ui elment needs to be rendered or not;
 enum UIRenderMode {
-    SHOW, 
-    HIDE
+    UI_SHOW, 
+    UI_HIDE
 };
 
 // Determines if logic for ui needs to updated;
 enum UISelectMode {
-    ACTIVE,
-    INACTIVE
+    UI_ACTIVE,
+    UI_INACTIVE
 };
 
 typedef struct {
@@ -35,8 +35,15 @@ typedef struct {
     DynamicMatrix* tilemap;
 } UIElement ;
 
+// maybe linked list bauen? kommt drauf an.
 typedef struct {
-    UIElement* uiEls[10];
+    // global is constant.
+    UIElement* globalUI[10];
+    // local is dynamic.
+    // or adjustable. 
+    // TODO: decite best approche
+    UIElement* localUI[10];
+    int countLocalUIEls;
 } MenuState;
 
 #endif

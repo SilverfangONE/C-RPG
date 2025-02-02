@@ -10,6 +10,33 @@
 const int UI_ELEMENT_SLOT_SIZE = 10;
 
 // -------- UI-MENU-SYSTEM --------
+void createMenuState(GameState* game) {
+    MenuState* menu = malloc(sizeof(MenuState)); 
+}
+
+void destroyMenuState(GameState* game) {
+    destoryLocalUI(game);
+    destroyGlobalUI(game);
+    free(game->menu);
+}
+
+
+void loadLocalUIForRoom(GameState* game, unsigned int ids[], int id_size) {
+    // Handle ui switch.
+} 
+
+void destoryLocalUI(GameState* game) {
+
+}
+
+void loadGobalUI(GameState* game) {
+
+}
+
+void destroyGlobalUI(GameState* game) {
+
+}
+
 
 void createTextBox() {
 

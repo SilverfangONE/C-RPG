@@ -2,6 +2,7 @@
 #define GAME
 
 #include <SDL3/SDL.h>	
+#include "menu.h"
 
 // ---- CONSTANTS ----
 extern const int WINDOW_HEIGHT;
@@ -22,13 +23,13 @@ extern const int TILESET_SLOT_SIZE;
 // -------- STRUCTS --------
 // ---- GAME RENDER ----
 enum GameObjTypes {
-	PLAYER,
-	ITEMS,	
+	GO_PLAYER,
+	GO_ITEMS,	
 };
 
 enum textureTypes {
-	STATIC,
-	ANIMATION
+	TEXT_STATIC,
+	TEXT_ANIMATION
 };
 
 typedef struct {
@@ -65,9 +66,9 @@ typedef struct {
 } Tileset;
 
 enum RoomType{
-	MENU,
-	WORLD,
-	COMBAT
+	R_MENU,
+	R_WORLD,
+	R_COMBAT
 };
 
 typedef struct {
@@ -79,6 +80,7 @@ typedef struct {
 // ---- GAME SYSTEM ----
 typedef struct {
 	Tileset* sets[6]; // cann hold for tilessets in memory (vorerst) TILE_SLOT_SIZE
+	MenuState menu;
 	Room room;
 	Display display;
 	SDL_Window* window;
