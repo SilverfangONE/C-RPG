@@ -2,6 +2,7 @@
 #define GAME
 
 #include <SDL3/SDL.h>	
+#include "menu.h"
 
 // ---- CONSTANTS ----
 extern const int WINDOW_HEIGHT;
@@ -22,13 +23,13 @@ extern const int TILESET_SLOT_SIZE;
 // -------- STRUCTS --------
 // ---- GAME RENDER ----
 enum GameObjTypes {
-	PLAYER,
-	ITEMS,	
+	GO_PLAYER,
+	GO_ITEMS,	
 };
 
 enum textureTypes {
-	STATIC,
-	ANIMATION
+	TEXT_STATIC,
+	TEXT_ANIMATION
 };
 
 typedef struct {
@@ -65,9 +66,9 @@ typedef struct {
 } Tileset;
 
 enum RoomType{
-	MENU,
-	WORLD,
-	COMBAT
+	R_MENU,
+	R_WORLD,
+	R_COMBAT
 };
 
 typedef struct {
@@ -78,7 +79,8 @@ typedef struct {
 
 // ---- GAME SYSTEM ----
 typedef struct {
-	Tileset* sets[4]; // cann hold for tilessets in memory (vorerst) TILE_SLOT_SIZE
+	Tileset* sets[6]; // cann hold for tilessets in memory (vorerst) TILE_SLOT_SIZE
+	MenuState menu;
 	Room room;
 	Display display;
 	SDL_Window* window;
@@ -88,7 +90,7 @@ typedef struct {
 // -------- FUNCTIONS --------
 // ---- LOAD/DESTROY SYSTEMS ----
 GameState* loadGame();
-void loadRoom(GameState* , enum RoomType , unsigned int , unsigned int );
+void loadRoom(GameState* , enum RoomType, unsigned int, unsigned int);
 void loadDisplay(GameState*);
 void loadTileset(GameState* , char* , int , int , int , int , unsigned int);
 
@@ -107,7 +109,7 @@ void updateGame(GameState*);
 
 // ---- GAME RENDER ---- 
 void renderGame(GameState*);
-void renderTileFromRoom(GameState* , int, int, int);
+void renderTileFromRoom(GameState*, int, int, int);
 
 // ---- PRINT STRUCTS ----
 void printTileset(Tileset*);
