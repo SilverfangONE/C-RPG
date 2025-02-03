@@ -1,6 +1,7 @@
 #include "game_util.h"
 #include <stdlib.h>
 #include "log.h"
+#include "cJSON.h"
 
 Matrix* createMatrix(size_t rows, size_t cols) {
     Matrix* matrix = malloc(sizeof(Matrix) + rows * cols * sizeof(int));
@@ -23,7 +24,7 @@ void destoryMatrix(Matrix* matrix) {
 }
 
 // read from json
-void fillMatrix(Matrix* matrix, char* pathJSON) {
+void fillMatrix(Matrix* matrix, cJSON* json) {
     // TODO
 }
 

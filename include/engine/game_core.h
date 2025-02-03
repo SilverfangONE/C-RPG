@@ -35,7 +35,7 @@ typedef struct {
 
 // ........ GAME ENV SYSTEM ........
 struct SubRoomIDNode {
-    unsigned int ID;
+    char* id;
     char* path;
 };
 
@@ -45,12 +45,12 @@ struct Enviroment {
     // sub rooms[] oder sub jedes mal rein laden
     struct Sub* sub;
     /* ID TO PATH */
-    struct hashmap *mapSubRoomIDs;
+    struct hashmap *subRoomIDMap;
     int sheetCount;
     int uiElsCount;
-    struct Tilesheet tilesheet; // array of sheets
-    struct Spritesheet spritesheet;
-    struct UIElement* uiElements; // array of ui elements
+    struct Tilesheet* tilesheet; // array of sheets
+    struct Spritesheet* spritesheet;
+    struct UIElement **uiElements; // array of ui elements
     int localUIActive;
 };
 
@@ -64,6 +64,18 @@ struct Map {
     struct Matrix* spriteMap;
     struct Matrix* logicMap; // player spawn point and exit 
 };
+
+struct EnviromentStackItem {
+    struct EnviromentStackItem* prev;
+    struct EnviromentStackItem* next;
+    struct Enviroment* env;
+};
+
+typedef struct EnviromentStack {
+    struct EnviromentStackItem* top;
+    struct EnviromentStackItem* bottom;
+    int size;  
+} EnviromentStack;
 
 /* bis jetzt noch kein use case dafür.
 enum Tilesize {
@@ -84,7 +96,6 @@ typedef struct {
 	Tileset* tileset;
 } Room;
 
-
 // ---- GAME SYSTEM ----
 typedef struct {
 	Tileset* sets[6]; // cann hold for tilessets in memory (vorerst) TILE_SLOT_SIZE
@@ -92,6 +103,7 @@ typedef struct {
 	Display display;
 	SDL_Window* window;
 	SDL_Renderer* renderer;
+    EnviromentStack envStack;
 } GameState;
 
 // -------- FUNCTIONS --------
@@ -106,6 +118,8 @@ void destoryRoom(Room*);
 void destoryTileset(Tileset*);
 void destoryDisplay(Display*);
 void destoryGameState(GameState*);
+void destroySub(struct Sub*);
+void destroyMap(struct Map*);
 
 // ---- GAME SYSTEM ----
 Tileset** getTilesetSaveSlot(GameState* );

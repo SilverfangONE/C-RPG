@@ -158,3 +158,8 @@ void renderTileFromRoom(GameState* game, int tileIndex, int x, int y) {
 void destoryDisplay(Display* display) {
     SDL_DestroyTexture(display->texture);
 }
+
+void destoryUIElement(struct UIElement* uiEl) {
+    // TODO
+    free(uiEl);
+}

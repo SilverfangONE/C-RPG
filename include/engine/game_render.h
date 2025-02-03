@@ -3,6 +3,7 @@
 
 #include <SDL3/SDL.h>	
 
+// -------- STRUCTS --------
 enum textureTypes {
 	TEXT_STATIC,
 	TEXT_ANIMATION
@@ -17,7 +18,7 @@ typedef struct {
 	SDL_FRect destRect;
 } Display;
 
-struct Tilesheet {
+typedef struct Tilesheet {
     unsigned int ID;
 	SDL_Texture* texture;
 	char textPath[50];
@@ -25,7 +26,7 @@ struct Tilesheet {
 	int rows;
 	int tileSizeX;
 	int tileSizeY;
-};
+} Tilesheet;
 
 typedef struct {
 	unsigned int ID;
@@ -37,7 +38,21 @@ typedef struct {
 	int tileSizeY;
 } Tileset;
 
-struct Spritesheet {};
+typedef struct Spritesheet {} Spritesheet;
 struct UIElement {};
+
+// -------- FUNCTIONS --------
+void renderTileFromRoom(GameState* game, int tileIndex, int x, int y);
+void renderGame(GameState* game);
+Tileset* lookupTileset(GameState* game, unsigned int tilesetID);
+Tileset** getTilesetSaveSlot(GameState* game);
+
+// ---- LOAD/DESTROY SYSTEMS ----
+void loadTileset(GameState* game, char* tilesetTexturePath, int tileSizeX, int tileSizeY, int cols, int rows, unsigned int ID);
+void loadDisplay(GameState* game);
+void destroyUIElement(struct UIElement* uiEl);
+void destroyDisplay(Display* display);
+void destroyTilesheet(Tilesheet *tilesheet);
+void destroySpritesheet(Spritesheet*);
 
 #endif
