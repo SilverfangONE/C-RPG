@@ -1,6 +1,6 @@
 #include <SDL3/SDL.h>
 #include <windows.h>
-#include "game.h"
+#include "game_core.h"
 #include "log.h"
 
 int main() 

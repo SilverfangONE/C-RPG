@@ -1,4 +1,4 @@
-#include "util.h"
+#include "game_util.h"
 #include <stdlib.h>
 #include "log.h"
 

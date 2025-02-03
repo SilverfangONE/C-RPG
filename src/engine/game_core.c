@@ -3,7 +3,7 @@
 #include <SDL3_image/SDL_image.h>
 #include <stdio.h>
 #include <windows.h>
-#include "game.h"
+#include "game_core.h"
 #include "log.h"
 #include <time.h>
 
