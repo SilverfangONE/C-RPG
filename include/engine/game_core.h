@@ -21,12 +21,10 @@ extern const int TILESET_SLOT_SIZE;
 // const int TILE_SIZE_ARR
 
 // -------- STRUCTS --------
-// ---- GAME RENDER ----
 enum GameObjTypes {
 	GO_PLAYER,
 	GO_ITEMS,	
 };
-
 
 typedef struct {
 	SDL_Texture* spriteset;
@@ -35,6 +33,7 @@ typedef struct {
 } GameObj;
 
 
+// ........ GAME ENV SYSTEM ........
 struct SubRoomIDNode {
     unsigned int ID;
     char* path;
@@ -84,6 +83,7 @@ typedef struct {
 	enum RoomType type;
 	Tileset* tileset;
 } Room;
+
 
 // ---- GAME SYSTEM ----
 typedef struct {

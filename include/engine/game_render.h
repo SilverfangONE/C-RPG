@@ -8,7 +8,6 @@ enum textureTypes {
 	TEXT_ANIMATION
 };
 
-
 typedef struct {
 	SDL_Texture* texture;
 	int width;

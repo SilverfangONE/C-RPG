@@ -91,15 +91,11 @@ void destoryGameState(GameState* game) {
     free(game);
 }
 
-
-
 void destoryRoom(Room* room) {
     // NOTHING TO DESTROY YET.
 }
 
 // ---- GAME SYSTEM ----
-
-
 void processEventsSDL(GameState* game) 
 {
     SDL_Event event;
@@ -154,8 +150,10 @@ void loopGame(GameState* game)
     }
 }
 
-// ---- GAME RENDER ---- 
-
+// ---- ENV SYSTEM ----
+void createEnviroment(GameState* game, char* pathJSON) {
+    
+}
 
 // ---- PRINT STRUCTS ----
 void printTileset(Tileset* tileset) {
