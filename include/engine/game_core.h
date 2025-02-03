@@ -2,6 +2,7 @@
 #define GAME
 
 #include <SDL3/SDL.h>	
+#include "game_render.h"
 
 // ---- CONSTANTS ----
 extern const int WINDOW_HEIGHT;
@@ -26,10 +27,6 @@ enum GameObjTypes {
 	GO_ITEMS,	
 };
 
-enum textureTypes {
-	TEXT_STATIC,
-	TEXT_ANIMATION
-};
 
 typedef struct {
 	SDL_Texture* spriteset;
@@ -38,14 +35,36 @@ typedef struct {
 } GameObj;
 
 
-typedef struct {
-	SDL_Texture* texture;
-	int width;
-	int height;
-	float scaleX;
-	float scaleY;
-	SDL_FRect destRect;
-} Display;
+struct SubRoomIDNode {
+    unsigned int ID;
+    char* path;
+};
+
+struct Enviroment {
+    /*Blocks calling global UI lobic and rendering from ENV*/
+    int blockGlobalUI; // standart 0; 
+    // sub rooms[] oder sub jedes mal rein laden
+    struct Sub* sub;
+    /* ID TO PATH */
+    struct hashmap *mapSubRoomIDs;
+    int sheetCount;
+    int uiElsCount;
+    struct Tilesheet tilesheet; // array of sheets
+    struct Spritesheet spritesheet;
+    struct UIElement* uiElements; // array of ui elements
+    int localUIActive;
+};
+
+struct Sub {
+    struct Map* map;
+};
+
+struct Map {
+    struct Matrix* backgroundMap;
+    struct Matrix* middelgroudMap;
+    struct Matrix* spriteMap;
+    struct Matrix* logicMap; // player spawn point and exit 
+};
 
 /* bis jetzt noch kein use case dafür.
 enum Tilesize {
@@ -53,16 +72,6 @@ enum Tilesize {
 	TILE_SIZE_BIG
 };
 */
-
-typedef struct {
-	unsigned int ID;
-	SDL_Texture* texture;
-	char textPath[50];
-	int cols;
-	int rows;
-	int tileSizeX;
-	int tileSizeY;
-} Tileset;
 
 enum RoomType{
 	R_MENU,
