@@ -3,9 +3,9 @@
 #include <stdlib.h>
 
 // USECASE: TILEMAP
-typedef struct {
+typedef struct Matrix {
     size_t rows;
     size_t cols;
     int data[];
-} DynamicMatrix;
+} Matrix;
 #endif 

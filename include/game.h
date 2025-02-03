@@ -2,7 +2,6 @@
 #define GAME
 
 #include <SDL3/SDL.h>	
-#include "menu.h"
 
 // ---- CONSTANTS ----
 extern const int WINDOW_HEIGHT;
@@ -80,7 +79,6 @@ typedef struct {
 // ---- GAME SYSTEM ----
 typedef struct {
 	Tileset* sets[6]; // cann hold for tilessets in memory (vorerst) TILE_SLOT_SIZE
-	MenuState menu;
 	Room room;
 	Display display;
 	SDL_Window* window;

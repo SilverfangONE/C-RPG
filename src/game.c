@@ -55,7 +55,7 @@ GameState* loadGame()
     // init game state.
     loadDisplay(game);
     loadTileset(game, "./res/tilesheet.png", 8, 8, 6, 6, 0);
-    loadRoom(game, WORLD, 0, 0);
+    loadRoom(game, R_WORLD, 0, 0);
     log_debug("LOAD: GAME: init GameState");
     return game;
 }
@@ -324,9 +324,9 @@ void printRoom(Room* room) {
 
 char* printRoomType(enum RoomType type) {
     switch(type) {
-        case MENU: return "MENU";
-        case WORLD: return "WORLD";
-        case COMBAT: return "COMBAT";
+        case R_MENU: return "MENU";
+        case R_WORLD: return "WORLD";
+        case R_COMBAT: return "COMBAT";
         default: return "Unkowne";
     }
 }

@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include "log.h"
 
-DynamicMatrix* createDynMatrix(size_t rows, size_t cols) {
-    DynamicMatrix* matrix = malloc(sizeof(DynamicMatrix) + rows * cols * sizeof(int));
+Matrix* createMatrix(size_t rows, size_t cols) {
+    Matrix* matrix = malloc(sizeof(Matrix) + rows * cols * sizeof(int));
     if(!matrix) {
         log_error("malloc failed");
         return NULL;
@@ -18,15 +18,15 @@ DynamicMatrix* createDynMatrix(size_t rows, size_t cols) {
     return matrix;
 }
 
-void destoryDynMatrix(DynamicMatrix* matrix) {
-    free(destoryDynMatrix);
+void destoryMatrix(Matrix* matrix) {
+    free(matrix);
 }
 
 // read from json
-void fillDynMatrix(DynamicMatrix* matrix, char* pathJSON) {
+void fillMatrix(Matrix* matrix, char* pathJSON) {
     // TODO
 }
 
-void setDynMatrixCell(DynamicMatrix* matrix, unsigned int x, unsigned int y, int value) {
+void setMatrixCell(Matrix* matrix, unsigned int x, unsigned int y, int value) {
     matrix->data[y * matrix->cols + x] = value;
 }
