@@ -1,0 +1,8 @@
+{
+    "ID": "GRASS_FIELD",
+    "cols": 6,
+    "rows": 6,
+    "tileSizeX": 8,
+    "tileSizeY": 8,
+    "texturePath": "./res/tilesheets/tilesheet.8.png"
+}

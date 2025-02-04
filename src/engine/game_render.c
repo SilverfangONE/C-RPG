@@ -5,74 +5,6 @@
 #include <SDL3_image/SDL_image.h>
 #include <stdlib.h>
 
-void loadDisplay(GameState* game) 
-{
-    Display disp;
-    disp.texture = SDL_CreateTexture(
-        game->renderer, 
-        SDL_PIXELFORMAT_RGBA8888, 
-        SDL_TEXTUREACCESS_TARGET, 
-        NES_PIXEL_WIDTH, 
-        NES_PIXEL_HEIGHT
-    );
-    // Setze die Textur auf "Nearest Neighbor" (pixelgenaue Skalierung)
-    if(!SDL_SetTextureScaleMode(disp.texture, SDL_SCALEMODE_NEAREST)) {
-        log_error("%s", SDL_GetError());
-        exitGame(game);
-    }
-    // scaling.
-    disp.height = NES_PIXEL_HEIGHT;
-    disp.width = NES_PIXEL_WIDTH;
-    // quadrtic scale;
-    int scaleXInt = WINDOW_WIDTH / NES_PIXEL_WIDTH;
-    int scaleYInt = WINDOW_HEIGHT / NES_PIXEL_HEIGHT;
-    if(scaleXInt < scaleYInt) {
-        scaleYInt = scaleXInt;
-    } else {
-        scaleXInt = scaleYInt;
-    }
-    
-    disp.scaleX = (float) scaleXInt;
-    disp.scaleY = (float) scaleYInt;
-    
-    // placement from display in window
-    SDL_FRect destR;
-    destR.w = (float) disp.width * disp.scaleX;
-    destR.h = (float) disp.height * disp.scaleY;
-    destR.x = (float) (WINDOW_WIDTH - destR.w) / 2;
-    destR.y = (float) (WINDOW_HEIGHT - destR.h) / 2;
-    disp.destRect = destR;
-
-    game->display=disp;
-    printDisplay(&disp);
-}
-
-// TODO: später steht das alles in einer json datei. => dan nur pfad zur json datei und zur texture
-void loadTileset(GameState* game, char* tilesetTexturePath, int tileSizeX, int tileSizeY, int cols, int rows, unsigned int ID) {
-    Tileset** slotPtr = getTilesetSaveSlot(game);
-    if(slotPtr == NULL) {  
-        log_error("GAME_STATE: Can't load new TILESET:{path=%s;ID=%u}, because no slot is free!", tilesetTexturePath, ID);
-    }   
-    Tileset* tileset = (Tileset*)malloc(sizeof(Tileset));
-    tileset->ID = ID;
-    SDL_Texture *texture = IMG_LoadTexture(game->renderer, tilesetTexturePath);
-    if(!texture) {
-        log_error("%s", SDL_GetError());
-        exitGame(game);
-    }
-    tileset->texture = texture;
-    tileset->cols = cols;
-    tileset->rows = rows;
-    tileset->tileSizeX = tileSizeX;
-    tileset->tileSizeY = tileSizeY;
-    strncpy(tileset->textPath, tilesetTexturePath, sizeof(tileset->textPath) - 1);
-    // Setze die Textur auf "Nearest Neighbor" (pixelgenaue Skalierung)
-    if(!SDL_SetTextureScaleMode(texture, SDL_SCALEMODE_NEAREST)) {
-        log_error("%s", SDL_GetError());
-        exitGame(game);
-    }
-    *slotPtr = tileset;
-}
 
 Tileset** getTilesetSaveSlot(GameState* game) {
     // checks if a free slot is avaiable 
@@ -155,11 +87,3 @@ void renderTileFromRoom(GameState* game, int tileIndex, int x, int y) {
     }
 }
 
-void destoryDisplay(Display* display) {
-    SDL_DestroyTexture(display->texture);
-}
-
-void destoryUIElement(struct UIElement* uiEl) {
-    // TODO
-    free(uiEl);
-}

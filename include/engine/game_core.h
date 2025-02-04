@@ -2,21 +2,12 @@
 #define GAME
 
 #include <SDL3/SDL.h>	
+#include "cJSON.h"
 #include "game_components.h"
 
-// ---- LOAD/DESTROY SYSTEMS ----
-GameState* loadGame();
-void loadRoom(GameState* , enum RoomType, unsigned int, unsigned int);
-void loadDisplay(GameState*);
-void loadTileset(GameState* , char* , int , int , int , int , unsigned int);
 
+GameState* loadGame();
 void exitGame(GameState*);
-void destoryRoom(Room*);
-void destoryTileset(Tileset*);
-void destoryDisplay(Display*);
-void destoryGameState(GameState*);
-void destroySub(struct Sub*);
-void destroyMap(struct Map*);
 
 // ---- GAME SYSTEM ----
 Tileset** getTilesetSaveSlot(GameState* );

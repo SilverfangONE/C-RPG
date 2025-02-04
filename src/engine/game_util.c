@@ -1,7 +1,8 @@
-#include "game_util.h"
 #include <stdlib.h>
 #include "log.h"
 #include "cJSON.h"
+#include "game_util.h"
+#include "game_core.h"
 
 Matrix* createMatrix(size_t rows, size_t cols) {
     Matrix* matrix = malloc(sizeof(Matrix) + rows * cols * sizeof(int));
@@ -19,15 +20,50 @@ Matrix* createMatrix(size_t rows, size_t cols) {
     return matrix;
 }
 
+Matrix* createMatrixJSON(GameState* game, size_t rows, size_t cols, cJSON* arrayJSON) {
+    validateValueJSON(game, arrayJSON);
+    validateTypeValueJSON(game, arrayJSON, cJSON_IsArray);
+    Matrix* matrix = malloc(sizeof(Matrix) + rows * cols * sizeof(int));
+    if(!matrix) {
+        log_error("malloc failed");
+        exitGame(game);
+    }
+    matrix->cols = cols;
+    matrix->rows = rows;
+
+    // set all entrys to null
+    int index = 0;
+    cJSON *item = NULL;
+    cJSON_ArrayForEach(item, arrayJSON) {
+        if(index > cols * rows) {
+            log_error("ArrayJSONs size is not accordingly to given rows:%d and cols:%d!", rows, cols);
+            exitGame(game);
+        }
+        validateTypeValueJSON(game, item, cJSON_IsNumber);
+        matrix->data[index++] = item->valueint;
+    }
+    return matrix;
+}
+
 void destoryMatrix(Matrix* matrix) {
     free(matrix);
 }
 
-// read from json
-void fillMatrix(Matrix* matrix, cJSON* json) {
-    // TODO
-}
-
 void setMatrixCell(Matrix* matrix, unsigned int x, unsigned int y, int value) {
     matrix->data[y * matrix->cols + x] = value;
+}
+
+void validateValueJSON(GameState* game, cJSON* value) {
+    if(value == NULL) {
+        const char *error_ptr = cJSON_GetErrorPtr();
+        log_error("JSON Parsing Error: %s", (error_ptr != NULL)?error_ptr:"Something went wrong LOL.");
+        exitGame(game);
+    }
+}
+
+void validateTypeValueJSON(GameState* game, cJSON* value, int (*checkType)(cJSON*)) {
+    if(!checkType(value)) {
+        log_error("JSON Error: %s type %s ist not valid!", value->string, value->type);
+        exitGame(game);
+    }
 }

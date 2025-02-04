@@ -2,6 +2,7 @@
 #define GAME_COMPONENTS
 
 #include <SDL3/SDL.h>	
+#include "cJSON.h"
 // -------- ALL STRUCTS FOR GLOBAL CONTEXT --------
 /**
  * Global game context.
@@ -30,7 +31,7 @@ struct Enviroment {
     struct hashmap *subRoomIDMap;
     int sheetCount;
     int uiElsCount;
-    struct Tilesheet* tilesheet; // array of sheets
+    struct Tileset* tileset; // array of sheets
     struct Spritesheet* spritesheet;
     struct UIElement **uiElements; // array of ui elements
     int localUIActive;
@@ -38,9 +39,12 @@ struct Enviroment {
 
 struct Sub {
     struct Map* map;
+    char* ID;
 };
 
 struct Map {
+    int cols;
+    int rows;
     struct Matrix* backgroundMap;
     struct Matrix* middelgroudMap;
     struct Matrix* spriteMap;
@@ -48,14 +52,12 @@ struct Map {
 };
 
 struct EnviromentStackItem {
-    struct EnviromentStackItem* prev;
     struct EnviromentStackItem* next;
     struct Enviroment* env;
 };
 
 typedef struct EnviromentStack {
     struct EnviromentStackItem* top;
-    struct EnviromentStackItem* bottom;
     int size;  
 } EnviromentStack;
 
@@ -86,17 +88,7 @@ typedef struct {
 	SDL_FRect destRect;
 } Display;
 
-typedef struct Tilesheet {
-    unsigned int ID;
-	SDL_Texture* texture;
-	char textPath[50];
-	int cols;
-	int rows;
-	int tileSizeX;
-	int tileSizeY;
-} Tilesheet;
-
-typedef struct {
+typedef struct Tileset {
 	unsigned int ID;
 	SDL_Texture* texture;
 	char textPath[50];
@@ -122,5 +114,41 @@ extern const int TILES_Y;
 extern const int TILE_COUNT;
 extern const int TILE_SIZE;
 extern const int TILESET_SLOT_SIZE;
+
+// ---- PRINT STRUCTS ----
+void printTileset(Tileset*);
+void printGameState(GameState*);
+void printDisplay(Display*);
+void printRoom(Room*);
+char* printRoomType(enum RoomType);
+
+// ---- LOAD & DESTROY Game Components ----
+struct GameState* initGameState();
+void destroyyGameState(GameState*);
+
+struct Enviroment* loadEnviroment(GameState* game, char* pathJSON);
+void destroyEnviroment(struct Enviroment* env);
+
+struct Sub* loadSub(const GameState* game, const cJSON* pathJSON) ;
+void destroySub(struct Sub*);
+
+struct Map* loadMap(GameState*, int cols, int rows, cJSON* backgroundMap, cJSON* middelgroudMap, cJSON* spriteMap, cJSON* logicMap);
+void destroyMap(struct Map*);
+
+void loadRoom(GameState* , enum RoomType, unsigned int, unsigned int);
+void destroyRoom(Room*);
+
+void loadDisplay(GameState*);
+void destroyDisplay(Display*);
+
+void loadTileset(GameState* , char* , int , int , int , int , unsigned int);
+void loadTilesetJSON(GameState*, char* pathJSON );
+void destroyTileset(Tileset*);
+
+struct EnviromentStackItem* createEnviromentStackItem(struct EnviromentStackItem* next, struct Enviroment* env);
+void destroyEnviromentStackItem(struct EnviromentStackItem* stackItem); 
+
+void initEnviromentStack(GameState* game);
+void destroyEnviromentStack(EnviromentStack* envStack);
 
 #endif
