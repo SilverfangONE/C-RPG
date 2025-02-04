@@ -191,7 +191,7 @@ struct Sub* loadSub(GameState* game, char* pathJSON) {
     
     char* jsonString = readFile(pathJSON);
     if (!jsonString) {
-        log_warn("JSON-Datei konnte nicht gelesen werden!");
+        log_warn("JSON-Datei=%s konnte nicht gelesen werden!", pathJSON);
         return NULL;
     }
     cJSON *subJSON = cJSON_Parse(jsonString);
@@ -346,16 +346,20 @@ struct Enviroment* loadEnviroment(GameState* game, char* pathJSON) {
         cJSON *pathJSON = cJSON_GetObjectItemCaseSensitive(item, "path");
         validateValueJSON(game, pathJSON);
         struct SubRoomIDNode sub;
-        sub.id = idJSON->string;
-        sub.path = pathJSON->string;
-        hashmap_set(subRoomIDMap, &sub);
+        sub.id = idJSON->valuestring;
+        sub.path = pathJSON->valuestring;
+        if(hashmap_set(subRoomIDMap, &sub) == NULL) {
+            log_trace("Item was added to hashmap:\n{\n\tID=%s;\n\tpath=%s\n}", sub.id, sub.path);
+        } else {
+            log_warn("Item in hashmap was repaced:\n{\n\tID=%s;\n\tpath=%s\n}", sub.id, sub.path);
+        }
     }    
     
     struct SubRoomIDNode searchKey;
-    searchKey.id = initSubID->string;
+    searchKey.id = initSubID->valuestring;
     const struct SubRoomIDNode* node = hashmap_get(subRoomIDMap, &searchKey);
     if(node == NULL) {
-        log_error("'initSubIDs' path isn't present in subIDs!");
+        log_error("'initSubIDs'(%s) path isn't present in subIDs!", initSubID->valuestring);
         exitGame(game);
     }
     env->sub = loadSub(game, node->path);

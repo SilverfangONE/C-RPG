@@ -5,7 +5,7 @@
     "spritesheetPath": "./res/tilesheets/tilesheet.8.json",
     "enableGlobalUI": false,
     "subIDs": [
-        { "ID": "GRASS_FIELD", "path":"./res/ENVs/WORLD/OPENWORLD/GRASS_FIELD.sub.json" }
+        { "ID": "GRASS_FIELD", "path":"./res/enviroments/WORLD/OPEN_WORLD/GRASS_FIELD.sub.json"}
     ],
     "initSubID": "GRASS_FIELD"
 }
