@@ -227,6 +227,26 @@ void destroyMap(struct Map* map) {
     free(map);
 }
 
+GameState* initGameState() {
+    GameState* game = (GameState*)malloc(sizeof(GameState));
+    // setup window and renderer context SDL3.
+    if(!SDL_CreateWindowAndRenderer(
+        "C-RPG",
+        WINDOW_WIDTH,
+        WINDOW_HEIGHT,
+        0,
+        &game->window,
+        &game->renderer
+    )) {
+        log_error("%s", SDL_GetError());
+        exitGame(game);
+    }
+    // load game components.
+    loadDisplay(game);
+    initEnviromentStack(game);
+    return game;
+}
+
 void destroyGameState(GameState* game) {
     destoryDisplay(&game->display);
     destroyEnviromentStack(game);
@@ -422,7 +442,6 @@ enum EnviromentType toEnviromentType(GameState* game, char* string) {
     exitGame(game);
 }
 
-// ---- Convert String to ENUM ----
 enum TextureType toTextureType(GameState* game, char* string) {
     #ifdef _WIN32
         if(_stricmp("TEXT_STATIC", string) == 0) {

@@ -4,45 +4,23 @@
 #include <stdio.h>
 #include <windows.h>
 #include <time.h>
-#include "game_core.h"
-#include "game_render.h"
-#include "game_util.h"
 #include "log.h"
 #include "cJSON.h"
+#include "game_core.h"
+#include "game_render.h"
+#include "game_components.h"
 
-// temp
-int roomIDCounter = 0;
 
-// ---- LOAD/DESTROY SYSTEMS ----
 GameState* loadGame()
 {
-    GameState* game = (GameState*)malloc(sizeof(GameState));
-    // set sets to NULL default
-    for(int i = 0; i < TILESET_SLOT_SIZE; i++)
-    {
-        game->sets[i] = NULL;
-    }
- 
-    log_info("LOAD: GAME");
+    log_info("Loading game ...");
     // setup SDL3.
     SDL_Init(SDL_INIT_VIDEO);
-    if(!SDL_CreateWindowAndRenderer(
-        "C-RPG",
-        WINDOW_WIDTH,
-        WINDOW_HEIGHT,
-        0,
-        &game->window,
-        &game->renderer
-    )) {
-        log_error("%s", SDL_GetError());
-        exitGame(game);
-    }
-    log_debug("LOAD: GAME: init SDL3");
     // init game state.
-    loadDisplay(game);
-    loadTileset(game, "./res/tilesheets/tilesheet.8..png", 8, 8, 6, 6, 0);
-    loadRoom(game, R_WORLD, 0, 0);
-    log_debug("LOAD: GAME: init GameState");
+    GameState* game = initGameState();
+    // load init env.
+
+    log_info("Loading game completed!");
     return game;
 }
 
@@ -54,8 +32,6 @@ void exitGame(GameState* game)
     destoryGameState(game);
     exit(0);
 }
-
-
 
 // ---- GAME SYSTEM ----
 void processEventsSDL(GameState* game) 
@@ -111,28 +87,6 @@ void loopGame(GameState* game)
         // Sleep(start + frameDelay - GetCurrentTime());
     }
 }
-
-// ---- ENV SYSTEM ----
-
-
-
-
-
-
-
-struct EnviromentStackItem* createEnviromentStackItem(
-    struct EnviromentStackItem* prev,  
-    struct EnviromentStackItem* next,
-    struct Enviroment* env
-) {
-    struct EnviromentStackItem *item = malloc(sizeof(struct EnviromentStackItem));   
-    item->env = env;
-    item->prev = prev;
-    item->next = next;
-    return item;
-}
-
-
 
 // ---- SMOKE-TESTS ----
 void smokeTestIMGRender(GameState* game) {

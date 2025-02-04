@@ -5,29 +5,6 @@
 #include <SDL3_image/SDL_image.h>
 #include <stdlib.h>
 
-
-Tileset** getTilesetSaveSlot(GameState* game) {
-    // checks if a free slot is avaiable 
-    for(int i = 0; i < TILESET_SLOT_SIZE; i++) {
-        if(game->sets[i] == NULL) {
-            return &game->sets[i];
-        }
-    }
-    log_warn("GAME_STATE: NO slot is free for loading new Tilesset!");
-    return NULL;
-}
-
-Tileset* lookupTileset(GameState* game, unsigned int tilesetID) {
-    // currently gamestate can hold for 4 tilesets
-    for(int i = 0; i < 4; i++) {
-        if(game->sets[i]->ID == tilesetID) {
-            return game->sets[i];
-        }
-    }
-    log_error("Tilset with ID=%u not found in GameState!", tilesetID);
-    exitGame(game);
-}
-
 void renderGame(GameState* game) {
     // reset.
     if(!SDL_RenderClear(game->renderer)) {

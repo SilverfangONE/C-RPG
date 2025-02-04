@@ -7,7 +7,7 @@
 /**
  * Global game context.
  */
-typedef struct {
+typedef struct GameState {
 	Display display;
 	SDL_Window* window;
 	SDL_Renderer* renderer;
@@ -113,9 +113,10 @@ void printTextureAtlas(TextureAtlas*);
 void printGameState(GameState*);
 void printDisplay(Display*);
 //TODO rest print funs.
+
 // ---- LOAD & DESTROY Game Components ----
-struct GameState* initGameState();
-void destroyyGameState(GameState*);
+GameState* initGameState();
+void destroyGameState(GameState*);
 
 struct Enviroment* loadEnviroment(GameState* game, char* pathJSON);
 void destroyEnviroment(struct Enviroment* env);
@@ -138,4 +139,11 @@ void destroyEnviromentStackItem(struct EnviromentStackItem* stackItem);
 void initEnviromentStack(GameState* game);
 void destroyEnviromentStack(EnviromentStack* envStack);
 
+// ---- EnviromentStack functions ----
+void pushEnviroment(GameState* game, char* pathJSON);
+void popEnviroment(GameState* game);
+
+// ---- Convert String to ENUM ----
+enum EnviromentType toEnviromentType(GameState* game, char* string);
+enum TextureType toTextureType(GameState* game, char* string);
 #endif
