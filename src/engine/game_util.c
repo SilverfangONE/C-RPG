@@ -57,7 +57,7 @@ void setMatrixCell(Matrix* matrix, unsigned int x, unsigned int y, int value) {
     matrix->data[y * matrix->cols + x] = value;
 }
 
-void validateValueJSON(GameState* game, cJSON* value) {
+void validateValueJSON(GameState* game, const cJSON* value) {
     if(value == NULL) {
         const char *error_ptr = cJSON_GetErrorPtr();
         log_error("JSON Parsing Error: %s", (error_ptr != NULL)?error_ptr:"Something went wrong LOL.");
@@ -65,7 +65,7 @@ void validateValueJSON(GameState* game, cJSON* value) {
     }
 }
 
-void validateTypeValueJSON(GameState* game, cJSON* value, int (*checkType)(cJSON*)) {
+void validateTypeValueJSON(GameState* game, const cJSON* value, JsonTypeCheckFunc checkType) {
     if(!checkType(value)) {
         log_error("JSON Error: %s type %s ist not valid!", value->string, value->type);
         exitGame(game);

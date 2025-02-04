@@ -19,6 +19,7 @@ Matrix* createMatrixJSON(GameState* game, size_t rows, size_t cols, cJSON* array
 Matrix* createMatrix(size_t rows, size_t cols);
 void destoryMatrix(Matrix* matrix);
 
-void validateValueJSON(GameState* game, cJSON* value);
-void validateTypeValueJSON(GameState* game, cJSON* value, int (*checkType)(cJSON*));
+typedef int (*JsonTypeCheckFunc)(const cJSON *const);
+void validateValueJSON(GameState* game, const cJSON* value);
+void validateTypeValueJSON(GameState* game, const cJSON* value, JsonTypeCheckFunc checkFunc);
 #endif 

@@ -100,8 +100,8 @@ void destroyDisplay(Display* display) {
 TextureAtlas* loadTextureAtlasJSON(GameState* game, char* pathJSON) {
     struct TextureAtlas* textureAtlas = malloc(sizeof(struct TextureAtlas));
     // load TextureAtlas from json.
-    cJSON *textureAtlasJSON = cJSON_Parse(pathJSON);
-    validateValueJSON(game, textureAtlas);
+    const cJSON *textureAtlasJSON = cJSON_Parse(pathJSON);
+    validateValueJSON(game, textureAtlasJSON);
 
     const cJSON *ID = NULL;
     const cJSON *cols = NULL;
