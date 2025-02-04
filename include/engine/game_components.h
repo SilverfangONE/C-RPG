@@ -124,10 +124,10 @@ void destroyGameState(GameState*);
 struct Enviroment* loadEnviroment(GameState* game, char* pathJSON);
 void destroyEnviroment(struct Enviroment* env);
 
-struct Sub* loadSub(const GameState* game, const cJSON* pathJSON) ;
+struct Sub* loadSub(GameState* game, char* pathJSON) ;
 void destroySub(struct Sub*);
 
-struct Map* loadMap(GameState*, int cols, int rows, cJSON* backgroundMap, cJSON* middelgroudMap, cJSON* spriteMap, cJSON* logicMap);
+struct Map* loadMap(GameState*, int cols, int rows, const cJSON* backgroundMap, const cJSON* middelgroudMap, const cJSON* spriteMap, const cJSON* logicMap);
 void destroyMap(struct Map*);
 
 void loadDisplay(GameState*);
@@ -142,9 +142,16 @@ void destroyEnviromentStackItem(struct EnviromentStackItem* stackItem);
 void initEnviromentStack(GameState* game);
 void destroyEnviromentStack(EnviromentStack* envStack);
 
+// ---- Sub functions ----
+int subRoomIDNode_compare(const void *a, const void *b, void *udata);
+bool subRoomIDNode_iter(const void *item, void *udata);
+uint64_t subRoomIDNode_hash(const void *item, uint64_t seed0, uint64_t seed1);
+
 // ---- EnviromentStack functions ----
 void pushEnviroment(GameState* game, char* pathJSON);
 void popEnviroment(GameState* game);
+void updateToRenderFlagsFromStackEnvs(struct EnviromentStackItem* item);
+void setToRenderFlagFromLowerENV(struct Enviroment* top, struct Enviroment* next);
 
 // ---- Convert String to ENUM ----
 enum EnviromentType toEnviromentType(GameState* game, char* string);

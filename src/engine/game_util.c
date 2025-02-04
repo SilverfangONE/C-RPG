@@ -20,8 +20,8 @@ Matrix* createMatrix(size_t rows, size_t cols) {
     return matrix;
 }
 
-Matrix* createMatrixJSON(GameState* game, size_t rows, size_t cols, cJSON* arrayJSON) {
-    validateValueJSON(game, arrayJSON);
+Matrix* createMatrixJSON(GameState* game, size_t rows, size_t cols, const cJSON* arrayJSON) {
+    validateValueConstJSON(game, arrayJSON);
     validateTypeValueJSON(game, arrayJSON, cJSON_IsArray);
     Matrix* matrix = malloc(sizeof(Matrix) + rows * cols * sizeof(int));
     if(!matrix) {
@@ -57,7 +57,15 @@ void setMatrixCell(Matrix* matrix, unsigned int x, unsigned int y, int value) {
     matrix->data[y * matrix->cols + x] = value;
 }
 
-void validateValueJSON(GameState* game, const cJSON* value) {
+void validateValueConstJSON(GameState* game, const cJSON* value) {
+    if(value == NULL) {
+        const char *error_ptr = cJSON_GetErrorPtr();
+        log_error("JSON Parsing Error: %s", (error_ptr != NULL)?error_ptr:"Something went wrong LOL.");
+        exitGame(game);
+    }
+}
+
+void validateValueJSON(GameState* game, cJSON* value) {
     if(value == NULL) {
         const char *error_ptr = cJSON_GetErrorPtr();
         log_error("JSON Parsing Error: %s", (error_ptr != NULL)?error_ptr:"Something went wrong LOL.");

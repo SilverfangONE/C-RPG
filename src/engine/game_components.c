@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
-
+#include <SDL3/SDL.h>
+#include <SDL3_image/SDL_image.h>
 #include "log.h"
 #include "hashmap.h"
 #include "game_components.h"
@@ -100,9 +101,9 @@ void destroyDisplay(Display* display) {
 TextureAtlas* loadTextureAtlasJSON(GameState* game, char* pathJSON) {
     struct TextureAtlas* textureAtlas = malloc(sizeof(struct TextureAtlas));
     // load TextureAtlas from json.
-    const cJSON *textureAtlasJSON = cJSON_Parse(pathJSON);
+    cJSON *textureAtlasJSON = cJSON_Parse(pathJSON);
     validateValueJSON(game, textureAtlasJSON);
-
+    
     const cJSON *ID = NULL;
     const cJSON *cols = NULL;
     const cJSON *rows = NULL;
@@ -112,36 +113,36 @@ TextureAtlas* loadTextureAtlasJSON(GameState* game, char* pathJSON) {
     const cJSON *textureType = NULL;
     
     ID = cJSON_GetObjectItemCaseSensitive(textureAtlasJSON, "ID");
-    validateValueJSON(game, ID);
+    validateValueConstJSON(game, ID);
     validateTypeValueJSON(game, ID, cJSON_IsString);
     strncpy(textureAtlas->ID, ID->string, sizeof(textureAtlas->ID - 1));
     textureAtlas->ID[sizeof(textureAtlas->ID) - 1] = '\0';
     
     texturePath = cJSON_GetObjectItemCaseSensitive(textureAtlasJSON, "texturePath");
-    validateValueJSON(game, texturePath);
+    validateValueConstJSON(game, texturePath);
     validateTypeValueJSON(game, texturePath, cJSON_IsString);
     strncpy(textureAtlas->textPath, texturePath->string, sizeof(textureAtlas->textPath - 1));
     textureAtlas->textPath[sizeof(textureAtlas->textPath) - 1] = '\0';
     
     textureType = cJSON_GetObjectItemCaseSensitive(textureAtlasJSON, "textureType");
-    validateValueJSON(game, textureType);
+    validateValueConstJSON(game, textureType);
     validateTypeValueJSON(game, textureType, cJSON_IsString);
     textureAtlas->textureType = toTextureType(game, textureType->string);
 
     cols = cJSON_GetObjectItemCaseSensitive(textureAtlasJSON, "cols");
-    validateValueJSON(game, cols);
+    validateValueConstJSON(game, cols);
     textureAtlas->cols = cols->valueint;
 
     rows = cJSON_GetObjectItemCaseSensitive(textureAtlasJSON, "rows");
-    validateValueJSON(game, rows);
+    validateValueConstJSON(game, rows);
     textureAtlas->rows = rows->valueint;
 
     tileSizeX = cJSON_GetObjectItemCaseSensitive(textureAtlasJSON, "tileSizeX");
-    validateValueJSON(game, tileSizeX);
+    validateValueConstJSON(game, tileSizeX);
     textureAtlas->tileSizeX = rows->valueint;
 
     tileSizeY = cJSON_GetObjectItemCaseSensitive(textureAtlasJSON, "tileSizeY");
-    validateValueJSON(game, tileSizeY);
+    validateValueConstJSON(game, tileSizeY);
     textureAtlas->tileSizeY = tileSizeY->valueint;
 
     // load texture.    
@@ -161,7 +162,20 @@ TextureAtlas* loadTextureAtlasJSON(GameState* game, char* pathJSON) {
     return textureAtlas;
 }
 
-struct Map* loadMap(GameState* game, int cols, int rows, cJSON* backgroundMap, cJSON* middelgroudMap, cJSON* spriteMap, cJSON* logicMap) {
+void destroyTextureAtlas(TextureAtlas* atlas) {
+    SDL_DestroyTexture(atlas->texture);
+    free(atlas);
+}
+
+struct Map* loadMap(
+    GameState* game, 
+    int cols, 
+    int rows, 
+    const cJSON* backgroundMap, 
+    const cJSON* middelgroudMap, 
+    const cJSON* spriteMap, 
+    const cJSON* logicMap
+) {
     struct Map* map = malloc(sizeof(struct Map));
     map->cols = cols;
     map->rows = rows;
@@ -172,7 +186,7 @@ struct Map* loadMap(GameState* game, int cols, int rows, cJSON* backgroundMap, c
     return map;
 }
 
-struct Sub* loadSub(const GameState* game, const cJSON* pathJSON) {
+struct Sub* loadSub(GameState* game, char* pathJSON) {
     struct Sub* sub = malloc(sizeof(struct Sub));
     cJSON *subJSON = cJSON_Parse(pathJSON);
     validateValueJSON(game, subJSON);
@@ -186,11 +200,11 @@ struct Sub* loadSub(const GameState* game, const cJSON* pathJSON) {
     const cJSON *logicMap = NULL;
     
     subID = cJSON_GetObjectItemCaseSensitive(subJSON, "subID");
-    validateValueJSON(game, subID);
+    validateValueConstJSON(game, subID);
     cols = cJSON_GetObjectItemCaseSensitive(subJSON, "cols");
-    validateValueJSON(game, cols);
+    validateValueConstJSON(game, cols);
     rows = cJSON_GetObjectItemCaseSensitive(subJSON, "rows");
-    validateValueJSON(game, rows);
+    validateValueConstJSON(game, rows);
     
     // in LoadMap gets validated the json;
     backgroundMap = cJSON_GetObjectItemCaseSensitive(subJSON, "backgroundMap");
@@ -215,7 +229,7 @@ struct Sub* loadSub(const GameState* game, const cJSON* pathJSON) {
 }
 
 void destroySub(struct Sub* sub) {
-    destoryMap(sub->map);
+    destroyMap(sub->map);
     free(sub);
 }
 
@@ -248,8 +262,8 @@ GameState* initGameState() {
 }
 
 void destroyGameState(GameState* game) {
-    destoryDisplay(&game->display);
-    destroyEnviromentStack(game);
+    destroyDisplay(&game->display);
+    destroyEnviromentStack(&game->envStack);
     free(game);
 }
 
@@ -283,27 +297,27 @@ struct Enviroment* loadEnviroment(GameState* game, char* pathJSON) {
 
     // TextureAtlas Paths.
     tilesheetPath = cJSON_GetObjectItemCaseSensitive(envJSON, "tilesheetPath");
-    validateValueJSON(game, tilesheetPath);
+    validateValueConstJSON(game, tilesheetPath);
     validateTypeValueJSON(game, tilesheetPath, cJSON_IsString);
 
     spritesheetPath = cJSON_GetObjectItemCaseSensitive(envJSON, "spritesheetPath");
-    validateValueJSON(game, tilesheetPath);
+    validateValueConstJSON(game, tilesheetPath);
     validateTypeValueJSON(game, tilesheetPath, cJSON_IsString);
     
     // switch case for enum
     type = cJSON_GetObjectItemCaseSensitive(envJSON, "type");
-    validateValueJSON(game, type);
+    validateValueConstJSON(game, type);
     validateTypeValueJSON(game, type, cJSON_IsString);
     env->type = toEnviromentType(game, type->string);
     
     initSub = cJSON_GetObjectItemCaseSensitive(envJSON, "initSub");
-    validateValueJSON(game, initSub);
+    validateValueConstJSON(game, initSub);
     validateTypeValueJSON(game, initSub, cJSON_IsString);
 
     // Hash Map sub IDs
     struct hashmap *subRoomIDMap = hashmap_new(sizeof(struct SubRoomIDNode), 0, 0, 0, subRoomIDNode_hash, subRoomIDNode_compare, NULL, NULL);
     subIDs = cJSON_GetObjectItemCaseSensitive(envJSON, "subIDs");
-    validateValueJSON(game, subIDs);
+    validateValueConstJSON(game, subIDs);
     cJSON *item = NULL;
     cJSON_ArrayForEach(item, subIDs) {
         cJSON *idJSON = cJSON_GetObjectItemCaseSensitive(item, "ID");
@@ -316,7 +330,9 @@ struct Enviroment* loadEnviroment(GameState* game, char* pathJSON) {
         hashmap_set(subRoomIDMap, &sub);
     }    
     
-    struct SubRoomIDNode* node = hashmap_get(subRoomIDMap, &(struct SubRoomIDNode){.id=initSub->string});
+    struct SubRoomIDNode searchKey;
+    searchKey.id = initSub->string;
+    const struct SubRoomIDNode* node = hashmap_get(subRoomIDMap, &searchKey);
     if(node == NULL) {
         log_error("'initSubIDs' path isn't present in subIDs!");
         exitGame(game);
@@ -359,7 +375,7 @@ struct EnviromentStackItem* createEnviromentStackItem(
 
 void destroyEnviromentStackItem(struct EnviromentStackItem* stackItem) {
     // pointer next won't be destoryed here.
-    destoryEnviroment(stackItem->env);
+    destroyEnviroment(stackItem->env);
     free(stackItem->env);
 }
 
@@ -399,7 +415,7 @@ uint64_t subRoomIDNode_hash(const void *item, uint64_t seed0, uint64_t seed1) {
 // ---- EnviromentStack functions ----
 void pushEnviroment(GameState* game, char* pathJSON) {    
     struct Enviroment* env = loadEnviroment(game, pathJSON);
-    struct EnviromentStackItem* stackItem = createEnviromentStackItem(NULL, NULL, env);
+    struct EnviromentStackItem* stackItem = createEnviromentStackItem(NULL, env);
     // push env to EnvStack.
     setToRenderFlagFromLowerENV(env, game->envStack.top->env);
     stackItem->next = game->envStack.top;
