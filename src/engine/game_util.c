@@ -79,3 +79,28 @@ void validateTypeValueJSON(GameState* game, const cJSON* value, JsonTypeCheckFun
         exitGame(game);
     }
 }
+
+// Funktion zum Lesen der JSON-Datei als String
+char* readFile(const char* filename) {
+    FILE *file = fopen(filename, "r");
+    if (!file) {
+        printf("Fehler: Datei %s konnte nicht geöffnet werden!\n", filename);
+        return NULL;
+    }
+
+    fseek(file, 0, SEEK_END);
+    long length = ftell(file);
+    fseek(file, 0, SEEK_SET);
+
+    char *content = malloc(length + 1);
+    if (!content) {
+        printf("Fehler: Speicher konnte nicht allokiert werden!\n");
+        fclose(file);
+        return NULL;
+    }
+
+    fread(content, 1, length, file);
+    content[length] = '\0'; // Null-terminieren
+    fclose(file);
+    return content;
+}

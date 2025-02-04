@@ -24,4 +24,5 @@ typedef int (*JsonTypeCheckFunc)(const cJSON *const);
 void validateValueJSON(GameState* game, cJSON* value);
 void validateValueConstJSON(GameState* game, const cJSON* value);
 void validateTypeValueJSON(GameState* game, const cJSON* value, JsonTypeCheckFunc checkFunc);
+char* readFile(const char* filename);
 #endif 

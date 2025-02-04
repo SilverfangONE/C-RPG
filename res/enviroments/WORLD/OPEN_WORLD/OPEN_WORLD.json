@@ -1,6 +1,6 @@
 {
     "ID":"OPEN_WORLD",
-    "type": "WORLD",
+    "type": "ENV_WORLD",
     "tilesheetPath": "./res/tilesheets/tilesheet.8.json",
     "spritesheetPath": "./res/tilesheets/tilesheet.8.json",
     "enableGlobalUI": false,

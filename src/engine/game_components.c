@@ -188,7 +188,14 @@ struct Map* loadMap(
 
 struct Sub* loadSub(GameState* game, char* pathJSON) {
     struct Sub* sub = malloc(sizeof(struct Sub));
-    cJSON *subJSON = cJSON_Parse(pathJSON);
+    
+    char* jsonString = readFile(pathJSON);
+    if (!jsonString) {
+        log_warn("JSON-Datei konnte nicht gelesen werden!");
+        return NULL;
+    }
+    cJSON *subJSON = cJSON_Parse(jsonString);
+    free(jsonString);
     validateValueJSON(game, subJSON);
     
     const cJSON *subID = NULL;
@@ -274,10 +281,16 @@ void destroyUIElement(struct UIElement* uiEl) {
 
 
 struct Enviroment* loadEnviroment(GameState* game, char* pathJSON) {
- // create env from JSON.
+    // create env from JSON.
     log_trace("Loading Enviroment from %s ...", pathJSON);
     struct Enviroment *env = malloc(sizeof(struct Enviroment));
-    cJSON *envJSON = cJSON_Parse(pathJSON);
+    char* jsonString = readFile(pathJSON);
+    if (!jsonString) {
+        log_warn("JSON-Datei konnte nicht gelesen werden!");
+        return NULL;
+    }
+    cJSON *envJSON = cJSON_Parse(jsonString);
+    free(jsonString);
     if(envJSON == NULL) {
         log_warn("JSON File with path %s was not found!", pathJSON);
     }
@@ -311,8 +324,8 @@ struct Enviroment* loadEnviroment(GameState* game, char* pathJSON) {
     // switch case for enum
     type = cJSON_GetObjectItemCaseSensitive(envJSON, "type");
     validateValueConstJSON(game, type);
-    validateTypeValueJSON(game, type, cJSON_IsString);
-    env->type = toEnviromentType(game, type->string);
+    validateTypeValueJSON(game, type, cJSON_IsString);;
+    env->type = toEnviromentType(game, type->valuestring);
     
     initSub = cJSON_GetObjectItemCaseSensitive(envJSON, "initSub");
     validateValueConstJSON(game, initSub);
