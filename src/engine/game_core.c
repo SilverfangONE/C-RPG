@@ -10,23 +10,6 @@
 #include "log.h"
 #include "cJSON.h"
 
-// ---- GAME SYSTEM ----
-// ---- CONSTANTS ----
-const int WINDOW_HEIGHT = 1200;
-const int WINDOW_WIDTH = 1200;
-const int NES_PIXEL_WIDTH = 256;
-const int NES_PIXEL_HEIGHT = 240;
-const int TILE_PIXEL_SIZE_B = 16;
-const int TILE_PIXEL_SIZE_S = 8;
-const int TARGET_FPS = 60;
-const int TILES_X = 6;
-const int TILES_Y = 6;
-const int TILE_COUNT = 6 * 6;
-const int TILE_SIZE = 8;
-const int TILESET_SLOT_SIZE = 6;
-// KEIN USECASE DAFÜR:
-// const int TILE_SIZE_ARR[2] = { 8, 16 }; // mapped to tilesize enums.
-
 // temp
 int roomIDCounter = 0;
 
