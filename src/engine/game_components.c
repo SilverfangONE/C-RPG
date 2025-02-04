@@ -107,16 +107,45 @@ TextureAtlas* loadTextureAtlasJSON(GameState* game, char* pathJSON) {
     const cJSON *cols = NULL;
     const cJSON *rows = NULL;
     const cJSON *tileSizeX = NULL;
-    const cJSON *tileSizeX = NULL;
+    const cJSON *tileSizeY= NULL;
     const cJSON *texturePath = NULL;
+    const cJSON *textureType = NULL;
     
-    strncpy(textureAtlas->ID, subID->string, sizeof(sub->ID - 1));
-    sub->ID[sizeof(sub->ID) - 1] = '\0';
+    ID = cJSON_GetObjectItemCaseSensitive(textureAtlasJSON, "ID");
+    validateValueJSON(game, ID);
+    validateTypeValueJSON(game, ID, cJSON_IsString);
+    strncpy(textureAtlas->ID, ID->string, sizeof(textureAtlas->ID - 1));
+    textureAtlas->ID[sizeof(textureAtlas->ID) - 1] = '\0';
+    
+    texturePath = cJSON_GetObjectItemCaseSensitive(textureAtlasJSON, "texturePath");
+    validateValueJSON(game, texturePath);
+    validateTypeValueJSON(game, texturePath, cJSON_IsString);
+    strncpy(textureAtlas->textPath, texturePath->string, sizeof(textureAtlas->textPath - 1));
+    textureAtlas->textPath[sizeof(textureAtlas->textPath) - 1] = '\0';
+    
+    textureType = cJSON_GetObjectItemCaseSensitive(textureAtlasJSON, "textureType");
+    validateValueJSON(game, textureType);
+    validateTypeValueJSON(game, textureType, cJSON_IsString);
+    textureAtlas->textureType = toTextureType(game, textureType->string);
 
-    
+    cols = cJSON_GetObjectItemCaseSensitive(textureAtlasJSON, "cols");
+    validateValueJSON(game, cols);
+    textureAtlas->cols = cols->valueint;
+
+    rows = cJSON_GetObjectItemCaseSensitive(textureAtlasJSON, "rows");
+    validateValueJSON(game, rows);
+    textureAtlas->rows = rows->valueint;
+
+    tileSizeX = cJSON_GetObjectItemCaseSensitive(textureAtlasJSON, "tileSizeX");
+    validateValueJSON(game, tileSizeX);
+    textureAtlas->tileSizeX = rows->valueint;
+
+    tileSizeY = cJSON_GetObjectItemCaseSensitive(textureAtlasJSON, "tileSizeY");
+    validateValueJSON(game, tileSizeY);
+    textureAtlas->tileSizeY = tileSizeY->valueint;
 
     // load texture.    
-    SDL_Texture *texture = IMG_LoadTexture(game->renderer, tilesetTexturePath);
+    SDL_Texture *texture = IMG_LoadTexture(game->renderer, textureAtlas->textPath);
     if(!texture) {
         log_error("%s", SDL_GetError());
         exitGame(game);
