@@ -4,15 +4,6 @@
 #include <SDL3/SDL.h>	
 #include "cJSON.h"
 // -------- ALL STRUCTS FOR GLOBAL CONTEXT --------
-/**
- * Global game context.
- */
-typedef struct GameState {
-	Display display;
-	SDL_Window* window;
-	SDL_Renderer* renderer;
-    EnviromentStack envStack;
-} GameState;
 
 // -------- Envoirment Context --------
 struct SubRoomIDNode {
@@ -74,7 +65,7 @@ enum TextureType {
 	TEXT_ANIMATED
 };
 
-typedef struct {
+typedef struct Display {
 	SDL_Texture* texture;
 	int width;
 	int height;
@@ -95,6 +86,16 @@ typedef struct TextureAtlas {
 } TextureAtlas;
 
 struct UIElement {};
+
+/**
+ * Global game context.
+ */
+typedef struct GameState {
+	Display display;
+	SDL_Window* window;
+	SDL_Renderer* renderer;
+    EnviromentStack envStack;
+} GameState;
 
 // ---- GLOBAL CONSTANTS ---- 
 extern const int WINDOW_HEIGHT;
