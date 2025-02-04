@@ -326,6 +326,8 @@ struct Enviroment* loadEnviroment(GameState* game, char* pathJSON) {
     env->tilesheet = loadTextureAtlasJSON(game, tilesheetPath->string);
     env->spritesheet = loadTextureAtlasJSON(game, spritesheetPath->string);
     env->isLocalUIActive = false;
+    // deciedes EnvStack.
+    env->toRender = false;
 
     // TODO UI for Envoiment not implemented.
     env->uiElementCount = 0;
@@ -399,6 +401,7 @@ void pushEnviroment(GameState* game, char* pathJSON) {
     struct Enviroment* env = loadEnviroment(game, pathJSON);
     struct EnviromentStackItem* stackItem = createEnviromentStackItem(NULL, NULL, env);
     // push env to EnvStack.
+    setToRenderFlagFromLowerENV(env, game->envStack.top->env);
     stackItem->next = game->envStack.top;
     game->envStack.top = stackItem;
     game->envStack.size++;
@@ -413,6 +416,38 @@ void popEnviroment(GameState* game) {
     game->envStack.top = stackItem->next;  
     destroyEnviromentStackItem(stackItem);
     game->envStack.size--;
+    updateToRenderFlagsFromStackEnvs(game->envStack.top);
+}
+
+/**
+ * Implements render hierary for EnviromentStack in terms of which envs get rendered.
+ */
+void updateToRenderFlagsFromStackEnvs(struct EnviromentStackItem* item) {
+    if(item == NULL || item->next == NULL) {
+        return;
+    }
+    setToRenderFlagFromLowerENV(item->env, item->next->env);
+    return updateToRenderFlagsFromStackEnvs(item->next);
+}
+
+void setToRenderFlagFromLowerENV(struct Enviroment* top, struct Enviroment* next) {
+    if(next != NULL) {
+        if(top->toRender) {
+            switch(top->type) {
+                case ENV_MENU:
+                    next->toRender = true;
+                    return;
+                case ENV_WORLD:
+                    next->toRender = false;
+                    return;
+                case ENV_COMBAT:
+                    next->toRender = false;
+                    return;
+            }
+        } else {
+            next->toRender = false;
+        }
+    }
 }
 
 // ---- Convert String to ENUM ----

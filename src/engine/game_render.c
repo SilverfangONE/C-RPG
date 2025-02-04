@@ -10,10 +10,11 @@ void renderGame(GameState* game) {
     if(!SDL_RenderClear(game->renderer)) {
         log_error("%s", SDL_GetError());
     }
-    // set render target to display.
-    SDL_SetRenderTarget(game->renderer, game->display.texture);
 
-    // actuall render stuff. 
+    // render on display. 
+    SDL_SetRenderTarget(game->renderer, game->display.texture);
+    renderEnviromentStack(game);
+
     for(int y = 0; y < NES_PIXEL_HEIGHT / game->room.tileset->tileSizeY; y++) 
     {
         for(int x = 0; x < NES_PIXEL_WIDTH / game->room.tileset->tileSizeX; x++) 
@@ -27,6 +28,7 @@ void renderGame(GameState* game) {
         }
     }
 
+    // render on window.
     SDL_SetRenderTarget(game->renderer, NULL);
     if(!SDL_RenderTexture(game->renderer, game->display.texture, NULL, &game->display.destRect)) {
         log_error("%s", SDL_GetError());
@@ -37,9 +39,9 @@ void renderGame(GameState* game) {
 }
 
 // ---- TILES & SPRITE ----
-void renderTileFromRoom(GameState* game, int tileIndex, int x, int y) {
-    const int TILE_SIZE_Y = game->room.tileset->tileSizeY;
-    const int TILE_SIZE_X = game->room.tileset->tileSizeX;
+void renderTextureFromAtlas(GameState* game, TextureAtlas* atlas, int tileIndex, int x, int y) {
+    const int TILE_SIZE_Y = atlas->tileSizeY;
+    const int TILE_SIZE_X = atlas->tileSizeX;
     
     // calc index.
     // int tileY = tileIndex / game->room.tileset->cols; 
@@ -49,8 +51,8 @@ void renderTileFromRoom(GameState* game, int tileIndex, int x, int y) {
     SDL_FRect srcR;
     srcR.w = TILE_SIZE_X;
     srcR.h = TILE_SIZE_Y;
-    srcR.x = (tileIndex % game->room.tileset->cols) * TILE_SIZE_X;
-    srcR.y = (tileIndex / game->room.tileset->cols) * TILE_SIZE_Y;
+    srcR.x = (tileIndex % atlas->cols) * TILE_SIZE_X;
+    srcR.y = (tileIndex / atlas->cols) * TILE_SIZE_Y;
 
     SDL_FRect destR;
     destR.w = TILE_SIZE_X;
@@ -58,9 +60,14 @@ void renderTileFromRoom(GameState* game, int tileIndex, int x, int y) {
     destR.x = x;
     destR.y = y;
 
-    if(!SDL_RenderTexture(game->renderer, game->room.tileset->texture, &srcR, &destR)) {
+    if(!SDL_RenderTexture(game->renderer, atlas->texture, &srcR, &destR)) {
         log_error("%s", SDL_GetError());
         exitGame(game);
     }
 }
 
+void renderEnviromentStack(struct EnviromentStackItem* item) {
+    if(item!=NULL) {
+        
+    }
+}

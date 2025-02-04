@@ -39,6 +39,8 @@ struct Enviroment {
     struct TextureAtlas* spritesheet;
     struct UIElement **uiElements; // array of ui elements
     int uiElementCount;
+    /* is set by @EnviromentStack */
+    bool toRender;
     bool isLocalUIActive;
 };
 

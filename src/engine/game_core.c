@@ -10,7 +10,7 @@
 #include "game_render.h"
 #include "game_components.h"
 
-
+// ---- Load and Exit Game. ----
 GameState* loadGame()
 {
     log_info("Loading game ...");
@@ -19,7 +19,7 @@ GameState* loadGame()
     // init game state.
     GameState* game = initGameState();
     // load init env.
-
+    pushEnviroment(game, "./res/enviroments/WORLD/OPEN_WORLD/OPEN_WORLD.env.json");
     log_info("Loading game completed!");
     return game;
 }
@@ -28,8 +28,9 @@ void exitGame(GameState* game)
 {
     log_info("TERMINATE_GAME");
     SDL_DestroyWindow(game->window);
+    SDL_DestroyRenderer(game->renderer);
     SDL_Quit();
-    destoryGameState(game);
+    destroyGameState(game);
     exit(0);
 }
 
