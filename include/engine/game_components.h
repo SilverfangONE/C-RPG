@@ -78,7 +78,7 @@ typedef struct TextureAtlas {
 	char ID[20];
     enum TextureType textureType;
 	SDL_Texture* texture;
-	char textPath[50];
+	char textPath[60];
 	int cols;
 	int rows;
 	int tileSizeX;

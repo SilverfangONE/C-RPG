@@ -19,7 +19,7 @@ GameState* loadGame()
     // init game state.
     GameState* game = initGameState();
     // load init env.
-    pushEnviroment(game, "./res/enviroments/WORLD/OPEN_WORLD/OPEN_WORLD.env.json");
+    pushEnviroment(game, "./res/enviroments/WORLD/OPEN_WORLD/OPEN_WORLD.json");
     log_info("Loading game completed!");
     return game;
 }

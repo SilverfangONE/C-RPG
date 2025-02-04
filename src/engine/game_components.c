@@ -275,8 +275,12 @@ void destroyUIElement(struct UIElement* uiEl) {
 
 struct Enviroment* loadEnviroment(GameState* game, char* pathJSON) {
  // create env from JSON.
+    log_trace("Loading Enviroment from %s ...", pathJSON);
     struct Enviroment *env = malloc(sizeof(struct Enviroment));
     cJSON *envJSON = cJSON_Parse(pathJSON);
+    if(envJSON == NULL) {
+        log_warn("JSON File with path %s was not found!", pathJSON);
+    }
     validateValueJSON(game, envJSON);
     const cJSON *enableGlobalUI = NULL;
     const cJSON *tilesheetPath = NULL;
