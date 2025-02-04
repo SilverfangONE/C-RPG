@@ -1,5 +1,6 @@
 {
     "ID": "GRASS_FIELD",
+    "textureType": "TEXT_STATIC",
     "cols": 6,
     "rows": 6,
     "tileSizeX": 8,

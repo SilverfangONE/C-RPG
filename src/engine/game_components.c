@@ -1,9 +1,12 @@
 #include <stdlib.h>
+#include <string.h>
+
 #include "log.h"
 #include "hashmap.h"
 #include "game_components.h"
 #include "game_core.h"
 #include "game_util.h"
+
 
 // ---- CONSTANTS ----
 const int WINDOW_HEIGHT = 1200;
@@ -20,31 +23,13 @@ const int TILE_SIZE = 8;
 const int TILESET_SLOT_SIZE = 6;
 
 // ---- PRINT STRUCTS ----
-void printTileset(Tileset* tileset) {
-    log_debug("\nTILESET:\n{\n\tID=%u;\n\ttextPath=%s;\n\tcols=%d;\n\trows=%d\n}", 
-        tileset->ID,
-        tileset->textPath,
-        tileset->cols,
-        tileset->rows    
+void printTextureAtlas(TextureAtlas* textureAtlas) {
+    log_debug("\nTILESET:\n{\n\tID=%s;\n\ttextPath=%s;\n\tcols=%d;\n\trows=%d\n}", 
+        textureAtlas->ID,
+        textureAtlas->textPath,
+        textureAtlas->cols,
+        textureAtlas->rows    
     );
-}
-
-void printRoom(Room* room) {
-    log_debug("\nROOM:\n{\n\tID=%u;\n\ttype=%s;",
-        room->ID,
-        printRoomType(room->type)
-    );
-    printTileset(room->tileset);
-    log_debug("}");
-}
-
-char* printRoomType(enum RoomType type) {
-    switch(type) {
-        case R_MENU: return "MENU";
-        case R_WORLD: return "WORLD";
-        case R_COMBAT: return "COMBAT";
-        default: return "Unkowne";
-    }
 }
 
 void printDisplay(Display* disp) {
@@ -61,7 +46,6 @@ void printDisplay(Display* disp) {
 void printGameState(GameState* game) {
     log_debug("\nGAME_STATE:\n{");
     printDisplay(&game->display);
-    printRoom(&game->room);
     log_debug("}");
 }
 
@@ -113,30 +97,39 @@ void destroyDisplay(Display* display) {
 }
 
 // TODO: später steht das alles in einer json datei. => dan nur pfad zur json datei und zur texture
-void loadTileset(GameState* game, char* tilesetTexturePath, int tileSizeX, int tileSizeY, int cols, int rows, unsigned int ID) {
-    Tileset** slotPtr = getTilesetSaveSlot(game);
-    if(slotPtr == NULL) {  
-        log_error("GAME_STATE: Can't load new TILESET:{path=%s;ID=%u}, because no slot is free!", tilesetTexturePath, ID);
-    }   
-    Tileset* tileset = (Tileset*)malloc(sizeof(Tileset));
-    tileset->ID = ID;
+TextureAtlas* loadTextureAtlasJSON(GameState* game, char* pathJSON) {
+    struct TextureAtlas* textureAtlas = malloc(sizeof(struct TextureAtlas));
+    // load TextureAtlas from json.
+    cJSON *textureAtlasJSON = cJSON_Parse(pathJSON);
+    validateValueJSON(game, textureAtlas);
+
+    const cJSON *ID = NULL;
+    const cJSON *cols = NULL;
+    const cJSON *rows = NULL;
+    const cJSON *tileSizeX = NULL;
+    const cJSON *tileSizeX = NULL;
+    const cJSON *texturePath = NULL;
+    
+    strncpy(textureAtlas->ID, subID->string, sizeof(sub->ID - 1));
+    sub->ID[sizeof(sub->ID) - 1] = '\0';
+
+    
+
+    // load texture.    
     SDL_Texture *texture = IMG_LoadTexture(game->renderer, tilesetTexturePath);
     if(!texture) {
         log_error("%s", SDL_GetError());
         exitGame(game);
     }
-    tileset->texture = texture;
-    tileset->cols = cols;
-    tileset->rows = rows;
-    tileset->tileSizeX = tileSizeX;
-    tileset->tileSizeY = tileSizeY;
-    strncpy(tileset->textPath, tilesetTexturePath, sizeof(tileset->textPath) - 1);
+
     // Setze die Textur auf "Nearest Neighbor" (pixelgenaue Skalierung)
     if(!SDL_SetTextureScaleMode(texture, SDL_SCALEMODE_NEAREST)) {
         log_error("%s", SDL_GetError());
         exitGame(game);
     }
-    *slotPtr = tileset;
+
+    cJSON_Delete(textureAtlasJSON);
+    return textureAtlas;
 }
 
 struct Map* loadMap(GameState* game, int cols, int rows, cJSON* backgroundMap, cJSON* middelgroudMap, cJSON* spriteMap, cJSON* logicMap) {
@@ -176,7 +169,9 @@ struct Sub* loadSub(const GameState* game, const cJSON* pathJSON) {
     spriteMap = cJSON_GetObjectItemCaseSensitive(subJSON, "spriteMap");
     logicMap = cJSON_GetObjectItemCaseSensitive(subJSON, "logicMap");
    
-    sub->ID = subID->string;
+    strncpy(sub->ID, subID->string, sizeof(sub->ID - 1));
+    sub->ID[sizeof(sub->ID) - 1] = '\0';
+
     sub->map = loadMap(
         game,
         cols->valueint, 
@@ -186,6 +181,7 @@ struct Sub* loadSub(const GameState* game, const cJSON* pathJSON) {
         spriteMap, 
         logicMap
     );
+    cJSON_Delete(subJSON);
     return sub;
 }
 
@@ -203,31 +199,10 @@ void destroyMap(struct Map* map) {
 }
 
 void destroyGameState(GameState* game) {
-    destoryRoom(&game->room);
     destoryDisplay(&game->display);
-    // free SDL_Textures;
-    for(int i = 0; i < TILESET_SLOT_SIZE; i++) {
-        free(game->sets[i]);
-    }
     destroyEnviromentStack(game);
     free(game);
 }
-
-
-void destroyRoom(Room* room) {
-    // NOTHING TO DESTROY YET.
-}
-
-void loadRoom(GameState* game, enum RoomType type, unsigned int roomID, unsigned int tilesetID)
-{
-    Room room;
-    room.ID = roomID;
-    room.type = type;
-    room.tileset = lookupTileset(game, tilesetID);
-    game->room=room;
-    printRoom(&room);
-}
-
 
 void destroyUIElement(struct UIElement* uiEl) {
     // TODO
@@ -240,21 +215,41 @@ struct Enviroment* loadEnviroment(GameState* game, char* pathJSON) {
     struct Enviroment *env = malloc(sizeof(struct Enviroment));
     cJSON *envJSON = cJSON_Parse(pathJSON);
     validateValueJSON(game, envJSON);
-    const cJSON *blockGlobalUI = NULL;
+    const cJSON *enableGlobalUI = NULL;
     const cJSON *tilesheetPath = NULL;
+    const cJSON *spritesheetPath = NULL;
     const cJSON *subIDs = NULL;
     const cJSON *subID = NULL;
     const cJSON *initSub = NULL;
     const cJSON *type = NULL;
+    
+    // ceck if gloable ui is not enabled.
+    enableGlobalUI = cJSON_GetObjectItemCaseSensitive(envJSON, "enableGlobalUI");
+    if(enableGlobalUI == NULL) {
+        env->enableGlobalUI = true;
+    } else {
+        validateTypeValueJSON(game, enableGlobalUI, cJSON_IsBool);
+        env->enableGlobalUI = cJSON_IsTrue(enableGlobalUI);
+    }
 
-    blockGlobalUI = cJSON_GetObjectItemCaseSensitive(envJSON, "blockGlobalUI");
-    validateValueJSON(game, blockGlobalUI);
+    // TextureAtlas Paths.
     tilesheetPath = cJSON_GetObjectItemCaseSensitive(envJSON, "tilesheetPath");
     validateValueJSON(game, tilesheetPath);
+    validateTypeValueJSON(game, tilesheetPath, cJSON_IsString);
+
+    spritesheetPath = cJSON_GetObjectItemCaseSensitive(envJSON, "spritesheetPath");
+    validateValueJSON(game, tilesheetPath);
+    validateTypeValueJSON(game, tilesheetPath, cJSON_IsString);
+    
+    // switch case for enum
     type = cJSON_GetObjectItemCaseSensitive(envJSON, "type");
     validateValueJSON(game, type);
+    validateTypeValueJSON(game, type, cJSON_IsString);
+    env->type = toEnviromentType(game, type->string);
+    
     initSub = cJSON_GetObjectItemCaseSensitive(envJSON, "initSub");
     validateValueJSON(game, initSub);
+    validateTypeValueJSON(game, initSub, cJSON_IsString);
 
     // Hash Map sub IDs
     struct hashmap *subRoomIDMap = hashmap_new(sizeof(struct SubRoomIDNode), 0, 0, 0, subRoomIDNode_hash, subRoomIDNode_compare, NULL, NULL);
@@ -279,17 +274,23 @@ struct Enviroment* loadEnviroment(GameState* game, char* pathJSON) {
     }
     env->sub = loadSub(game, node->path);
     env->subRoomIDMap = subRoomIDMap;
-    // TODO. SUB 
+    env->tilesheet = loadTextureAtlasJSON(game, tilesheetPath->string);
+    env->spritesheet = loadTextureAtlasJSON(game, spritesheetPath->string);
+    env->isLocalUIActive = false;
+
+    // TODO UI for Envoiment not implemented.
+    env->uiElementCount = 0;
+    cJSON_Delete(envJSON);
     return env;
 }
 
 void destroyEnviroment(struct Enviroment* env) {
-    for(int i = 0; i < env->uiElsCount; i++) {
+    for(int i = 0; i < env->uiElementCount; i++) {
         struct UIElement *el = env->uiElements[i];
         destroyUIElement(env->uiElements[i]);
     }
-    destroyTilesheet(env->tilesheet);
-    destroySpritesheet(env->spritesheet);
+    destroyTextureAtlas(env->spritesheet);
+    destroyTextureAtlas(env->tilesheet);
     destroySub(env->sub);
     hashmap_free(env->subRoomIDMap);
     free(env);
@@ -325,7 +326,6 @@ void destroyEnviromentStack(EnviromentStack* envStack) {
     }
     free(envStack);
 }
-
 
 // ---- Sub functions ----
 int subRoomIDNode_compare(const void *a, const void *b, void *udata) {
@@ -364,4 +364,52 @@ void popEnviroment(GameState* game) {
     game->envStack.top = stackItem->next;  
     destroyEnviromentStackItem(stackItem);
     game->envStack.size--;
+}
+
+// ---- Convert String to ENUM ----
+enum EnviromentType toEnviromentType(GameState* game, char* string) {
+    #ifdef _WIN32
+        if(_stricmp("ENV_COMBAT", string) == 0) {
+            return ENV_COMBAT;
+        }
+        if(_stricmp("ENV_WORLD", string) == 0) {
+            return ENV_WORLD;
+        }
+        if(_stricmp("ENV_MENU", string) == 0) {
+            return ENV_MENU;
+        }
+    #elif defined(__linux__) || defined(__APPLE__)
+        if(strcasecmp("ENV_COMBAT", string) == 0) {
+            return ENV_COMBAT;
+        }
+        if(strcasecmp("ENV_WORLD", string) == 0 ) {
+            return ENV_WORLD;
+        }
+        if(strcasecmp("ENV_MENU", string) == =) {
+            return ENV_MENU;
+        }
+    #endif
+    log_error("No EnviromentType matches with %s", string);
+    exitGame(game);
+}
+
+// ---- Convert String to ENUM ----
+enum TextureType toTextureType(GameState* game, char* string) {
+    #ifdef _WIN32
+        if(_stricmp("TEXT_STATIC", string) == 0) {
+            return TEXT_STATIC;
+        }
+        if(_stricmp("TEXT_ANIMATED", string) == 0) {
+            return TEXT_ANIMATED;
+        }
+    #elif defined(__linux__) || defined(__APPLE__)
+        if(strcasecmp("TEXT_STATIC", string) == 0) {
+            return TEXT_STATIC;
+        }
+        if(strcasecmp("TEXT_ANIMATED", string) == 0 ) {
+            return TEXT_ANIMATED;
+        }
+    #endif
+    log_error("No TextureType matches with %s", string);
+    exitGame(game);
 }

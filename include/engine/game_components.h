@@ -8,8 +8,6 @@
  * Global game context.
  */
 typedef struct {
-	Tileset* sets[6]; // cann hold for tilessets in memory (vorerst) TILE_SLOT_SIZE
-	Room room;
 	Display display;
 	SDL_Window* window;
 	SDL_Renderer* renderer;
@@ -22,24 +20,31 @@ struct SubRoomIDNode {
     char* path;
 };
 
+enum EnviromentType{
+	ENV_MENU,
+	ENV_WORLD,
+	ENV_COMBAT
+};
+
 struct Enviroment {
+    char ID[20];
+    enum EnviromentType type;
     /*Blocks calling global UI lobic and rendering from ENV*/
-    int blockGlobalUI; // standart 0; 
+    bool enableGlobalUI; // standart 0; 
     // sub rooms[] oder sub jedes mal rein laden
     struct Sub* sub;
     /* ID TO PATH */
     struct hashmap *subRoomIDMap;
-    int sheetCount;
-    int uiElsCount;
-    struct Tileset* tileset; // array of sheets
-    struct Spritesheet* spritesheet;
+    struct TextureAtlas* tilesheet; // array of sheets
+    struct TextureAtlas* spritesheet;
     struct UIElement **uiElements; // array of ui elements
-    int localUIActive;
+    int uiElementCount;
+    bool isLocalUIActive;
 };
 
 struct Sub {
+    char ID[20];
     struct Map* map;
-    char* ID;
 };
 
 struct Map {
@@ -61,22 +66,10 @@ typedef struct EnviromentStack {
     int size;  
 } EnviromentStack;
 
-enum RoomType{
-	R_MENU,
-	R_WORLD,
-	R_COMBAT
-};
-
-typedef struct {
-	unsigned int ID;
-	enum RoomType type;
-	Tileset* tileset;
-} Room;
-
 // -------- Rendering Components --------
-enum textureTypes {
+enum TextureType {
 	TEXT_STATIC,
-	TEXT_ANIMATION
+	TEXT_ANIMATED
 };
 
 typedef struct {
@@ -88,17 +81,17 @@ typedef struct {
 	SDL_FRect destRect;
 } Display;
 
-typedef struct Tileset {
-	unsigned int ID;
+typedef struct TextureAtlas {
+	char ID[20];
+    enum TextureType textureType;
 	SDL_Texture* texture;
 	char textPath[50];
 	int cols;
 	int rows;
 	int tileSizeX;
 	int tileSizeY;
-} Tileset;
+} TextureAtlas;
 
-typedef struct Spritesheet {} Spritesheet;
 struct UIElement {};
 
 // ---- GLOBAL CONSTANTS ---- 
@@ -116,12 +109,10 @@ extern const int TILE_SIZE;
 extern const int TILESET_SLOT_SIZE;
 
 // ---- PRINT STRUCTS ----
-void printTileset(Tileset*);
+void printTextureAtlas(TextureAtlas*);
 void printGameState(GameState*);
 void printDisplay(Display*);
-void printRoom(Room*);
-char* printRoomType(enum RoomType);
-
+//TODO rest print funs.
 // ---- LOAD & DESTROY Game Components ----
 struct GameState* initGameState();
 void destroyyGameState(GameState*);
@@ -135,15 +126,11 @@ void destroySub(struct Sub*);
 struct Map* loadMap(GameState*, int cols, int rows, cJSON* backgroundMap, cJSON* middelgroudMap, cJSON* spriteMap, cJSON* logicMap);
 void destroyMap(struct Map*);
 
-void loadRoom(GameState* , enum RoomType, unsigned int, unsigned int);
-void destroyRoom(Room*);
-
 void loadDisplay(GameState*);
 void destroyDisplay(Display*);
 
-void loadTileset(GameState* , char* , int , int , int , int , unsigned int);
-void loadTilesetJSON(GameState*, char* pathJSON );
-void destroyTileset(Tileset*);
+TextureAtlas* loadTextureAtlasJSON(GameState*, char* pathJSON );
+void destroyTextureAtlas(TextureAtlas*);
 
 struct EnviromentStackItem* createEnviromentStackItem(struct EnviromentStackItem* next, struct Enviroment* env);
 void destroyEnviromentStackItem(struct EnviromentStackItem* stackItem); 
