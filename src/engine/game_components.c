@@ -113,36 +113,36 @@ TextureAtlas* loadTextureAtlasJSON(GameState* game, char* pathJSON) {
     const cJSON *textureType = NULL;
     
     ID = cJSON_GetObjectItemCaseSensitive(textureAtlasJSON, "ID");
-    validateValueConstJSON(game, ID);
+    validateValueConstJSON(game, ID, "ID", pathJSON);
     validateTypeValueJSON(game, ID, cJSON_IsString);
     strncpy(textureAtlas->ID, ID->string, sizeof(textureAtlas->ID - 1));
     textureAtlas->ID[sizeof(textureAtlas->ID) - 1] = '\0';
     
     texturePath = cJSON_GetObjectItemCaseSensitive(textureAtlasJSON, "texturePath");
-    validateValueConstJSON(game, texturePath);
+    validateValueConstJSON(game, texturePath, "texturePath", pathJSON);
     validateTypeValueJSON(game, texturePath, cJSON_IsString);
     strncpy(textureAtlas->textPath, texturePath->string, sizeof(textureAtlas->textPath - 1));
     textureAtlas->textPath[sizeof(textureAtlas->textPath) - 1] = '\0';
     
     textureType = cJSON_GetObjectItemCaseSensitive(textureAtlasJSON, "textureType");
-    validateValueConstJSON(game, textureType);
+    validateValueConstJSON(game, textureType, "textureType", pathJSON);
     validateTypeValueJSON(game, textureType, cJSON_IsString);
     textureAtlas->textureType = toTextureType(game, textureType->string);
 
     cols = cJSON_GetObjectItemCaseSensitive(textureAtlasJSON, "cols");
-    validateValueConstJSON(game, cols);
+    validateValueConstJSON(game, cols, "cols", pathJSON);
     textureAtlas->cols = cols->valueint;
 
     rows = cJSON_GetObjectItemCaseSensitive(textureAtlasJSON, "rows");
-    validateValueConstJSON(game, rows);
+    validateValueConstJSON(game, rows, "rows", pathJSON);
     textureAtlas->rows = rows->valueint;
 
     tileSizeX = cJSON_GetObjectItemCaseSensitive(textureAtlasJSON, "tileSizeX");
-    validateValueConstJSON(game, tileSizeX);
+    validateValueConstJSON(game, tileSizeX, "tileSizeX", pathJSON);
     textureAtlas->tileSizeX = rows->valueint;
 
     tileSizeY = cJSON_GetObjectItemCaseSensitive(textureAtlasJSON, "tileSizeY");
-    validateValueConstJSON(game, tileSizeY);
+    validateValueConstJSON(game, tileSizeY, "tileSizeY", pathJSON);
     textureAtlas->tileSizeY = tileSizeY->valueint;
 
     // load texture.    
@@ -207,17 +207,21 @@ struct Sub* loadSub(GameState* game, char* pathJSON) {
     const cJSON *logicMap = NULL;
     
     subID = cJSON_GetObjectItemCaseSensitive(subJSON, "subID");
-    validateValueConstJSON(game, subID);
+    validateValueConstJSON(game, subID, "subID", pathJSON);
     cols = cJSON_GetObjectItemCaseSensitive(subJSON, "cols");
-    validateValueConstJSON(game, cols);
+    validateValueConstJSON(game, cols, "cols", pathJSON);
     rows = cJSON_GetObjectItemCaseSensitive(subJSON, "rows");
-    validateValueConstJSON(game, rows);
+    validateValueConstJSON(game, rows, "rows", pathJSON);
     
     // in LoadMap gets validated the json;
     backgroundMap = cJSON_GetObjectItemCaseSensitive(subJSON, "backgroundMap");
+    validateValueConstJSON(game, backgroundMap, "backgroundMap", pathJSON);
     middelgroudMap = cJSON_GetObjectItemCaseSensitive(subJSON, "middelgroudMap");
+    validateValueConstJSON(game, middelgroudMap, "middelgroudMap", pathJSON);
     spriteMap = cJSON_GetObjectItemCaseSensitive(subJSON, "spriteMap");
+    validateValueConstJSON(game, spriteMap, "spriteMap", pathJSON);
     logicMap = cJSON_GetObjectItemCaseSensitive(subJSON, "logicMap");
+    validateValueConstJSON(game, logicMap, "logicMap", pathJSON);
    
     strncpy(sub->ID, subID->string, sizeof(sub->ID - 1));
     sub->ID[sizeof(sub->ID) - 1] = '\0';
@@ -300,7 +304,7 @@ struct Enviroment* loadEnviroment(GameState* game, char* pathJSON) {
     const cJSON *spritesheetPath = NULL;
     const cJSON *subIDs = NULL;
     const cJSON *subID = NULL;
-    const cJSON *initSub = NULL;
+    const cJSON *initSubID = NULL;
     const cJSON *type = NULL;
     
     // ceck if gloable ui is not enabled.
@@ -314,27 +318,27 @@ struct Enviroment* loadEnviroment(GameState* game, char* pathJSON) {
 
     // TextureAtlas Paths.
     tilesheetPath = cJSON_GetObjectItemCaseSensitive(envJSON, "tilesheetPath");
-    validateValueConstJSON(game, tilesheetPath);
+    validateValueConstJSON(game, tilesheetPath, "tilesheetPath", pathJSON);
     validateTypeValueJSON(game, tilesheetPath, cJSON_IsString);
 
     spritesheetPath = cJSON_GetObjectItemCaseSensitive(envJSON, "spritesheetPath");
-    validateValueConstJSON(game, tilesheetPath);
+    validateValueConstJSON(game, tilesheetPath, "spritesheetPath", pathJSON);
     validateTypeValueJSON(game, tilesheetPath, cJSON_IsString);
     
     // switch case for enum
     type = cJSON_GetObjectItemCaseSensitive(envJSON, "type");
-    validateValueConstJSON(game, type);
+    validateValueConstJSON(game, type, "type", pathJSON);
     validateTypeValueJSON(game, type, cJSON_IsString);;
     env->type = toEnviromentType(game, type->valuestring);
     
-    initSub = cJSON_GetObjectItemCaseSensitive(envJSON, "initSub");
-    validateValueConstJSON(game, initSub);
-    validateTypeValueJSON(game, initSub, cJSON_IsString);
+    initSubID = cJSON_GetObjectItemCaseSensitive(envJSON, "initSubID");
+    validateValueConstJSON(game, initSubID, "initSubID", pathJSON);
+    validateTypeValueJSON(game, initSubID, cJSON_IsString);
 
     // Hash Map sub IDs
     struct hashmap *subRoomIDMap = hashmap_new(sizeof(struct SubRoomIDNode), 0, 0, 0, subRoomIDNode_hash, subRoomIDNode_compare, NULL, NULL);
     subIDs = cJSON_GetObjectItemCaseSensitive(envJSON, "subIDs");
-    validateValueConstJSON(game, subIDs);
+    validateValueConstJSON(game, subIDs, "subIDs", pathJSON);
     cJSON *item = NULL;
     cJSON_ArrayForEach(item, subIDs) {
         cJSON *idJSON = cJSON_GetObjectItemCaseSensitive(item, "ID");
@@ -348,7 +352,7 @@ struct Enviroment* loadEnviroment(GameState* game, char* pathJSON) {
     }    
     
     struct SubRoomIDNode searchKey;
-    searchKey.id = initSub->string;
+    searchKey.id = initSubID->string;
     const struct SubRoomIDNode* node = hashmap_get(subRoomIDMap, &searchKey);
     if(node == NULL) {
         log_error("'initSubIDs' path isn't present in subIDs!");
