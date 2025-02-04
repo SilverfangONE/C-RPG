@@ -49,6 +49,10 @@ void destoryMatrix(Matrix* matrix) {
     free(matrix);
 }
 
+int getMatrixCell(Matrix* matrix, int col, int row) {
+    return matrix->data[row * matrix->cols + col];
+}
+
 void setMatrixCell(Matrix* matrix, unsigned int x, unsigned int y, int value) {
     matrix->data[y * matrix->cols + x] = value;
 }

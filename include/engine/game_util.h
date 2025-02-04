@@ -12,6 +12,7 @@ typedef struct Matrix {
 
 // -------- FUNCTIONS --------
 void setMatrixCell(Matrix* matrix, unsigned int x, unsigned int y, int value);
+int getMatrixCell(Matrix* matrix, int col, int row);
 
 // ---- LOAD/DESTROY SYSTEMS ----
 Matrix* createMatrixJSON(GameState* game, size_t rows, size_t cols, cJSON* arrayJSON);
