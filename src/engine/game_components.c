@@ -87,7 +87,7 @@ TextureAtlas* loadTextureAtlasJSON(GameState* game, char* pathJSON) {
     ID = cJSON_GetObjectItemCaseSensitive(textureAtlasJSON, "ID");
     validateValueConstJSON(game, ID, "ID", pathJSON);
     validateTypeValueJSON(game, ID, cJSON_IsString);
-    strncpy(textureAtlas->ID, ID->string, sizeof(textureAtlas->ID - 1));
+    strncpy(textureAtlas->ID, ID->string, sizeof(textureAtlas->ID) - 1);
     textureAtlas->ID[sizeof(textureAtlas->ID) - 1] = '\0';
     
     texturePath = cJSON_GetObjectItemCaseSensitive(textureAtlasJSON, "texturePath");
@@ -198,7 +198,7 @@ struct Sub* loadSub(GameState* game, char* pathJSON) {
     logicMap = cJSON_GetObjectItemCaseSensitive(subJSON, "logicMap");
     validateValueConstJSON(game, logicMap, "logicMap", pathJSON);
    
-    strncpy(sub->ID, subID->string, sizeof(sub->ID - 1));
+    strncpy(sub->ID, subID->valuestring, sizeof(sub->ID) - 1);
     sub->ID[sizeof(sub->ID) - 1] = '\0';
 
     sub->map = loadMap(

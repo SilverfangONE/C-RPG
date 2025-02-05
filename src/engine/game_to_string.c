@@ -23,6 +23,7 @@ char* constantsToString () {
 }
 
 char* textureTypeToString (enum TextureType type) {
+    log_trace("TYPE: %s to TextureType", type);
     switch(type) {
         case TEXT_STATIC:
             return "TEXT_STATIC";
@@ -34,6 +35,7 @@ char* textureTypeToString (enum TextureType type) {
 }
 
 char* enviromentTypeToString (enum EnviromentType type) {
+    log_trace("TYPE: %s to EnviromentType", type);
     switch(type) {
         case ENV_MENU:
             return "ENV_MENU";
