@@ -78,7 +78,7 @@ typedef struct TextureAtlas {
 	char ID[20];
     enum TextureType textureType;
 	SDL_Texture* texture;
-	char textPath[60];
+	char textPath[300];
 	int cols;
 	int rows;
 	int tileSizeX;
@@ -102,20 +102,8 @@ extern const int WINDOW_HEIGHT;
 extern const int WINDOW_WIDTH;
 extern const int NES_PIXEL_WIDTH;
 extern const int NES_PIXEL_HEIGHT;
-extern const int TILE_PIXEL_SIZE_B;
-extern const int TILE_PIXEL_SIZE_S;
 extern const int TARGET_FPS;
-extern const int TILES_X;
-extern const int TILES_Y;
-extern const int TILE_COUNT;
-extern const int TILE_SIZE;
-extern const int TILESET_SLOT_SIZE;
-
-// ---- PRINT STRUCTS ----
-void printTextureAtlas(TextureAtlas*);
-void printGameState(GameState*);
-void printDisplay(Display*);
-//TODO rest print funs.
+extern const char NAME_OF_GAME[40];
 
 // ---- LOAD & DESTROY Game Components ----
 GameState* initGameState();

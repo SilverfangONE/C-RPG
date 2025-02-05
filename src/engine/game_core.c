@@ -9,6 +9,7 @@
 #include "game_core.h"
 #include "game_render.h"
 #include "game_components.h"
+#include "game_to_string.h"
 
 // ---- Load and Exit Game. ----
 GameState* loadGame()
@@ -21,6 +22,7 @@ GameState* loadGame()
     // load init env.
     pushEnviroment(game, "./res/enviroments/WORLD/OPEN_WORLD/OPEN_WORLD.json");
     log_info("Loading game completed!");
+    printGameState(game, LOG_DEBUG);
     return game;
 }
 

@@ -7,48 +7,15 @@
 #include "game_components.h"
 #include "game_core.h"
 #include "game_util.h"
-
+#include "game_to_string.h"
 
 // ---- CONSTANTS ----
 const int WINDOW_HEIGHT = 1200;
 const int WINDOW_WIDTH = 1200;
 const int NES_PIXEL_WIDTH = 256;
 const int NES_PIXEL_HEIGHT = 240;
-const int TILE_PIXEL_SIZE_B = 16;
-const int TILE_PIXEL_SIZE_S = 8;
 const int TARGET_FPS = 60;
-const int TILES_X = 6;
-const int TILES_Y = 6;
-const int TILE_COUNT = 6 * 6;
-const int TILE_SIZE = 8;
-const int TILESET_SLOT_SIZE = 6;
-
-// ---- PRINT STRUCTS ----
-void printTextureAtlas(TextureAtlas* textureAtlas) {
-    log_debug("\nTILESET:\n{\n\tID=%s;\n\ttextPath=%s;\n\tcols=%d;\n\trows=%d\n}", 
-        textureAtlas->ID,
-        textureAtlas->textPath,
-        textureAtlas->cols,
-        textureAtlas->rows    
-    );
-}
-
-void printDisplay(Display* disp) {
-    log_debug("\nDISPLAY:\n{\n\twidth=%d;\n\theight=%d;\n\tscaleX=%f;\n\tscaleY=%f;\n\tx=%f;\n\ty=%f\n}",
-        disp->width, 
-        disp->height, 
-        disp->scaleX, 
-        disp->scaleY,
-        disp->destRect.x,
-        disp->destRect.y
-    );
-}
-
-void printGameState(GameState* game) {
-    log_debug("\nGAME_STATE:\n{");
-    printDisplay(&game->display);
-    log_debug("}");
-}
+const char NAME_OF_GAME[40] = "C_RPG";
 
 // ---- LOAD & DESTROY Game Components ----
 void loadDisplay(GameState* game) 
@@ -88,9 +55,8 @@ void loadDisplay(GameState* game)
     destR.x = (float) (WINDOW_WIDTH - destR.w) / 2;
     destR.y = (float) (WINDOW_HEIGHT - destR.h) / 2;
     disp.destRect = destR;
-
     game->display=disp;
-    printDisplay(&disp);
+    printDisplay(&disp, LOG_TRACE);
 }
 
 void destroyDisplay(Display* display) {
@@ -101,7 +67,13 @@ void destroyDisplay(Display* display) {
 TextureAtlas* loadTextureAtlasJSON(GameState* game, char* pathJSON) {
     struct TextureAtlas* textureAtlas = malloc(sizeof(struct TextureAtlas));
     // load TextureAtlas from json.
-    cJSON *textureAtlasJSON = cJSON_Parse(pathJSON);
+    char* jsonString = readFile(pathJSON);
+    if (!jsonString) {
+        log_error("JSON-Datei=%s konnte nicht gelesen werden!", pathJSON);
+        exitGame(game);
+    }
+    cJSON *textureAtlasJSON = cJSON_Parse(jsonString);
+    free(jsonString);
     validateValueJSON(game, textureAtlasJSON);
     
     const cJSON *ID = NULL;
@@ -121,13 +93,14 @@ TextureAtlas* loadTextureAtlasJSON(GameState* game, char* pathJSON) {
     texturePath = cJSON_GetObjectItemCaseSensitive(textureAtlasJSON, "texturePath");
     validateValueConstJSON(game, texturePath, "texturePath", pathJSON);
     validateTypeValueJSON(game, texturePath, cJSON_IsString);
-    strncpy(textureAtlas->textPath, texturePath->string, sizeof(textureAtlas->textPath - 1));
+    log_debug("texturePathJSON: %s", texturePath->valuestring);
+    strncpy(textureAtlas->textPath, texturePath->valuestring, sizeof(textureAtlas->textPath) - 1);
     textureAtlas->textPath[sizeof(textureAtlas->textPath) - 1] = '\0';
     
     textureType = cJSON_GetObjectItemCaseSensitive(textureAtlasJSON, "textureType");
     validateValueConstJSON(game, textureType, "textureType", pathJSON);
     validateTypeValueJSON(game, textureType, cJSON_IsString);
-    textureAtlas->textureType = toTextureType(game, textureType->string);
+    textureAtlas->textureType = toTextureType(game, textureType->valuestring);
 
     cols = cJSON_GetObjectItemCaseSensitive(textureAtlasJSON, "cols");
     validateValueConstJSON(game, cols, "cols", pathJSON);
@@ -159,6 +132,7 @@ TextureAtlas* loadTextureAtlasJSON(GameState* game, char* pathJSON) {
     }
 
     cJSON_Delete(textureAtlasJSON);
+    printTextureAtlas(textureAtlas, LOG_TRACE);
     return textureAtlas;
 }
 
@@ -183,6 +157,7 @@ struct Map* loadMap(
     map->middelgroudMap = createMatrixJSON(game, rows, cols, middelgroudMap);
     map->spriteMap = createMatrixJSON(game, rows, cols, spriteMap);
     map->logicMap = createMatrixJSON(game, rows, cols, logicMap);
+    printMap(map, LOG_TRACE);
     return map;
 }
 
@@ -191,8 +166,8 @@ struct Sub* loadSub(GameState* game, char* pathJSON) {
     
     char* jsonString = readFile(pathJSON);
     if (!jsonString) {
-        log_warn("JSON-Datei=%s konnte nicht gelesen werden!", pathJSON);
-        return NULL;
+        log_error("JSON-Datei=%s konnte nicht gelesen werden!", pathJSON);
+        exitGame(game);
     }
     cJSON *subJSON = cJSON_Parse(jsonString);
     free(jsonString);
@@ -236,6 +211,7 @@ struct Sub* loadSub(GameState* game, char* pathJSON) {
         logicMap
     );
     cJSON_Delete(subJSON);
+    printSub(sub, LOG_TRACE);
     return sub;
 }
 
@@ -256,7 +232,7 @@ GameState* initGameState() {
     GameState* game = (GameState*)malloc(sizeof(GameState));
     // setup window and renderer context SDL3.
     if(!SDL_CreateWindowAndRenderer(
-        "C-RPG",
+        NAME_OF_GAME,
         WINDOW_WIDTH,
         WINDOW_HEIGHT,
         0,
@@ -269,6 +245,7 @@ GameState* initGameState() {
     // load game components.
     loadDisplay(game);
     initEnviromentStack(game);
+    printGameState(game, LOG_TRACE);
     return game;
 }
 
@@ -364,11 +341,11 @@ struct Enviroment* loadEnviroment(GameState* game, char* pathJSON) {
     }
     env->sub = loadSub(game, node->path);
     env->subRoomIDMap = subRoomIDMap;
-    env->tilesheet = loadTextureAtlasJSON(game, tilesheetPath->string);
-    env->spritesheet = loadTextureAtlasJSON(game, spritesheetPath->string);
+    env->tilesheet = loadTextureAtlasJSON(game, tilesheetPath->valuestring);
+    env->spritesheet = loadTextureAtlasJSON(game, spritesheetPath->valuestring);
     env->isLocalUIActive = false;
     // deciedes EnvStack.
-    env->toRender = false;
+    env->toRender = true;
 
     // TODO UI for Envoiment not implemented.
     env->uiElementCount = 0;
@@ -407,6 +384,7 @@ void destroyEnviromentStackItem(struct EnviromentStackItem* stackItem) {
 void initEnviromentStack(GameState* game) {
     game->envStack.size = 0;
     game->envStack.top = NULL;
+    printEnviromentStack(&game->envStack, LOG_TRACE);
 }
 
 void destroyEnviromentStack(EnviromentStack* envStack) {
@@ -442,10 +420,11 @@ void pushEnviroment(GameState* game, char* pathJSON) {
     struct Enviroment* env = loadEnviroment(game, pathJSON);
     struct EnviromentStackItem* stackItem = createEnviromentStackItem(NULL, env);
     // push env to EnvStack.
-    setToRenderFlagFromLowerENV(env, game->envStack.top->env);
     stackItem->next = game->envStack.top;
     game->envStack.top = stackItem;
     game->envStack.size++;
+    updateToRenderFlagsFromStackEnvs(game->envStack.top);
+    printEnviromentStack(&game->envStack, LOG_TRACE);
 }
 
 void popEnviroment(GameState* game) {
@@ -458,6 +437,7 @@ void popEnviroment(GameState* game) {
     destroyEnviromentStackItem(stackItem);
     game->envStack.size--;
     updateToRenderFlagsFromStackEnvs(game->envStack.top);
+    printEnviromentStack(&game->envStack, LOG_TRACE);
 }
 
 /**
