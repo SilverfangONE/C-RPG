@@ -3,96 +3,37 @@
 #include <SDL3_image/SDL_image.h>
 #include <stdio.h>
 #include <windows.h>
+#include <time.h>
+#include "log.h"
+#include "cJSON.h"
 #include "game_core.h"
 #include "game_render.h"
-#include "log.h"
-#include <time.h>
+#include "game_components.h"
+#include "game_to_string.h"
 
-// ---- GAME SYSTEM ----
-// ---- CONSTANTS ----
-const int WINDOW_HEIGHT = 1200;
-const int WINDOW_WIDTH = 1200;
-const int NES_PIXEL_WIDTH = 256;
-const int NES_PIXEL_HEIGHT = 240;
-const int TILE_PIXEL_SIZE_B = 16;
-const int TILE_PIXEL_SIZE_S = 8;
-const int TARGET_FPS = 60;
-const int TILES_X = 6;
-const int TILES_Y = 6;
-const int TILE_COUNT = 6 * 6;
-const int TILE_SIZE = 8;
-const int TILESET_SLOT_SIZE = 6;
-// KEIN USECASE DAFÜR:
-// const int TILE_SIZE_ARR[2] = { 8, 16 }; // mapped to tilesize enums.
-
-// temp
-int roomIDCounter = 0;
-
-// ---- LOAD/DESTROY SYSTEMS ----
+// ---- Load and Exit Game. ----
 GameState* loadGame()
 {
-    GameState* game = (GameState*)malloc(sizeof(GameState));
-    // set sets to NULL default
-    for(int i = 0; i < TILESET_SLOT_SIZE; i++)
-    {
-        game->sets[i] = NULL;
-    }
- 
-    log_info("LOAD: GAME");
+    log_info("Loading game ...");
     // setup SDL3.
     SDL_Init(SDL_INIT_VIDEO);
-    if(!SDL_CreateWindowAndRenderer(
-        "C-RPG",
-        WINDOW_WIDTH,
-        WINDOW_HEIGHT,
-        0,
-        &game->window,
-        &game->renderer
-    )) {
-        log_error("%s", SDL_GetError());
-        exitGame(game);
-    }
-    log_debug("LOAD: GAME: init SDL3");
     // init game state.
-    loadDisplay(game);
-    loadTileset(game, "./res/tilesheet.png", 8, 8, 6, 6, 0);
-    loadRoom(game, R_WORLD, 0, 0);
-    log_debug("LOAD: GAME: init GameState");
+    GameState* game = initGameState();
+    // load init env.
+    pushEnviroment(game, "./res/enviroments/WORLD/OPEN_WORLD/OPEN_WORLD.json");
+    log_info("Loading game completed!");
+    printGameState(game, LOG_DEBUG);
     return game;
 }
-
-void loadRoom(GameState* game, enum RoomType type, unsigned int roomID, unsigned int tilesetID)
-{
-    Room room;
-    room.ID = roomID;
-    room.type = type;
-    room.tileset = lookupTileset(game, tilesetID);
-    game->room=room;
-    printRoom(&room);
-}
-
 
 void exitGame(GameState* game)
 {
     log_info("TERMINATE_GAME");
     SDL_DestroyWindow(game->window);
+    SDL_DestroyRenderer(game->renderer);
     SDL_Quit();
-    destoryGameState(game);
+    destroyGameState(game);
     exit(0);
-}
-
-void destoryGameState(GameState* game) {
-    destoryRoom(&game->room);
-    destoryDisplay(&game->display);
-    // free SDL_Textures;
-    for(int i = 0; i < TILESET_SLOT_SIZE; i++) {
-        free(game->sets[i]);
-    }
-    free(game);
-}
-
-void destoryRoom(Room* room) {
-    // NOTHING TO DESTROY YET.
 }
 
 // ---- GAME SYSTEM ----
@@ -150,61 +91,10 @@ void loopGame(GameState* game)
     }
 }
 
-// ---- ENV SYSTEM ----
-void createEnviroment(GameState* game, char* pathJSON) {
-    
-}
-
-// ---- PRINT STRUCTS ----
-void printTileset(Tileset* tileset) {
-    log_debug("\nTILESET:\n{\n\tID=%u;\n\ttextPath=%s;\n\tcols=%d;\n\trows=%d\n}", 
-        tileset->ID,
-        tileset->textPath,
-        tileset->cols,
-        tileset->rows    
-    );
-}
-
-void printRoom(Room* room) {
-    log_debug("\nROOM:\n{\n\tID=%u;\n\ttype=%s;",
-        room->ID,
-        printRoomType(room->type)
-    );
-    printTileset(room->tileset);
-    log_debug("}");
-}
-
-char* printRoomType(enum RoomType type) {
-    switch(type) {
-        case R_MENU: return "MENU";
-        case R_WORLD: return "WORLD";
-        case R_COMBAT: return "COMBAT";
-        default: return "Unkowne";
-    }
-}
-
-void printDisplay(Display* disp) {
-    log_debug("\nDISPLAY:\n{\n\twidth=%d;\n\theight=%d;\n\tscaleX=%f;\n\tscaleY=%f;\n\tx=%f;\n\ty=%f\n}",
-        disp->width, 
-        disp->height, 
-        disp->scaleX, 
-        disp->scaleY,
-        disp->destRect.x,
-        disp->destRect.y
-    );
-}
-
-void printGameState(GameState* game) {
-    log_debug("\nGAME_STATE:\n{");
-    printDisplay(&game->display);
-    printRoom(&game->room);
-    log_debug("}");
-}
-
 // ---- SMOKE-TESTS ----
 void smokeTestIMGRender(GameState* game) {
     // test 
-    SDL_Texture* img = IMG_LoadTexture(game->renderer, "./res/Bang_Manga_Profile.png");
+    SDL_Texture* img = IMG_LoadTexture(game->renderer, "./res/tilesheets/Studio_Logo.png");
     SDL_FRect texture_rect;
     texture_rect.x = 0; //the x coordinate
     texture_rect.y = 0; //the y coordinate
@@ -216,5 +106,5 @@ void smokeTestIMGRender(GameState* game) {
         log_error("%s", SDL_GetError());
     }
     SDL_RenderPresent(game->renderer); //updates the renderer
-    Sleep(1000);
+    Sleep(2000);
 }

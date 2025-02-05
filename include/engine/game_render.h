@@ -2,42 +2,13 @@
 #define GAME_RENDER
 
 #include <SDL3/SDL.h>	
+#include "game_components.h"
+#include "game_util.h"
 
-enum textureTypes {
-	TEXT_STATIC,
-	TEXT_ANIMATION
-};
-
-typedef struct {
-	SDL_Texture* texture;
-	int width;
-	int height;
-	float scaleX;
-	float scaleY;
-	SDL_FRect destRect;
-} Display;
-
-struct Tilesheet {
-    unsigned int ID;
-	SDL_Texture* texture;
-	char textPath[50];
-	int cols;
-	int rows;
-	int tileSizeX;
-	int tileSizeY;
-};
-
-typedef struct {
-	unsigned int ID;
-	SDL_Texture* texture;
-	char textPath[50];
-	int cols;
-	int rows;
-	int tileSizeX;
-	int tileSizeY;
-} Tileset;
-
-struct Spritesheet {};
-struct UIElement {};
+// -------- FUNCTIONS --------
+void renderGame(GameState* game);
+void renderMatrixMap(GameState* game, Matrix* matrix, TextureAtlas* atlas);
+void renderTextureFromAtlas(GameState* game, TextureAtlas* atlas, int tileIndex, int x, int y);
+void renderEnviromentStack(GameState* game, struct EnviromentStackItem* item);
 
 #endif

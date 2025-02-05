@@ -10,9 +10,11 @@
 Einfach im Projekt Ordner <code>make</code> in der cmd ausf�hren.
 
 ### Libs die Verwendet werden:
-- https://github.com/DaveGamble/cJSON/tree/master
-- https://github.com/rxi/log.c
-- https://www.libsdl.org/
+- JSON: https://github.com/DaveGamble/cJSON/tree/master
+- LOGGER: https://github.com/rxi/log.c
+- SDL: https://www.libsdl.org/
+- Hashmap: https://github.com/tidwall/hashmap.c
+
 
 ### <code>Setup C ENV in Windows:</code>
 > 1. download zip mingw64: https://winlibs.com/

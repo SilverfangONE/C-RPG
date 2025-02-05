@@ -1,0 +1,11 @@
+{
+    "ID":"OPEN_WORLD",
+    "type": "ENV_WORLD",
+    "tilesheetPath": "./res/tilesheets/tilesheet.8.json",
+    "spritesheetPath": "./res/tilesheets/tilesheet.8.json",
+    "enableGlobalUI": false,
+    "subIDs": [
+        { "ID": "GRASS_FIELD", "path":"./res/enviroments/WORLD/OPEN_WORLD/GRASS_FIELD.sub.json"}
+    ],
+    "initSubID": "GRASS_FIELD"
+}
