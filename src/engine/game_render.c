@@ -5,6 +5,7 @@
 #include "game_render.h"
 #include "game_core.h"
 #include "game_util.h"
+#include "game_to_string.h"
 
 void renderGame(GameState* game) {
     // reset.
@@ -45,7 +46,10 @@ void renderGame(GameState* game) {
 void renderMatrixMap(GameState* game, Matrix* matrix, TextureAtlas* atlas) {
     for(int row = 0; row < matrix->rows; row++) {
         for(int col = 0; col < matrix->cols; col++) {
-            renderTextureFromAtlas(game, atlas, getMatrixCell(matrix, col, row), col, row);
+            if(getMatrixCell(matrix, col, row) == 0){
+                continue;
+            }
+            renderTextureFromAtlas(game, atlas, getMatrixCell(matrix, col, row) - 1, col*atlas->tileSizeX, row*atlas->tileSizeY);
         }
     }
 }
@@ -84,6 +88,7 @@ void renderEnviromentStack(GameState* game, struct EnviromentStackItem* item) {
     struct Enviroment* env = item->env;
     // TODO: implment Render local UI.
     if(env->toRender) {
+        log_trace("Render Sub maps!");
         // render background Map;
         renderMatrixMap(game, env->sub->map->backgroundMap, env->tilesheet);
         

@@ -112,7 +112,7 @@ TextureAtlas* loadTextureAtlasJSON(GameState* game, char* pathJSON) {
 
     tileSizeX = cJSON_GetObjectItemCaseSensitive(textureAtlasJSON, "tileSizeX");
     validateValueConstJSON(game, tileSizeX, "tileSizeX", pathJSON);
-    textureAtlas->tileSizeX = rows->valueint;
+    textureAtlas->tileSizeX = tileSizeX->valueint;
 
     tileSizeY = cJSON_GetObjectItemCaseSensitive(textureAtlasJSON, "tileSizeY");
     validateValueConstJSON(game, tileSizeY, "tileSizeY", pathJSON);
@@ -131,6 +131,7 @@ TextureAtlas* loadTextureAtlasJSON(GameState* game, char* pathJSON) {
         exitGame(game);
     }
 
+    textureAtlas->texture = texture;
     cJSON_Delete(textureAtlasJSON);
     printTextureAtlas(textureAtlas, LOG_DEBUG);
     return textureAtlas;
@@ -276,6 +277,7 @@ struct Enviroment* loadEnviroment(GameState* game, char* pathJSON) {
         log_warn("JSON File with path %s was not found!", pathJSON);
     }
     validateValueJSON(game, envJSON);
+    const cJSON *ID = NULL;
     const cJSON *enableGlobalUI = NULL;
     const cJSON *tilesheetPath = NULL;
     const cJSON *spritesheetPath = NULL;
@@ -284,6 +286,10 @@ struct Enviroment* loadEnviroment(GameState* game, char* pathJSON) {
     const cJSON *initSubID = NULL;
     const cJSON *type = NULL;
     
+    ID = cJSON_GetObjectItemCaseSensitive(envJSON, "ID");
+    validateValueConstJSON(game, ID, "ID", pathJSON);
+    validateTypeValueJSON(game, ID, cJSON_IsString);
+
     // ceck if gloable ui is not enabled.
     enableGlobalUI = cJSON_GetObjectItemCaseSensitive(envJSON, "enableGlobalUI");
     if(enableGlobalUI == NULL) {
@@ -339,6 +345,9 @@ struct Enviroment* loadEnviroment(GameState* game, char* pathJSON) {
         log_error("'initSubIDs'(%s) path isn't present in subIDs!", initSubID->valuestring);
         exitGame(game);
     }
+    // TODO
+    strncpy(env->ID, ID->valuestring, sizeof(env->ID) - 1);
+    env->ID[sizeof(env->ID) - 1] = '\0';
     env->sub = loadSub(game, node->path);
     env->subRoomIDMap = subRoomIDMap;
     env->tilesheet = loadTextureAtlasJSON(game, tilesheetPath->valuestring);
