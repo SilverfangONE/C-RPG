@@ -10,12 +10,12 @@
 char* constantsToString () {
     char* buffer = (char*)malloc(BUFFER_SIZE);
     snprintf(buffer, BUFFER_SIZE,
-    "\nGLOBAL_CONSTANTS:\n\tWINDOW_HEIGHT=%d\n\tWINDOW_WIDTH=%d\n\tNES_PIXEL_WIDTH=%d\n\tNES_PIXEL_HEIGHT=%d"
+    "\nGLOBAL_CONSTANTS:\n\tWINDOW_HEIGHT=%d\n\tWINDOW_WIDTH=%d\n\tSNES_PIXEL_WIDTH=%d\n\tSNES_PIXEL_HEIGHT=%d"
     "\n\tTARGET_FPS=%d\n\tNAME_OF_GAME=%s",
         WINDOW_HEIGHT,
         WINDOW_WIDTH,
-        NES_PIXEL_WIDTH,
-        NES_PIXEL_HEIGHT,
+        SNES_PIXEL_WIDTH,
+        SNES_PIXEL_HEIGHT,
         TARGET_FPS,
         NAME_OF_GAME
     );

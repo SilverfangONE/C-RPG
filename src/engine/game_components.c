@@ -12,8 +12,8 @@
 // ---- CONSTANTS ----
 const int WINDOW_HEIGHT = 1200;
 const int WINDOW_WIDTH = 1200;
-const int NES_PIXEL_WIDTH = 256;
-const int NES_PIXEL_HEIGHT = 240;
+const int SNES_PIXEL_WIDTH = 256;
+const int SNES_PIXEL_HEIGHT = 224;
 const int TARGET_FPS = 60;
 const char NAME_OF_GAME[40] = "C_RPG";
 
@@ -25,8 +25,8 @@ void loadDisplay(GameState* game)
         game->renderer, 
         SDL_PIXELFORMAT_RGBA8888, 
         SDL_TEXTUREACCESS_TARGET, 
-        NES_PIXEL_WIDTH, 
-        NES_PIXEL_HEIGHT
+        SNES_PIXEL_WIDTH, 
+        SNES_PIXEL_HEIGHT
     );
     // Setze die Textur auf "Nearest Neighbor" (pixelgenaue Skalierung)
     if(!SDL_SetTextureScaleMode(disp.texture, SDL_SCALEMODE_NEAREST)) {
@@ -34,11 +34,11 @@ void loadDisplay(GameState* game)
         exitGame(game);
     }
     // scaling.
-    disp.height = NES_PIXEL_HEIGHT;
-    disp.width = NES_PIXEL_WIDTH;
+    disp.height = SNES_PIXEL_HEIGHT;
+    disp.width = SNES_PIXEL_WIDTH;
     // quadrtic scale;
-    int scaleXInt = WINDOW_WIDTH / NES_PIXEL_WIDTH;
-    int scaleYInt = WINDOW_HEIGHT / NES_PIXEL_HEIGHT;
+    int scaleXInt = WINDOW_WIDTH / SNES_PIXEL_WIDTH;
+    int scaleYInt = WINDOW_HEIGHT / SNES_PIXEL_HEIGHT;
     if(scaleXInt < scaleYInt) {
         scaleYInt = scaleXInt;
     } else {

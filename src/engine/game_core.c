@@ -98,8 +98,8 @@ void smokeTestIMGRender(GameState* game) {
     SDL_FRect texture_rect;
     texture_rect.x = 0; //the x coordinate
     texture_rect.y = 0; //the y coordinate
-    texture_rect.w = NES_PIXEL_WIDTH; //the width of the texture
-    texture_rect.h = NES_PIXEL_HEIGHT; //the height of the texture
+    texture_rect.w = SNES_PIXEL_WIDTH; //the width of the texture
+    texture_rect.h = SNES_PIXEL_HEIGHT; //the height of the texture
     SDL_RenderClear(game->renderer); //clears the renderer
     SDL_RenderRect(game->renderer, &texture_rect);
     if(!SDL_RenderTexture(game->renderer, img, NULL, &texture_rect)) {

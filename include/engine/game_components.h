@@ -100,8 +100,8 @@ typedef struct GameState {
 // ---- GLOBAL CONSTANTS ---- 
 extern const int WINDOW_HEIGHT;
 extern const int WINDOW_WIDTH;
-extern const int NES_PIXEL_WIDTH;
-extern const int NES_PIXEL_HEIGHT;
+extern const int SNES_PIXEL_WIDTH;
+extern const int SNES_PIXEL_HEIGHT;
 extern const int TARGET_FPS;
 extern const char NAME_OF_GAME[40];
 

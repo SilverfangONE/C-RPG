@@ -1,0 +1,9 @@
+{
+    "ID": "BASE_TILE_SHEET",
+    "textureType": "TEXT_STATIC",
+    "cols": 10,
+    "rows": 10,
+    "tileSizeX": 16,
+    "tileSizeY": 16,
+    "texturePath": "./res/texture_atlas/tilesheets/tilesheet-base-1.0.0.png"
+}

@@ -88,7 +88,6 @@ void renderEnviromentStack(GameState* game, struct EnviromentStackItem* item) {
     struct Enviroment* env = item->env;
     // TODO: implment Render local UI.
     if(env->toRender) {
-        log_trace("Render Sub maps!");
         // render background Map;
         renderMatrixMap(game, env->sub->map->backgroundMap, env->tilesheet);
         
