@@ -87,19 +87,19 @@ TextureAtlas* loadTextureAtlasJSON(GameState* game, char* pathJSON) {
     ID = cJSON_GetObjectItemCaseSensitive(textureAtlasJSON, "ID");
     validateValueConstJSON(game, ID, "ID", pathJSON);
     validateTypeValueJSON(game, ID, cJSON_IsString);
-    strncpy(textureAtlas->ID, ID->string, sizeof(textureAtlas->ID) - 1);
+    strncpy(textureAtlas->ID, ID->valuestring, sizeof(textureAtlas->ID) - 1);
     textureAtlas->ID[sizeof(textureAtlas->ID) - 1] = '\0';
     
     texturePath = cJSON_GetObjectItemCaseSensitive(textureAtlasJSON, "texturePath");
     validateValueConstJSON(game, texturePath, "texturePath", pathJSON);
     validateTypeValueJSON(game, texturePath, cJSON_IsString);
-    log_debug("texturePathJSON: %s", texturePath->valuestring);
     strncpy(textureAtlas->textPath, texturePath->valuestring, sizeof(textureAtlas->textPath) - 1);
     textureAtlas->textPath[sizeof(textureAtlas->textPath) - 1] = '\0';
     
     textureType = cJSON_GetObjectItemCaseSensitive(textureAtlasJSON, "textureType");
     validateValueConstJSON(game, textureType, "textureType", pathJSON);
     validateTypeValueJSON(game, textureType, cJSON_IsString);
+    log_debug("TextureType: %s", textureType->valuestring);
     textureAtlas->textureType = toTextureType(game, textureType->valuestring);
 
     cols = cJSON_GetObjectItemCaseSensitive(textureAtlasJSON, "cols");
@@ -132,7 +132,7 @@ TextureAtlas* loadTextureAtlasJSON(GameState* game, char* pathJSON) {
     }
 
     cJSON_Delete(textureAtlasJSON);
-    printTextureAtlas(textureAtlas, LOG_TRACE);
+    printTextureAtlas(textureAtlas, LOG_DEBUG);
     return textureAtlas;
 }
 
@@ -350,6 +350,7 @@ struct Enviroment* loadEnviroment(GameState* game, char* pathJSON) {
     // TODO UI for Envoiment not implemented.
     env->uiElementCount = 0;
     cJSON_Delete(envJSON);
+    printEnviroment(env, LOG_DEBUG);
     return env;
 }
 
@@ -475,12 +476,15 @@ void setToRenderFlagFromLowerENV(struct Enviroment* top, struct Enviroment* next
 enum EnviromentType toEnviromentType(GameState* game, char* string) {
     #ifdef _WIN32
         if(_stricmp("ENV_COMBAT", string) == 0) {
+            log_trace("toEnviromentType: %s to ENV_COMBAT", string);
             return ENV_COMBAT;
         }
         if(_stricmp("ENV_WORLD", string) == 0) {
+            log_trace("toEnviromentType: %s to ENV_WORLD", string);
             return ENV_WORLD;
         }
         if(_stricmp("ENV_MENU", string) == 0) {
+            log_trace("toEnviromentType: %s to ENV_MENU", string);
             return ENV_MENU;
         }
     #elif defined(__linux__) || defined(__APPLE__)
@@ -501,9 +505,11 @@ enum EnviromentType toEnviromentType(GameState* game, char* string) {
 enum TextureType toTextureType(GameState* game, char* string) {
     #ifdef _WIN32
         if(_stricmp("TEXT_STATIC", string) == 0) {
+            log_trace("toTextureType: %s to TEXT_STATIC", string);     
             return TEXT_STATIC;
         }
         if(_stricmp("TEXT_ANIMATED", string) == 0) {
+            log_trace("toTextureType: %s to TEXT_ANIMATED", string);     
             return TEXT_ANIMATED;
         }
     #elif defined(__linux__) || defined(__APPLE__)
