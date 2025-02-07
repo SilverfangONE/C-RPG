@@ -18,6 +18,53 @@ const int TARGET_FPS = 60;
 const char NAME_OF_GAME[40] = "C_RPG";
 
 // ---- LOAD & DESTROY Game Components ----
+void loadPlayer(GameState* game, int x, int y, int width, int height, int speed, int textureAtlasIndex) {
+    Player* player = malloc(sizeof(Player));
+    player->textureAtlasIndex = textureAtlasIndex;
+    player->x = x;
+    player->y = y;
+    player->hitBoxHeight = height;
+    player->hitBoxWidth = width;
+    player->speed = speed;
+    game->player = player;
+}
+
+void destroyPlayer(Player* player) {
+    free(player);
+}
+
+void resetKeymapExceptPressed(Keymap* keymap) {
+    keymap->down = false;
+    keymap->up = false;
+    keymap->left = false;
+    keymap->right = false;
+    keymap->esc = false;
+    keymap->enter = false;
+}
+
+void resetKeymap(Keymap* keymap) {
+    keymap->down = false;
+    keymap->pressedDOWN = false;
+    keymap->up = false;
+    keymap->pressedUP = false;
+    keymap->left = false;
+    keymap->pressedLEFT = false;
+    keymap->right = false;
+    keymap->pressedRIGHT = false;
+    keymap->esc = false;
+    keymap->enter = false;
+}
+
+void loadKeymap(GameState* game) {
+    Keymap* keymap = malloc(sizeof(Keymap));
+    resetKeymap(keymap);
+    game->keymap = keymap;
+}
+
+void destroyKeymap(Keymap* keymap) {
+    free(keymap);
+}
+
 void loadDisplay(GameState* game) 
 {
     Display disp;
@@ -245,6 +292,7 @@ GameState* initGameState() {
     }
     // load game components.
     loadDisplay(game);
+    loadKeymap(game);
     initEnviromentStack(game);
     printGameState(game, LOG_TRACE);
     return game;
@@ -253,6 +301,8 @@ GameState* initGameState() {
 void destroyGameState(GameState* game) {
     destroyDisplay(&game->display);
     destroyEnviromentStack(&game->envStack);
+    destroyKeymap(game->keymap);
+    destroyPlayer(game->player);
     free(game);
 }
 

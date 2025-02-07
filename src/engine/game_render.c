@@ -81,6 +81,10 @@ void renderTextureFromAtlas(GameState* game, TextureAtlas* atlas, int tileIndex,
     }
 }
 
+void renderPlayer(GameState* game, TextureAtlas* atlas) {
+    renderTextureFromAtlas(game, atlas, game->player->textureAtlasIndex ,game->player->x, game->player->y);
+}
+
 void renderEnviromentStack(GameState* game, struct EnviromentStackItem* item) {
     if(item->next !=NULL) {
         return renderEnviromentStack(game, item->next);
@@ -97,9 +101,8 @@ void renderEnviromentStack(GameState* game, struct EnviromentStackItem* item) {
         // render sprites;
         renderMatrixMap(game, env->sub->map->spriteMap, env->spritesheet);
 
-        // TODO: implement player render;
         // render player;
-        // renderPlayer(game);
+        renderPlayer(game, env->spritesheet);
         // env->sub->map->backgroundMap; 
     }
     return;

@@ -5,6 +5,36 @@
 #include "cJSON.h"
 // -------- ALL STRUCTS FOR GLOBAL CONTEXT --------
 
+// -------- CAMERA --------
+typedef struct Camera {
+    int x;
+    int y;
+} Camera;
+
+// -------- KEY INPUT --------
+typedef struct Keymap {
+    bool up;
+    bool pressedUP;
+    bool down;
+    bool pressedDOWN;
+    bool left;
+    bool pressedLEFT;
+    bool right;
+    bool pressedRIGHT;
+    bool enter;
+    bool esc;
+} Keymap;
+
+// -------- Game Objs --------
+typedef struct Player {
+    int x;
+    int y;
+    int hitBoxWidth;
+    int hitBoxHeight;
+    int textureAtlasIndex;
+    int speed;
+} Player;
+
 // -------- Envoirment Context --------
 struct SubRoomIDNode {
     char* id;
@@ -86,12 +116,13 @@ typedef struct TextureAtlas {
 } TextureAtlas;
 
 struct UIElement {};
-
 /**
  * Global game context.
  */
 typedef struct GameState {
-	Display display;
+    Keymap* keymap;
+	Player* player;
+    Display display;
 	SDL_Window* window;
 	SDL_Renderer* renderer;
     EnviromentStack envStack;
@@ -108,6 +139,14 @@ extern const char NAME_OF_GAME[40];
 // ---- LOAD & DESTROY Game Components ----
 GameState* initGameState();
 void destroyGameState(GameState*);
+
+void loadPlayer(GameState* game, int x, int y, int width, int height, int speed, int textureAtlasIndex);
+void destroyPlayer(Player* player);
+
+void loadKeymap(GameState* game);
+void resetKeymap(Keymap* keymap); 
+void resetKeymapExceptPressed(Keymap* keymap);
+void destroyKeymap(Keymap* map);
 
 struct Enviroment* loadEnviroment(GameState* game, char* pathJSON);
 void destroyEnviroment(struct Enviroment* env);

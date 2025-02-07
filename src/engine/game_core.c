@@ -7,9 +7,24 @@
 #include "log.h"
 #include "cJSON.h"
 #include "game_core.h"
+#include "game_logic.h"
 #include "game_render.h"
 #include "game_components.h"
 #include "game_to_string.h"
+
+#ifdef _WIN32
+    #include <windows.h>
+#else 
+    #include <unistd.h>
+#endif
+
+void sleep_ms(int milliseconds) {
+    #ifdef _WIN32
+        Sleep(milliseconds);
+    #else
+        usleep(milliseconds * 1000);
+    #endif
+}
 
 // ---- Load and Exit Game. ----
 GameState* loadGame()
@@ -36,58 +51,24 @@ void exitGame(GameState* game)
     exit(0);
 }
 
-// ---- GAME SYSTEM ----
-void processEventsSDL(GameState* game) 
-{
-    SDL_Event event;
-    while (SDL_PollEvent(&event))
-    {
-        switch (event.type)
-        {
-            case SDL_EVENT_WINDOW_CLOSE_REQUESTED:
-            {
-                exitGame(game);
-            }
-            break;
-            case SDL_EVENT_KEY_DOWN:
-            {
-                switch (event.key.scancode)
-                {
-                case SDL_SCANCODE_UP:
-                    log_trace("KEY:UP");
-                    break;
-                case SDL_SCANCODE_DOWN:
-                    log_trace("KEY:DOWN");
-                    break;
-                case SDL_SCANCODE_LEFT:
-                    log_trace("KEY:LEFT");
-                    break;
-                case SDL_SCANCODE_RIGHT:
-                    log_trace("KEY:RIGHT");
-                }
-            }
-        }
-    }
-}
-
-void updateGame(GameState* game) 
-{
-    // TODO
-}
-
 void loopGame(GameState* game)
-{
-    smokeTestIMGRender(game);
+{   
+    // smokeTestIMGRender(game);
     // start.
-    log_info("GAME_LOOP:START");
-    int frameDelay = 1000000 / TARGET_FPS;
+    loadPlayer(game, 0, 0, 16, 16, 2, 0);
+    log_info("START: Game Loop ... ");
     int run = 1;
+    int FRAME_TIME = 1000 / TARGET_FPS;
     while (run) {
-        // double start = GetCurrentTime();
+        clock_t start_time = clock();
         processEventsSDL(game);
         updateGame(game);
         renderGame(game);
-        // Sleep(start + frameDelay - GetCurrentTime());
+        clock_t end_time = clock();
+        double elapsed_ms = (double)(end_time - start_time) * 1000 / CLOCKS_PER_SEC; 
+        if(elapsed_ms < FRAME_TIME) {
+            sleep_ms(FRAME_TIME - (int)elapsed_ms);
+        }   
     }
 }
 
