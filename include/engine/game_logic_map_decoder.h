@@ -1,0 +1,5 @@
+#ifndef GAME_LOGIC_MAP_DECODER
+#define GAME_LOGIC_MAP_DECODER
+
+
+#endif

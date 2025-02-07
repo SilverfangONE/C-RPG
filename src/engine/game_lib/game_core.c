@@ -68,7 +68,7 @@ void loopGame(GameState* game)
         double elapsed_ms = (double)(end_time - start_time) * 1000 / CLOCKS_PER_SEC; 
         if(elapsed_ms < FRAME_TIME) {
             sleep_ms(FRAME_TIME - (int)elapsed_ms);
-        }   
+        }
     }
 }
 

@@ -157,6 +157,7 @@ void destroySub(struct Sub*);
 struct Map* loadMap(GameState*, int cols, int rows, const cJSON* backgroundMap, const cJSON* middelgroudMap, const cJSON* spriteMap, const cJSON* logicMap);
 void destroyMap(struct Map*);
 
+Display* createDisplay(SDL_Renderer* renderer, int pixelWidth, int pixelHeight, int windowWith, int windowHeight);
 void loadDisplay(GameState*);
 void destroyDisplay(Display*);
 

@@ -65,14 +65,54 @@ void destroyKeymap(Keymap* keymap) {
     free(keymap);
 }
 
-void loadDisplay(GameState* game) 
+Display* createDisplay(SDL_Renderer* renderer, int pixelWidth, int pixelHeight, int windowWith, int windowHeight){
+    log_trace("Create Display!");
+    Display* disp = (Display*)malloc(sizeof(Display));
+    disp->texture = SDL_CreateTexture(
+        renderer, 
+        SDL_PIXELFORMAT_RGBA8888, 
+        SDL_TEXTUREACCESS_TARGET, 
+        pixelWidth, 
+        pixelHeight
+    );
+    // Setze die Textur auf "Nearest Neighbor" (pixelgenaue Skalierung)
+    if(!SDL_SetTextureScaleMode(disp->texture, SDL_SCALEMODE_NEAREST)) {
+        log_error("%s", SDL_GetError());
+    }
+    // scaling.
+    disp->height = pixelHeight;
+    disp->width = pixelWidth;
+    // quadrtic scale;
+    int scaleXInt = windowWith / pixelWidth;
+    int scaleYInt = windowHeight / pixelHeight;
+    if(scaleXInt < scaleYInt) {
+        scaleYInt = scaleXInt;
+    } else {
+        scaleXInt = scaleYInt;
+    }
+    
+    disp->scaleX = (float) scaleXInt;
+    disp->scaleY = (float) scaleYInt;
+    
+    // placement from display in window
+    SDL_FRect destR;
+    destR.w = (float) disp->width * disp->scaleX;
+    destR.h = (float) disp->height * disp->scaleY;
+    destR.x = (float) (WINDOW_WIDTH - destR.w) / 2;
+    destR.y = (float) (WINDOW_HEIGHT - destR.h) / 2;
+    disp->destRect = destR;
+    printDisplay(disp, LOG_TRACE);    
+    return disp;
+}
+
+void loadDisplay(GameState* game)
 {
     Display disp;
     disp.texture = SDL_CreateTexture(
-        game->renderer, 
-        SDL_PIXELFORMAT_RGBA8888, 
-        SDL_TEXTUREACCESS_TARGET, 
-        SNES_PIXEL_WIDTH, 
+        game->renderer,
+        SDL_PIXELFORMAT_RGBA8888,
+        SDL_TEXTUREACCESS_TARGET,
+        SNES_PIXEL_WIDTH,
         SNES_PIXEL_HEIGHT
     );
     // Setze die Textur auf "Nearest Neighbor" (pixelgenaue Skalierung)
@@ -91,10 +131,9 @@ void loadDisplay(GameState* game)
     } else {
         scaleXInt = scaleYInt;
     }
-    
+
     disp.scaleX = (float) scaleXInt;
     disp.scaleY = (float) scaleYInt;
-    
     // placement from display in window
     SDL_FRect destR;
     destR.w = (float) disp.width * disp.scaleX;
@@ -108,6 +147,7 @@ void loadDisplay(GameState* game)
 
 void destroyDisplay(Display* display) {
     SDL_DestroyTexture(display->texture);
+    free(display);
 }
 
 // TODO: später steht das alles in einer json datei. => dan nur pfad zur json datei und zur texture

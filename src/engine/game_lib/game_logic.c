@@ -2,6 +2,7 @@
 #include "game_core.h"
 #include "game_components.h"
 #include "log.h"
+#include "game_util.h"
 
 void updatePlayer(GameState* game) {    
     if(game->player == NULL) {
