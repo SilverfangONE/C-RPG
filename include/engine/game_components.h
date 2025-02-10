@@ -137,11 +137,11 @@ extern const int TARGET_FPS;
 extern const char NAME_OF_GAME[40];
 
 // ---- LOAD & DESTROY Game Components ----
-GameState* initGameState();
-void destroyGameState(GameState*);
+GameState* init_GameState();
+void destroy_GameState(GameState*);
 
-void loadPlayer(GameState* game, int x, int y, int width, int height, int speed, int textureAtlasIndex);
-void destroyPlayer(Player* player);
+void load_Player(GameState* game, int x, int y, int width, int height, int speed, int textureAtlasIndex);
+void destroy_Player(Player* player);
 
 void loadKeymap(GameState* game);
 void resetKeymap(Keymap* keymap); 

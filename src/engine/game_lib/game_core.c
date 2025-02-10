@@ -33,7 +33,7 @@ GameState* loadGame()
     // setup SDL3.
     SDL_Init(SDL_INIT_VIDEO);
     // init game state.
-    GameState* game = initGameState();
+    GameState* game = init_GameState();
     // load init env.
     pushEnviroment(game, "./res/enviroments/WORLD/OPEN_WORLD/OPEN_WORLD.json");
     log_info("Loading game completed!");
@@ -47,7 +47,7 @@ void exitGame(GameState* game)
     SDL_DestroyWindow(game->window);
     SDL_DestroyRenderer(game->renderer);
     SDL_Quit();
-    destroyGameState(game);
+    destroy_GameState(game);
     exit(0);
 }
 
@@ -55,7 +55,7 @@ void loopGame(GameState* game)
 {   
     // smokeTestIMGRender(game);
     // start.
-    loadPlayer(game, 0, 0, 16, 16, 2, 0);
+    load_Player(game, 0, 0, 16, 16, 2, 0);
     log_info("START: Game Loop ... ");
     int run = 1;
     int FRAME_TIME = 1000 / TARGET_FPS;

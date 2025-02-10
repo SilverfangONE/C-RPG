@@ -18,7 +18,7 @@ const int TARGET_FPS = 60;
 const char NAME_OF_GAME[40] = "C_RPG";
 
 // ---- LOAD & DESTROY Game Components ----
-void loadPlayer(GameState* game, int x, int y, int width, int height, int speed, int textureAtlasIndex) {
+void load_Player(GameState* game, int x, int y, int width, int height, int speed, int textureAtlasIndex) {
     Player* player = malloc(sizeof(Player));
     player->textureAtlasIndex = textureAtlasIndex;
     player->x = x;
@@ -29,7 +29,7 @@ void loadPlayer(GameState* game, int x, int y, int width, int height, int speed,
     game->player = player;
 }
 
-void destroyPlayer(Player* player) {
+void destroy_Player(Player* player) {
     free(player);
 }
 
@@ -316,7 +316,7 @@ void destroyMap(struct Map* map) {
     free(map);
 }
 
-GameState* initGameState() {
+GameState* init_GameState() {
     GameState* game = (GameState*)malloc(sizeof(GameState));
     // setup window and renderer context SDL3.
     if(!SDL_CreateWindowAndRenderer(
@@ -338,11 +338,11 @@ GameState* initGameState() {
     return game;
 }
 
-void destroyGameState(GameState* game) {
+void destroy_GameState(GameState* game) {
     destroyDisplay(&game->display);
     destroyEnviromentStack(&game->envStack);
     destroyKeymap(game->keymap);
-    destroyPlayer(game->player);
+    destroy_Player(game->player);
     free(game);
 }
 
