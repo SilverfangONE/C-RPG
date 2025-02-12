@@ -3,8 +3,8 @@
 
 #include "game_components.h"
 
-void updatePlayer(GameState* game);
-void updateGame(GameState* game);
-void processEventsSDL(GameState* game);
+void updatePlayer (GameState *game);
+void updateGame (GameState *game);
+void processEventsSDL (GameState *game);
 
 #endif
