@@ -11,7 +11,13 @@
  * Global Context for the RPG-ENGINE
  */
 typedef struct CONTEXT_RPGE {
+    /**
+     * @return if true is returned the program loop should stop, false it can go on.
+     */
     bool (*fupdatePtr)(struct CONTEXT_RPGE *eContext);
+     /**
+     * @return if true is returned the program loop should stop, false it can go on.
+     */
     bool (*frenderPtr)(struct CONTEXT_RPGE *eContext);
     void (*fdestroyPContextPtr)(void* pContext);
     void* pContext;
@@ -21,7 +27,7 @@ typedef struct CONTEXT_RPGE {
     SDL_Renderer* renderer;  
 } CONTEXT_RPGE;
 
-void terminate_RPGE(CONTEXT_RPGE* eContext);
+void terminate_RPGE(CONTEXT_RPGE* eContext, int);
 CONTEXT_RPGE* init_RPGE ( 
     bool (*fupdatePtr)(struct CONTEXT_RPGE *eContext),
     bool (*frenderPtr)(struct CONTEXT_RPGE *eContext),

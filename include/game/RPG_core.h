@@ -4,7 +4,13 @@
 #include "RPGE_E_context.h"
 #include <stdbool.h>
 
-bool update(struct CONTEXT_RPGE *eContext);
-bool render(struct CONTEXT_RPGE *eContext);
+/**
+ * @return if true is returned the program loop should stop, false it can go on.
+ */
+bool update_RPG(struct CONTEXT_RPGE *eContext);
+/**
+ * @return if true is returned the program loop should stop, false it can go on.
+ */
+bool render_RPG(struct CONTEXT_RPGE *eContext);
 
 #endif

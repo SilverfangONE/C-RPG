@@ -1,9 +1,11 @@
 #include <stdlib.h>
+#include <errno.h>
+#include <string.h> 
 #include "log.h"
-#include "RPGE_E_context.h"
 #include "RPGE_E_display.h"
 #include "RPGE_E_keymap.h"
 #include "RPGE_E_system_infos.h"
+#include "RPGE_E_context.h"
 
 /**
  * Creates CONTEXT_RPGE Struct with given params.
@@ -29,8 +31,16 @@ CONTEXT_RPGE* init_RPGE (
 ) {
     CONTEXT_RPGE* eContext = (CONTEXT_RPGE*)malloc(sizeof(CONTEXT_RPGE));
     if (eContext == NULL) {
+        // malloc sets errno.
         return NULL;
     }
+    
+    if (pContext == NULL) {
+        errno = EINVAL;
+        return NULL;    
+    }
+    eContext->pContext = pContext;
+    
     SDL_Init(SDL_INIT_VIDEO);
     if(!SDL_CreateWindowAndRenderer(
         pName,
@@ -43,24 +53,40 @@ CONTEXT_RPGE* init_RPGE (
         log_error("%s", SDL_GetError());
         return NULL;
     }
-    eContext->display = create_Display_RPGE(
+    
+    Display_RPGE* display = create_Display_RPGE(
         eContext->renderer,
         system,
         WINDOW_WIDTH,
         WINDOW_HEIGHT
     );  
-    if (eContext->display == NULL) {
+    if (display == NULL) {
         return NULL;
     }
-    eContext->keymap = create_Keymap_RPGE();
-    if (eContext->keymap == NULL) {
+    eContext->display = display;
+    
+    Keymap_RPGE* keymap = create_Keymap_RPGE();
+    if (keymap == NULL) {
         return NULL;
     }
-    if (eContext->frenderPtr == NULL || eContext->fdestroyPContextPtr == NULL || eContext->fupdatePtr == NULL) {
+    eContext->keymap = keymap;
+    
+    if (frenderPtr == NULL) {
+        errno = EINVAL;
         return NULL;
     }
     eContext->frenderPtr = frenderPtr;
+   
+    if (fupdatePtr == NULL) {
+        errno = EINVAL;
+        return NULL;
+    }
     eContext->fupdatePtr = fupdatePtr;
+    
+    if (fdestroyPContextPtr == NULL) {
+        errno = EINVAL;
+        return NULL;
+    }
     eContext->fdestroyPContextPtr = fdestroyPContextPtr;
     return eContext;
 }
@@ -69,8 +95,7 @@ CONTEXT_RPGE* init_RPGE (
  * Terminates RPG-ENGINE by freeing allocated memory for CONTEXT_RPGE form heap in right order.
  * @param eContext Context from RPG-ENGINE
  */
-void terminate_RPGE(CONTEXT_RPGE* eContext) {
-    log_debug("Exit RPG-ENGINE ...");
+void terminate_RPGE(CONTEXT_RPGE* eContext, int _Code) {
     eContext->fdestroyPContextPtr(eContext->pContext);
     destroy_Keymap_RPGE(eContext->keymap);
     destroy_Display_RPGE(eContext->display);
@@ -78,4 +103,15 @@ void terminate_RPGE(CONTEXT_RPGE* eContext) {
     SDL_DestroyRenderer(eContext->renderer);
     SDL_Quit();
     free(eContext);
+    switch (_Code) {
+        case EXIT_FAILURE: 
+            log_error("Terminated[EXIT_FAILURE] RPG-ENGINE:\n\tValue of errno: %d\n\t Error message: %s", errno, strerror(errno));
+            exit(_Code);
+        case EXIT_SUCCESS:
+            log_info("Terminated[EXIT_SUCCESS] RPG-ENGINE ...", _Code);
+            break;
+        default: 
+            log_warn("Terminated[Unknown] RPG-ENGINE ...", _Code);
+            break;    
+    }
 }

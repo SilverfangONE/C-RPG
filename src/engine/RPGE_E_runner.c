@@ -2,6 +2,8 @@
 #include <SDL3_image/SDL_image.h>
 #include <stdlib.h>
 #include <time.h>
+#include <stdbool.h>
+#include <errno.h> 
 #include "log.h"
 #include "RPGE_E_runner.h"
 #include "RPGE_E_context.h"
@@ -22,35 +24,35 @@ void sleep_ms(int milliseconds) {
 }
 
 /**
- * entry point of RPG-Engine
+ * Entry point of RPG-Engine.
+ * @return returns 0, but will never be reached because of terminate_RPGE()
  */
 int run_RPGE(
     const int TARGET_FPS,
     CONTEXT_RPGE *eContext
 ) {
-    log_debug("Start RPG-ENGINE ...");
-    // setup.
-    int run = 1;
+    log_info("Start RPG-ENGINE ...");
     int FRAME_TIME = 1000 / TARGET_FPS;
-    while (run) {
+    while (true) {
         clock_t start_time = clock();
-        processEventsSDL(eContext);
-        log_trace("next call update");
-        eContext->fupdatePtr(eContext);
-        log_trace("next call render");
-        eContext->frenderPtr(eContext);
+        // excute engine logics.
+        if (processEventsSDL(eContext)) break;
+        if (eContext->fupdatePtr(eContext)) break;
+        if (eContext->frenderPtr(eContext)) break;
         clock_t end_time = clock();
         double elapsed_ms = (double)(end_time - start_time) * 1000 / CLOCKS_PER_SEC; 
         if(elapsed_ms < FRAME_TIME) {
             sleep_ms(FRAME_TIME - (int)elapsed_ms);
         }
     }
-    terminate_RPGE(eContext);
     return 0;
 }
 
-void processEventsSDL(CONTEXT_RPGE* eContext) 
-{
+/**
+ * @return if true is returned the program loop should stop, false it can go on.
+ */
+bool processEventsSDL(CONTEXT_RPGE* eContext) 
+{ 
     reset_Keymap_RPGE(eContext->keymap);
     SDL_Event event;
     while (SDL_PollEvent(&event))
@@ -59,7 +61,8 @@ void processEventsSDL(CONTEXT_RPGE* eContext)
         {
             case SDL_EVENT_WINDOW_CLOSE_REQUESTED:
             {
-                terminate_RPGE(eContext);
+                terminate_RPGE(eContext, EXIT_SUCCESS);
+                return true;
             }
             break;
             case SDL_EVENT_KEY_UP: 
@@ -123,4 +126,5 @@ void processEventsSDL(CONTEXT_RPGE* eContext)
             }
         }
     }
+    return false;
 }

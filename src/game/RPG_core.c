@@ -4,12 +4,12 @@
 #include "RPGE_E_context.h"
 #include "RPG_context.h"
 
-bool update(CONTEXT_RPGE *eContext) {
+bool update_RPG(CONTEXT_RPGE *eContext) {
     CONTEXT_RPG* pContext = (CONTEXT_RPG*)eContext->pContext;
-    log_trace("update from rpg context.");
+    return false;
 }
 
-bool render(CONTEXT_RPGE *eContext ) {
+bool render_RPG(CONTEXT_RPGE *eContext) {
     CONTEXT_RPG* pContext = (CONTEXT_RPG*)eContext->pContext;
-    log_trace("render from rpg context.");
+    return false;
 }
