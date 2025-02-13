@@ -15,7 +15,7 @@ typedef struct CONTEXT_RPGE {
      * @return if true is returned the program loop should stop, false it can go on.
      */
     bool (*fupdatePtr)(struct CONTEXT_RPGE *eContext);
-     /**
+    /**
      * @return if true is returned the program loop should stop, false it can go on.
      */
     bool (*frenderPtr)(struct CONTEXT_RPGE *eContext);
