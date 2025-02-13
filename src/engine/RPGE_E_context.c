@@ -59,6 +59,9 @@ CONTEXT_RPGE* init_RPGE (
     if (eContext->frenderPtr == NULL || eContext->fdestroyPContextPtr == NULL || eContext->fupdatePtr == NULL) {
         return NULL;
     }
+    eContext->frenderPtr = frenderPtr;
+    eContext->fupdatePtr = fupdatePtr;
+    eContext->fdestroyPContextPtr = fdestroyPContextPtr;
     return eContext;
 }
 
