@@ -28,13 +28,16 @@ int run_RPGE(
     const int TARGET_FPS,
     CONTEXT_RPGE *eContext
 ) {
+    log_debug("Start RPG-ENGINE ...");
     // setup.
     int run = 1;
     int FRAME_TIME = 1000 / TARGET_FPS;
     while (run) {
         clock_t start_time = clock();
         processEventsSDL(eContext);
+        log_trace("next call update");
         eContext->fupdatePtr(eContext);
+        log_trace("next call render");
         eContext->frenderPtr(eContext);
         clock_t end_time = clock();
         double elapsed_ms = (double)(end_time - start_time) * 1000 / CLOCKS_PER_SEC; 

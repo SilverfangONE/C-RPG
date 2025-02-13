@@ -5,6 +5,18 @@
 #include "RPGE_E_keymap.h"
 #include "RPGE_E_system_infos.h"
 
+/**
+ * Creates CONTEXT_RPGE Struct with given params.
+ * @param fupdatePtr Pointer to update function
+ * @param frenderPtr Poitner to render function
+ * @param pContext Pointer to program context struct
+ * @param WINDOW_WIDTH Size of Windowwidth in pixel
+ * @param WINDOW_HEIGHT Size of Windowheight in pixel
+ * @param system Target system for resolution of display
+ * @param pName Program name
+ * 
+ * @return pointer to created CONTEXT_RPGE struct or NULL if some error occured while init.
+ */
 CONTEXT_RPGE* init_RPGE ( 
     bool (*fupdatePtr)(struct CONTEXT_RPGE *eContext),
     bool (*frenderPtr)(struct CONTEXT_RPGE *eContext),
@@ -44,10 +56,18 @@ CONTEXT_RPGE* init_RPGE (
     if (eContext->keymap == NULL) {
         return NULL;
     }
+    if (eContext->frenderPtr == NULL || eContext->fdestroyPContextPtr == NULL || eContext->fupdatePtr == NULL) {
+        return NULL;
+    }
     return eContext;
 }
 
+/**
+ * Terminates RPG-ENGINE by freeing allocated memory for CONTEXT_RPGE form heap in right order.
+ * @param eContext Context from RPG-ENGINE
+ */
 void terminate_RPGE(CONTEXT_RPGE* eContext) {
+    log_debug("Exit RPG-ENGINE ...");
     eContext->fdestroyPContextPtr(eContext->pContext);
     destroy_Keymap_RPGE(eContext->keymap);
     destroy_Display_RPGE(eContext->display);
