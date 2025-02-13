@@ -4,13 +4,7 @@
 #include <SDL3/SDL.h>
 #include <SDL3_image/SDL_image.h>
 #include "RPGE_U_vec.h"
-
-enum SYSTEM_RPGE {
-	SNES,
-	NES,
-	GAME_BOY,
-	GAME_BOY_ADVANCED
-};
+#include "RPGE_E_system_infos.h"
 
 typedef struct Display_RPGE {
 	SDL_Texture* texture;
@@ -23,7 +17,4 @@ typedef struct Display_RPGE {
 
 void destroy_Display_RPGE(Display_RPGE*);
 Display_RPGE* create_Display_RPGE(SDL_Renderer*, enum SYSTEM_RPGE, const int, const int);
-
-
-Vec2D getSystemResolution_RPGE(enum SYSTEM_RPGE res);
 #endif
