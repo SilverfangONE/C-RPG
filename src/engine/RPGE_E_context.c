@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include "log.h"
 #include "RPGE_E_context.h"
 #include "RPGE_E_display.h"
 #include "RPGE_E_keymap.h"
@@ -7,7 +8,7 @@
 CONTEXT_RPGE* init_RPGE ( 
     bool (*fupdatePtr)(struct CONTEXT_RPGE *eContext),
     bool (*frenderPtr)(struct CONTEXT_RPGE *eContext),
-    bool (*fdestroyPContextPtr)(void* pContext),
+    void (*fdestroyPContextPtr)(void* pContext),
     void* pContext,
     const int WINDOW_WIDTH,
     const int WINDOW_HEIGHT,

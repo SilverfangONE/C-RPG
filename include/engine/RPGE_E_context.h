@@ -7,10 +7,13 @@
 #include "RPGE_E_display.h"
 #include "RPGE_E_keymap.h"
 
+/**
+ * Global Context for the RPG-ENGINE
+ */
 typedef struct CONTEXT_RPGE {
     bool (*fupdatePtr)(struct CONTEXT_RPGE *eContext);
     bool (*frenderPtr)(struct CONTEXT_RPGE *eContext);
-    bool (*fdestroyPContextPtr)(void* pContext);
+    void (*fdestroyPContextPtr)(void* pContext);
     void* pContext;
     Keymap_RPGE* keymap;
     Display_RPGE* display;
@@ -22,7 +25,7 @@ void terminate_RPGE(CONTEXT_RPGE* eContext);
 CONTEXT_RPGE* init_RPGE ( 
     bool (*fupdatePtr)(struct CONTEXT_RPGE *eContext),
     bool (*frenderPtr)(struct CONTEXT_RPGE *eContext),
-    bool (*fdestroyPContextPtr)(void* pContext),
+    void (*fdestroyPContextPtr)(void* pContext),
     void* pContext,
     const int WINDOW_WIDTH,
     const int WINDOW_HEIGHT,

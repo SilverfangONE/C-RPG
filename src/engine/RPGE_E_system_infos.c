@@ -1,3 +1,4 @@
+#include "log.h"
 #include "RPGE_E_system_infos.h"
 #include "RPGE_U_vec.h"
 

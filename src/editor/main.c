@@ -1,4 +1,4 @@
-#include "editor.h"
+#include "editor_core.h"
 #include "log.h"
 #include <stdlib.h>
 

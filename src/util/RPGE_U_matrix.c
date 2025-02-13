@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include "log.h"
 #include "RPGE_U_matrix.h"
 
 Matrix* create_MATRIX_UTIL(size_t rows, size_t cols) {

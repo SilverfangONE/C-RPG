@@ -1,5 +1,8 @@
+#include <SDL3/SDL.h>
+#include <SDL3_image/SDL_image.h>
 #include <stdlib.h>
 #include <time.h>
+#include "log.h"
 #include "RPGE_E_runner.h"
 #include "RPGE_E_context.h"
 #include "RPGE_E_keymap.h"
@@ -39,6 +42,7 @@ int run_RPGE(
             sleep_ms(FRAME_TIME - (int)elapsed_ms);
         }
     }
+    terminate_RPGE(eContext);
     return 0;
 }
 
@@ -52,7 +56,7 @@ void processEventsSDL(CONTEXT_RPGE* eContext)
         {
             case SDL_EVENT_WINDOW_CLOSE_REQUESTED:
             {
-                terminateEngine(eContext);
+                terminate_RPGE(eContext);
             }
             break;
             case SDL_EVENT_KEY_UP: 

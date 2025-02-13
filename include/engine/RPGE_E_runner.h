@@ -4,5 +4,6 @@
 #include "RPGE_E_context.h"
 
 int run_RPGE(const int TARGET_FPS, CONTEXT_RPGE *eContext);
+void processEventsSDL(CONTEXT_RPGE* eContext);
 
 #endif
