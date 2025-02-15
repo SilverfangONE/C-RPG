@@ -58,9 +58,9 @@ int getIndex_Background_MENU_TILE_UI_RPGE(enum MENU_TILE_TYPE tile) {
     switch (tile)
     {
         case UP_LEFT_CORN:
-            return;
+            return 0;
         case UP_RIGTH_CORN:
-            return;
+            return 2;
         case DOWN_LEFT_CORN:
             return;
         case DOWN_RIGTH_CORN:
