@@ -4,6 +4,17 @@
 #include "RPGE_U_vec.h"
 #include "RPGE_G_assetsheet.h"
 
+enum MENU_TILE_TYPE {
+    UP_LEFT_CORN,
+    UP_RIGTH_CORN,
+    DOWN_LEFT_CORN,
+    DOWN_RIGTH_CORN,
+    NORTH_MID,
+    EAST_MID,
+    WEST_MID,
+    SOUTH_MID
+};
+
 typedef struct BACKGROUND_UI_RPGE {
     Assetsheet_RPGE* asset;
     Vec2D vTableSize;

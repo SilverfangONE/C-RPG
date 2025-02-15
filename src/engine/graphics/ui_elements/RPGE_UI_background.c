@@ -53,3 +53,29 @@ void destroy_Background_UI_RPGE(BACKGROUND_UI_RPGE* background) {
     free(background->m_indices);
     free(background);
 }
+
+int getIndex_Background_MENU_TILE_UI_RPGE(enum MENU_TILE_TYPE tile) {
+    switch (tile)
+    {
+        case UP_LEFT_CORN:
+            return;
+        case UP_RIGTH_CORN:
+            return;
+        case DOWN_LEFT_CORN:
+            return;
+        case DOWN_RIGTH_CORN:
+            return;
+        case NORTH_MID:
+            return;
+        case EAST_MID:
+            return;
+        case WEST_MID:
+            return;
+        case SOUTH_MID:
+            return;
+        default:
+            return -1;
+    default:
+        break;
+    }
+}
