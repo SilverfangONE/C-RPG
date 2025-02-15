@@ -1,3 +1,5 @@
+#include <SDL3/SDL.h>
+#include <SDL3_image/SDL_image.h>
 #include <errno.h>
 #include <string.h>
 #include "log.h"
@@ -52,6 +54,35 @@ Assetsheet_RPGE* create_Assetsheet_G_RPGE(SDL_Renderer* renderer, Vec2D vTableSi
     }
     asset->vPatchSize = vPatchSize;
     return asset;
+}
+
+int renderTile_Assetsheet_G_RPGE(SDL_Renderer* renderer, Assetsheet_RPGE* asset, int tileIndex, Vec2D vCoordinates) {
+    const int TILE_SIZE_X = asset->vPatchSize.x;
+    const int TILE_SIZE_Y = asset->vPatchSize.y;
+    
+    // calc index.
+    // int tileY = tileIndex / game->room.tileset->cols; 
+    // int tileX = tileIndex % game->room.tileset->cols;
+    
+    // render stuff.
+    SDL_FRect srcR;
+    srcR.w = TILE_SIZE_X;
+    srcR.h = TILE_SIZE_Y;
+    srcR.x = (tileIndex % asset->vTableSize.x) * TILE_SIZE_X;
+    srcR.y = (tileIndex / asset->vTableSize.y) * TILE_SIZE_Y;
+
+    SDL_FRect destR;
+    destR.w = TILE_SIZE_X;
+    destR.h = TILE_SIZE_Y;
+    destR.x = vCoordinates.x;
+    destR.y = vCoordinates.y;
+
+    if(!SDL_RenderTexture(renderer, asset->imgText, &srcR, &destR)) {
+        log_error("%s", SDL_GetError());
+        errno = ENOMSG;
+        return 1;
+    }
+    return 0;
 }
 
 void destory_Assetsheet_G_RPGE(Assetsheet_RPGE* asset) {

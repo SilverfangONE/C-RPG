@@ -21,4 +21,5 @@ typedef struct Assetsheet_RPGE {
 
 Assetsheet_RPGE* create_Assetsheet_G_RPGE(SDL_Renderer* render, Vec2D vTableSize, Vec2D vPatchSize, char* ID, char* pathIMG);
 void destory_Assetsheet_G_RPGE(Assetsheet_RPGE* assetsheet);
+int renderTile_Assetsheet_G_RPGE(SDL_Renderer* renderer, Assetsheet_RPGE* asset, int tileIndex, Vec2D vCoordinates);
 #endif
