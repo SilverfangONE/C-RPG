@@ -1,10 +1,12 @@
 #include <stdio.h>
+#include <errno.h>
 #include <stdlib.h>
 #include <string.h>
 #include <SDL3/SDL.h>
 #include <SDL3_image/SDL_image.h>
 #include "RPGE_U_vec.h"
 #include "RPGE_G_assetsheet.h"
+#include "RPGE_UI_text.h"
 
 int getAlphabetIndex_UI_RPGE(char letter) {
     switch (letter) {
@@ -141,6 +143,11 @@ int render_Text_UI_RPGE(SDL_Renderer* renderer, char* text, Vec2D vCoordinates, 
         }
         // render literal.
         int index; 
+        if (text[literal] == '\n') {
+            xTable = 0;
+            yTable++;
+            continue;
+        }
         if (text[literal] == '\\') {
             char sp[6];
             strncpy(sp, text + literal, 6);
@@ -150,6 +157,10 @@ int render_Text_UI_RPGE(SDL_Renderer* renderer, char* text, Vec2D vCoordinates, 
                 literal =+ 6;
             } else {
                 index = getAlphabetIndex_UI_RPGE(text[literal]);
+                if (index < 0 ) {
+                    errno = EINVAL;
+                    return 1;
+                }
             }
         }
 

@@ -60,10 +60,6 @@ int renderTile_Assetsheet_G_RPGE(SDL_Renderer* renderer, Assetsheet_RPGE* asset,
     const int TILE_SIZE_X = asset->vPatchSize.x;
     const int TILE_SIZE_Y = asset->vPatchSize.y;
     
-    // calc index.
-    // int tileY = tileIndex / game->room.tileset->cols; 
-    // int tileX = tileIndex % game->room.tileset->cols;
-    
     // render stuff.
     SDL_FRect srcR;
     srcR.w = TILE_SIZE_X;

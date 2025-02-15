@@ -1,5 +1,7 @@
 #include <stdlib.h>
 #include "log.h"
+#include "RPGE_U_vec.h"
+#include "RPGE_U_array.h"
 #include "RPGE_U_matrix.h"
 
 Matrix* create_MATRIX_UTIL(size_t rows, size_t cols) {
@@ -8,8 +10,7 @@ Matrix* create_MATRIX_UTIL(size_t rows, size_t cols) {
         log_error("malloc failed");
         return NULL;
     }
-    matrix->cols = cols;
-    matrix->rows = rows;
+    matrix->vSize =  (Vec2D) { rows, cols};
 
     // set all entrys to null
     for(int i = 0; i < cols*rows; i++) {
@@ -23,9 +24,10 @@ void destory_MATRIX_UTIL(Matrix* matrix) {
 }
 
 int getCell_MATRIX_UTIL(Matrix* matrix, int col, int row) {
-    return matrix->data[row * matrix->cols + col];
+    return getCell_ARRAY2D_UTIL(matrix->data, matrix->vSize, col, row);
 }
 
-void setCell_MATRIX_UTIL(Matrix* matrix, unsigned int x, unsigned int y, int value) {
-    matrix->data[y * matrix->cols + x] = value;
+int setCell_MATRIX_UTIL(Matrix* matrix, unsigned int x, unsigned int y, int value) {
+    return setCell_ARRAY2D_UTIL(matrix->data, matrix->vSize, x, y, value);
 }
+
