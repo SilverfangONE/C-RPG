@@ -19,17 +19,17 @@ enum MenuassetComponents_UI_RPGE {
 int getIndex_Menuasset_UI_RPGE(enum MenuassetComponents_UI_RPGE);
 int render_Text_UI_RPGE(char* text, Vec2D coordinates, Vec2D vTableSize);
 
-typedef struct BACKGROUND_UI_RPGE {
+typedef struct Background_UI_RPGE {
     Vec2D vTableSize;
     int* m_indices;
-} BACKGROUND_UI_RPGE;
+} Background_UI_RPGE;
 
-int render_Background_UI_RPGE(SDL_Renderer* renderer, BACKGROUND_UI_RPGE* background);
+int render_Background_UI_RPGE(SDL_Renderer* renderer, Background_UI_RPGE* background);
 
 typedef struct BASE_UI_RPGE {
     char* label;
     Vec2D vLabel;
-    BACKGROUND_UI_RPGE* background;    
+    Background_UI_RPGE* background;    
 } BASE_UI_RPGE, Label_UI_RPGE;
 
 BASE_UI_RPGE* build_BASE_UI_RPGE(char* label);

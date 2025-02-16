@@ -5,30 +5,36 @@
 #include "RPGE_G_assetsheet.h"
 
 enum MENU_TILE_TYPE {
-    UP_LEFT_CORN,
-    UP_RIGTH_CORN,
-    DOWN_LEFT_CORN,
-    DOWN_RIGTH_CORN,
-    NORTH_MID,
-    EAST_MID,
-    WEST_MID,
-    SOUTH_MID
+    MENU_UP_LEFT_CORN,
+    MENU_UP_RIGTH_CORN,
+    MENU_DOWN_LEFT_CORN,
+    MENU_DOWN_RIGTH_CORN,
+    MENU_NORTH_BOARDER_MID,
+    MENU_EAST_BOARDER_MID,
+    MENU_WEST_BOARDER_MID,
+    MENU_SOUTH_BOARRDER_MID,
+    MENU_MID
 };
+int lookup_BackgroundTiles_UI_RPGE(enum MENU_TILE_TYPE tile);
+int set_flookupBackgroundTiles_UI_RPGE(int (*newflookupBackgroundTiles_UI_RPGE)(enum MENU_TILE_TYPE));
+void set_flookupBackgroundTiles_DEFAULT_UI_RPGE();
 
-typedef struct BACKGROUND_UI_RPGE {
+typedef struct Background_UI_RPGE {
     Assetsheet_RPGE* asset;
     Vec2D vTableSize;
     Vec2D vCoordinates;
     int* m_indices;
-} BACKGROUND_UI_RPGE;
+} Background_UI_RPGE;
 
 /**
  * @return 0 if no error occurded, 1 if occurded.
  */
-int render_Background_UI_RPGE(SDL_Renderer* renderer, BACKGROUND_UI_RPGE* background);
+int render_Background_UI_RPGE(SDL_Renderer* renderer, Background_UI_RPGE* background);
 
 /**
  * dont call destory asset!
  */
-void destroy_Background_UI_RPGE(BACKGROUND_UI_RPGE* background);
+void destroy_Background_UI_RPGE(Background_UI_RPGE* background);
+
+Background_UI_RPGE* build_Background_UI_RPGE(Assetsheet_RPGE* asset, Vec2D vCoordinates, Vec2D vTableSize );
 #endif
