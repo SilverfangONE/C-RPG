@@ -69,7 +69,7 @@ Matrix* createFromJSON_MATRIX_UTIL(size_t rows, size_t cols, const cJSON* arrayJ
     return matrix;
 }
 
-Vec2D jsonToVec2D_UTIL_RPGE(cJSON* json) {
+Vec2D jsonToVec2D_UTIL_RPGE(const cJSON* json) {
     if (json == NULL) {
         log_warn("jsonToVec2D_UTIL_RPGE: json is NULL");
         errno = EINVAL;
