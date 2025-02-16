@@ -79,7 +79,8 @@ int renderTile_Assetsheet_G_RPGE(SDL_Renderer *renderer, Assetsheet_RPGE *asset,
     srcR.w = TILE_SIZE_X;
     srcR.h = TILE_SIZE_Y;
     srcR.x = (tileIndex % asset->vTableSize.x) * TILE_SIZE_X;
-    srcR.y = (tileIndex / asset->vTableSize.y) * TILE_SIZE_Y;
+    srcR.y = (tileIndex / asset->vTableSize.x) * TILE_SIZE_Y;
+
 
     SDL_FRect destR;
     destR.w = TILE_SIZE_X;
