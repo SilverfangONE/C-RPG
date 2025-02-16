@@ -7,8 +7,10 @@
 
 typedef int (*JsonTypeCheckFunc)(const cJSON *const);
 Matrix* createFromJSON_MATRIX_UTIL(size_t rows, size_t cols, const cJSON* arrayJSON);
-bool isValueValidJSON_UTIL(cJSON* value);
 bool isValueConstValidJSON_UTIL(const cJSON* value, char* jsonFieldName, char* pathJSON);
-bool isValueTypeValidJSON_UTIL(const cJSON* value, JsonTypeCheckFunc checkFunc);
-
+bool isValueConstInvalidJSON_UTIL(const cJSON* value, char* jsonFieldName, char* pathJSON);
+bool isValueTypeValidJSON_UTIL(const cJSON* value, JsonTypeCheckFunc checkType);
+bool isValueTypeInvalidJSON_UTIL(const cJSON* value, JsonTypeCheckFunc checkFunc);
+bool isValueInvalidJSON_UTIL(cJSON* value);
+bool isValueValidJSON_UTIL(cJSON* value);
 #endif

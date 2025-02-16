@@ -5,6 +5,7 @@
 #include "RPGE_E_display.h"
 #include "RPGE_E_keymap.h"
 #include "RPGE_E_system_infos.h"
+#include "RPGE_G_assetsheet.h"
 #include "RPGE_E_context.h"
 
 /**
@@ -88,6 +89,9 @@ CONTEXT_RPGE* init_RPGE (
         return NULL;
     }
     eContext->fdestroyPContextPtr = fdestroyPContextPtr;
+    // load default ressouces
+    eContext->defaultFont = create_Assetsheet_G_RPGE(eContext->renderer, )
+
     return eContext;
 }
 

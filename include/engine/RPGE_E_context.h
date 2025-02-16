@@ -5,6 +5,7 @@
 #include <SDL3_image/SDL_image.h>
 #include <stdbool.h>
 #include "RPGE_E_display.h"
+#include "RPGE_G_assetsheet.h"
 #include "RPGE_E_keymap.h"
 
 /**
@@ -25,6 +26,9 @@ typedef struct CONTEXT_RPGE {
     Display_RPGE* display;
     SDL_Window* window;
     SDL_Renderer* renderer;  
+    // resouces.
+    Assetsheet_RPGE* defaultFont;
+    Assetsheet_RPGE* menuAsset;
 } CONTEXT_RPGE;
 
 void terminate_RPGE(CONTEXT_RPGE* eContext, int);

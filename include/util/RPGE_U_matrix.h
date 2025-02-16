@@ -2,6 +2,7 @@
 #define RPGE_U_MATRIX
 
 #include <stdlib.h>
+#include "RPGE_U_vec.h"
 
 typedef struct Matrix {
     Vec2D vSize;
