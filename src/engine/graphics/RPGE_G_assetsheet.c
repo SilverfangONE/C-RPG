@@ -64,6 +64,8 @@ Assetsheet_RPGE *create_Assetsheet_G_RPGE(SDL_Renderer *renderer, Vec2D vTableSi
     }
     asset->vPatchSize = vPatchSize;
     log_trace("[Created Assetsheet_RPG from %s]", pathIMG);
+    log_trace("[vTableSize: x=%d y=%d]", vTableSize.x, vTableSize.y);
+    log_trace("[vPatchSize: x=%d y=%d]", vPatchSize.x, vPatchSize.y);
     return asset;
 }
 

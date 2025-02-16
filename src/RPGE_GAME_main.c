@@ -18,7 +18,7 @@ void onError()
 
 int main()
 {
-    log_set_level(LOG_DEBUG);
+    log_set_level(LOG_TRACE);
     // setup.
     CONTEXT_RPG *pContext = init_RPG("C_RPG");
     if (pContext == NULL)
@@ -34,6 +34,10 @@ int main()
         onError();
         return EXIT_FAILURE;
     }
+    // setup.
+    Label_UI_RPGE* label = build_Label_UI_RPGE(eContext->defaultFont, eContext->menuAsset, "Hello World", (Vec2D) { 10, 10});
+    pContext->label = label;
+    
     // start.
     run_RPGE(TARGET_FPS, eContext);
     return 0;

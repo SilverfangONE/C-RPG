@@ -1,13 +1,13 @@
-#include "RPGE_E_runner.h"
-#include "RPGE_E_context.h"
-#include "RPGE_E_keymap.h"
-#include "log.h"
 #include <SDL3/SDL.h>
 #include <SDL3_image/SDL_image.h>
 #include <errno.h>
 #include <stdbool.h>
-#include <stdlib.h>
 #include <time.h>
+#include <stdlib.h>
+#include "log.h"
+#include "RPGE_E_context.h"
+#include "RPGE_E_keymap.h"
+#include "RPGE_E_runner.h"
 
 #ifdef _WIN32
 #include <windows.h>
@@ -38,9 +38,9 @@ int run_RPGE(const int TARGET_FPS, CONTEXT_RPGE *eContext)
         // excute engine logics.
         if (processEventsSDL(eContext))
             break;
-        if (eContext->fupdatePtr(eContext))
+        if (_update_RPGE(eContext)) 
             break;
-        if (eContext->frenderPtr(eContext))
+        if (_render_RPGE(eContext))
             break;
         clock_t end_time = clock();
         double elapsed_ms = (double)(end_time - start_time) * 1000 / CLOCKS_PER_SEC;
@@ -123,9 +123,39 @@ bool processEventsSDL(CONTEXT_RPGE *eContext)
             case SDL_SCANCODE_ESCAPE:
                 log_trace("KEY:ESCAPE");
                 eContext->keymap->esc = true;
+                terminate_RPGE(eContext, EXIT_SUCCESS);
+                return true;
             }
         }
         }
     }
     return false;
+}
+
+int _update_RPGE(CONTEXT_RPGE* eContext) {
+    return eContext->fupdatePtr(eContext);
+}
+
+int _render_RPGE(CONTEXT_RPGE* eContext) {
+    // reset.
+    if(!SDL_RenderClear(eContext->renderer)) {
+        log_error("%s", SDL_GetError());
+    }
+
+    // render on display. 
+    SDL_SetRenderTarget(eContext->renderer, eContext->display->texture);
+    
+    if(eContext->frenderPtr(eContext)) {
+        return 1;
+    }
+
+    // render on window.
+    SDL_SetRenderTarget(eContext->renderer, NULL);
+    if(!SDL_RenderTexture(eContext->renderer, eContext->display->texture, NULL, &eContext->display->destRect)) {
+        log_error("%s", SDL_GetError());
+    }
+    
+    // switch buffer.
+    SDL_RenderPresent(eContext->renderer); //updates the renderer
+    return 0;
 }

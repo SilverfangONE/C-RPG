@@ -6,5 +6,7 @@
 
 int run_RPGE(const int TARGET_FPS, CONTEXT_RPGE *eContext);
 bool processEventsSDL(CONTEXT_RPGE* eContext);
+int _update_RPGE (CONTEXT_RPGE* eContext);
+int _render_RPGE (CONTEXT_RPGE* eContext);
 
 #endif
