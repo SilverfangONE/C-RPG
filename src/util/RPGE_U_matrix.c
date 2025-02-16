@@ -4,7 +4,7 @@
 #include "RPGE_U_array.h"
 #include "RPGE_U_matrix.h"
 
-Matrix* create_MATRIX_UTIL(size_t rows, size_t cols) {
+Matrix* create_MATRIX_UTIL_RPGE(size_t rows, size_t cols) {
     Matrix* matrix = malloc(sizeof(Matrix) + rows * cols * sizeof(int));
     if(!matrix) {
         log_error("malloc failed");

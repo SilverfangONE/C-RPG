@@ -68,3 +68,29 @@ Matrix* createFromJSON_MATRIX_UTIL(size_t rows, size_t cols, const cJSON* arrayJ
     }
     return matrix;
 }
+
+Vec2D jsonToVec2D_UTIL_RPGE(cJSON* json) {
+    if (json == NULL) {
+        log_warn("jsonToVec2D_UTIL_RPGE: json is NULL");
+        errno = EINVAL;
+        return (Vec2D) {-1, -1};
+    }
+
+    Vec2D vec;
+    
+    const cJSON *yJ = NULL;
+    const cJSON *xJ = NULL;
+
+    yJ = cJSON_GetObjectItemCaseSensitive(json, "y");
+    if(isValueInvalidJSON_UTIL(yJ)) return (Vec2D) {-1, -1};
+    if(isValueTypeInvalidJSON_UTIL(yJ, cJSON_IsNumber)) return (Vec2D) {-1, -1};
+    vec.y = yJ->valueint;
+   
+
+    xJ = cJSON_GetObjectItemCaseSensitive(json, "x");
+    if(isValueInvalidJSON_UTIL(xJ)) return (Vec2D) {-1, -1};
+    if(isValueTypeInvalidJSON_UTIL(xJ, cJSON_IsNumber)) return (Vec2D) {-1, -1};
+    vec.x = xJ->valueint;
+
+    return vec;
+}

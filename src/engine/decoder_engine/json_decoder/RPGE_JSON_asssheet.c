@@ -4,7 +4,7 @@
 #include "RPGE_G_assetsheet.h"
 #include "RPGE_DEC_assetsheet.h"
 
-Assetsheet_RPGE* load_Assetsheet_JSON(const char* pathJSON) {
+Assetsheet_RPGE* load_Assetsheet_JSON_RPGE(const char* pathJSON) {
     struct Assetsheet_RPGE* assetsheet = malloc(sizeof(Assetsheet_RPGE));
     // load TextureAtlas from json.
     char* jsonString = readFile_UTIL(pathJSON);
@@ -12,51 +12,37 @@ Assetsheet_RPGE* load_Assetsheet_JSON(const char* pathJSON) {
     cJSON *assetsheet_JSON = cJSON_Parse(jsonString);
     free(jsonString);
 
-    if(!isValueInvalidJSON_UTIL(assetsheet_JSON)) return NULL;
+    if(isValueInvalidJSON_UTIL(assetsheet_JSON)) return NULL;
     
     const cJSON *ID = NULL;
-    const cJSON *cols = NULL;
-    const cJSON *rows = NULL;
-    const cJSON *tileSizeX = NULL;
-    const cJSON *tileSizeY= NULL;
-    const cJSON *texturePath = NULL;
-    const cJSON *textureType = NULL;
+    const cJSON *pathIMG = NULL;
+    const cJSON *vTableSize = NULL;
+    const cJSON *vPatchSize = NULL;
     
     // ID:
     ID = cJSON_GetObjectItemCaseSensitive(assetsheet_JSON, "ID");
-    if(!isValueInvalidJSON_UTIL(game, ID, "ID", pathJSON);
-    isValueValidJSON_UTIL(game, ID, cJSON_IsString);
-    strncpy(textureAtlas->ID, ID->valuestring, sizeof(textureAtlas->ID) - 1);
-    textureAtlas->ID[sizeof(textureAtlas->ID) - 1] = '\0';
+    if(isValueInvalidJSON_UTIL(ID)) return NULL;
+    if(isValueTypeInvalidJSON_UTIL(ID, cJSON_IsString)) return NULL;
+    strncpy(assetsheet_JSON->ID, ID->valuestring, sizeof(assetsheet_JSON->ID) - 1);
+    assetsheet->ID[sizeof(assetsheet_JSON->ID) - 1] = '\0';
     
-    texturePath = cJSON_GetObjectItemCaseSensitive(textureAtlasJSON, "texturePath");
-    validateValueConstJSON(game, texturePath, "texturePath", pathJSON);
-    validateTypeValueJSON(game, texturePath, cJSON_IsString);
-    strncpy(textureAtlas->textPath, texturePath->valuestring, sizeof(textureAtlas->textPath) - 1);
-    textureAtlas->textPath[sizeof(textureAtlas->textPath) - 1] = '\0';
+    // pathIMG:
+    pathIMG = cJSON_GetObjectItemCaseSensitive(assetsheet_JSON, "pathIMG");
+    if(isValueInvalidJSON_UTIL(pathIMG)) return NULL;
+    if(isValueTypeInvalidJSON_UTIL(pathIMG, cJSON_IsString)) return NULL;
+    strncpy(assetsheet_JSON->pathIMG, pathIMG->valuestring, sizeof(assetsheet_JSON->pathIMG) - 1);
+    assetsheet->pathIMG[sizeof(assetsheet_JSON->pathIMG) - 1] = '\0';
     
-    textureType = cJSON_GetObjectItemCaseSensitive(textureAtlasJSON, "textureType");
-    validateValueConstJSON(game, textureType, "textureType", pathJSON);
-    validateTypeValueJSON(game, textureType, cJSON_IsString);
-    log_debug("TextureType: %s", textureType->valuestring);
-    textureAtlas->textureType = toTextureType(game, textureType->valuestring);
+    // vTableSize:
+    Vec2D vTableSize = (cJSON_GetObjectItemCaseSensitive(assetsheet_JSON, "vTableSize"));
 
-    cols = cJSON_GetObjectItemCaseSensitive(textureAtlasJSON, "cols");
-    validateValueConstJSON(game, cols, "cols", pathJSON);
-    textureAtlas->cols = cols->valueint;
-
-    rows = cJSON_GetObjectItemCaseSensitive(textureAtlasJSON, "rows");
-    validateValueConstJSON(game, rows, "rows", pathJSON);
-    textureAtlas->rows = rows->valueint;
-
-    tileSizeX = cJSON_GetObjectItemCaseSensitive(textureAtlasJSON, "tileSizeX");
-    validateValueConstJSON(game, tileSizeX, "tileSizeX", pathJSON);
-    textureAtlas->tileSizeX = tileSizeX->valueint;
-
-    tileSizeY = cJSON_GetObjectItemCaseSensitive(textureAtlasJSON, "tileSizeY");
-    validateValueConstJSON(game, tileSizeY, "tileSizeY", pathJSON);
-    textureAtlas->tileSizeY = tileSizeY->valueint;
-
+    // vPatchSize:
+    vPatchSize = cJSON_GetObjectItemCaseSensitive(assetsheet_JSON, "vPatchSize");
+    if(isValueInvalidJSON_UTIL(pathIMG)) return NULL;
+    if(isValueTypeInvalidJSON_UTIL(pathIMG, cJSON_IsString)) return NULL;
+    strncpy(assetsheet_JSON->pathIMG, pathIMG->valuestring, sizeof(assetsheet_JSON->pathIMG) - 1);
+    assetsheet->pathIMG[sizeof(assetsheet_JSON->pathIMG) - 1] = '\0';
+   
     // load texture.    
     SDL_Texture *texture = IMG_LoadTexture(game->renderer, textureAtlas->textPath);
     if(!texture) {
