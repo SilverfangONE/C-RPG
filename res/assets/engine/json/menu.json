@@ -1,6 +1,6 @@
 {
     "ID": "MENU_ASSET",
-    "pathIMG": "",
+    "pathIMG": "./res/assets/engine/img/menu.png",
     "vTableSize": {
         "x" : 6,
         "y" : 3

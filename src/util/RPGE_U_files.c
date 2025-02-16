@@ -9,6 +9,7 @@ char *readFile_UTIL(const char *filename)
     if (!file)
     {
         log_error("Fehler: Datei %s konnte nicht geöffnet werden!\n", filename);
+        errno = EPERM;
         return NULL;
     }
 
@@ -26,6 +27,7 @@ char *readFile_UTIL(const char *filename)
 
     fread(content, 1, length, file);
     content[length] = '\0'; // Null-terminieren
-    fclose(file);
+    fclose(file); 
+    log_debug("Content of %s:\n%s", filename, content);
     return content;
 }

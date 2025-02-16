@@ -1,77 +1,64 @@
 #include "RPGE_G_assetsheet.h"
-#include "RPGE_JSON_assetsheet.h"
 #include "RPGE_U_files.h"
 #include "RPGE_U_json.h"
 #include "cJSON.h"
 #include "log.h"
 #include <SDL3/SDL.h>
 #include <SDL3_image/SDL_image.h>
+#include "RPGE_JSON_assetsheet.h"
 
 Assetsheet_RPGE *load_Assetsheet_JSON_RPGE(SDL_Renderer *renderer, const char *pathJSON)
 {
-    struct Assetsheet_RPGE *assetsheet = malloc(sizeof(Assetsheet_RPGE));
+    if (pathJSON == NULL) {
+        log_error("load_Assetsheet_JSON_RPGE(): pathJSON is Invalid");
+        errno = EINVAL;
+        return NULL;
+    }
     // load TextureAtlas from json.
     char *jsonString = readFile_UTIL(pathJSON);
-    if (jsonString == NULL)
+    if (jsonString == NULL) {
         return NULL;
+    }
     cJSON *assetsheet_JSON = cJSON_Parse(jsonString);
     free(jsonString);
-
-    if (isValueInvalidJSON_UTIL(assetsheet_JSON))
-        return NULL;
-
-    const cJSON *ID = NULL;
-    const cJSON *pathIMG = NULL;
-    const cJSON *vTableSize = NULL;
-    const cJSON *vPatchSize = NULL;
+    if (isValueInvalidJSON_UTIL(assetsheet_JSON)) return NULL;
+    
+    const cJSON *ID_json = NULL;
+    const cJSON *pathIMG_json = NULL;
 
     // ID:
-    ID = cJSON_GetObjectItemCaseSensitive(assetsheet_JSON, "ID");
-    if (isValueInvalidJSON_UTIL(ID))
+    ID_json = cJSON_GetObjectItemCaseSensitive(assetsheet_JSON, "ID");
+    if (isValueInvalidJSON_UTIL(ID_json))
         return NULL;
-    if (isValueTypeInvalidJSON_UTIL(ID, cJSON_IsString))
+    if (isValueTypeInvalidJSON_UTIL(ID_json, cJSON_IsString))
         return NULL;
-    strncpy(assetsheet->ID, ID->valuestring, sizeof(assetsheet->ID) - 1);
-    assetsheet->ID[sizeof(assetsheet->ID) - 1] = '\0';
-
     // pathIMG:
-    pathIMG = cJSON_GetObjectItemCaseSensitive(assetsheet_JSON, "pathIMG");
-    if (isValueInvalidJSON_UTIL(pathIMG))
-        return NULL;
-    if (isValueTypeInvalidJSON_UTIL(pathIMG, cJSON_IsString))
-        return NULL;
-    strncpy(assetsheet->pathIMG, pathIMG->valuestring, sizeof(assetsheet->pathIMG) - 1);
-    assetsheet->pathIMG[sizeof(assetsheet->pathIMG) - 1] = '\0';
-
-    // load texture.
-    SDL_Texture *imgText = IMG_LoadTexture(renderer, assetsheet->pathIMG);
-    if (!imgText)
-    {
-        log_error("%s", SDL_GetError());
-        errno = ENOMSG;
-        return NULL;
+    pathIMG_json = cJSON_GetObjectItemCaseSensitive(assetsheet_JSON, "pathIMG");
+    if (pathIMG_json == NULL) {
+        log_warn("pathIMG_JSON is %s", pathIMG_json);
     }
-
-    // Setze die Textur auf "Nearest Neighbor" (pixelgenaue Skalierung)
-    if (!SDL_SetTextureScaleMode(imgText, SDL_SCALEMODE_NEAREST))
-    {
-        log_error("%s", SDL_GetError());
-        errno = ENOMSG;
+    if (isValueInvalidJSON_UTIL(pathIMG_json))
         return NULL;
-    }
-
+    if (isValueTypeInvalidJSON_UTIL(pathIMG_json, cJSON_IsString))
+        return NULL;
+    
     // vTableSize:
-    Vec2D vecSize = jsonToVec2D_UTIL_RPGE(cJSON_GetObjectItemCaseSensitive(assetsheet_JSON, "vTableSize"));
-    if (vecSize.x == -1 || vecSize.y == -1)
+    Vec2D vTableSize = jsonToVec2D_UTIL_RPGE(cJSON_GetObjectItemCaseSensitive(assetsheet_JSON, "vTableSize"));
+    if (vTableSize.x == -1 || vTableSize.y == -1)
         return NULL;
-    assetsheet->vTableSize = vecSize;
-
+    
     // vPatchSize:
-    Vec2D vPSize = jsonToVec2D_UTIL_RPGE(cJSON_GetObjectItemCaseSensitive(assetsheet_JSON, "vPatchSize"));
-    if (vPSize.x == -1 || vPSize.y == -1)
+    Vec2D vPatchSize = jsonToVec2D_UTIL_RPGE(cJSON_GetObjectItemCaseSensitive(assetsheet_JSON, "vPatchSize"));
+    if (vPatchSize.x == -1 || vPatchSize.y == -1)
         return NULL;
-    assetsheet->vPatchSize = vPSize;
-
+    
+    Assetsheet_RPGE* assetsheet_RPGE = create_Assetsheet_G_RPGE(
+        renderer,
+        vTableSize,
+        vPatchSize,
+        ID_json->valuestring,
+        pathIMG_json->valuestring
+    );
     cJSON_Delete(assetsheet_JSON);
-    return assetsheet;
+    return assetsheet_RPGE;
 }

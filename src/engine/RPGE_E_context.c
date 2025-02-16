@@ -78,11 +78,10 @@ CONTEXT_RPGE *init_RPGE(bool (*fupdatePtr)(struct CONTEXT_RPGE *eContext),
     eContext->defaultFont = load_Assetsheet_JSON_RPGE(eContext->renderer, defaultFontPathJSON);
     if (eContext->defaultFont == NULL)
         return NULL;
-
     eContext->menuAsset = load_Assetsheet_JSON_RPGE(eContext->renderer, defaultMenuPathJSON);
     if (eContext->menuAsset == NULL)
         return NULL;
-
+    log_debug("[Created CONTEXT_RPGE]");
     return eContext;
 }
 

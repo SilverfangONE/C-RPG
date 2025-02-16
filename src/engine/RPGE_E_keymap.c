@@ -1,5 +1,6 @@
 #include "RPGE_E_keymap.h"
 #include <stdlib.h>
+#include "log.h"
 
 /**
  * Resets all fields from keymap to false, except for pressed ones.
@@ -35,6 +36,7 @@ Keymap_RPGE *create_Keymap_RPGE()
 {
     Keymap_RPGE *keymap = malloc(sizeof(Keymap_RPGE));
     resetAll_Keymap_RPGE(keymap);
+    log_debug("[Created Keymap_RPGE]");
     return keymap;
 }
 

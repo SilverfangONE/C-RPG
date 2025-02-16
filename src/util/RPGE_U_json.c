@@ -12,9 +12,9 @@ bool isValueConstInvalidJSON_UTIL(const cJSON *value, char *jsonFieldName, char 
         const char *error_ptr = cJSON_GetErrorPtr();
         log_error("JSON Parsing Error for %s by field %s: %s", pathJSON, jsonFieldName,
                   (error_ptr != NULL) ? error_ptr : "Something went wrong LOL.");
-        return false;
+        return true;
     }
-    return true;
+    return false;
 }
 
 bool isValueInvalidJSON_UTIL(const cJSON *value)
@@ -23,9 +23,9 @@ bool isValueInvalidJSON_UTIL(const cJSON *value)
     {
         const char *error_ptr = cJSON_GetErrorPtr();
         log_error("JSON Parsing Error: %s", (error_ptr != NULL) ? error_ptr : "Something went wrong LOL.");
-        return false;
+        return true;
     }
-    return true;
+    return false;
 }
 
 bool isValueTypeInvalidJSON_UTIL(const cJSON *value, JsonTypeCheckFunc checkType)
@@ -33,9 +33,9 @@ bool isValueTypeInvalidJSON_UTIL(const cJSON *value, JsonTypeCheckFunc checkType
     if (!checkType(value))
     {
         log_error("JSON Error: %s type %s ist not valid!", value->string, value->type);
-        return false;
+        return true;
     }
-    return true;
+    return false;
 }
 // syntax sugar.
 bool isValueTypeValidJSON_UTIL(const cJSON *value, JsonTypeCheckFunc checkType)
@@ -113,5 +113,6 @@ Vec2D jsonToVec2D_UTIL_RPGE(const cJSON *json)
         return (Vec2D){-1, -1};
     vec.x = xJ->valueint;
 
+    log_trace("[Created Vec2D {x=%d, y=%d}]", vec.x, vec.y);
     return vec;
 }

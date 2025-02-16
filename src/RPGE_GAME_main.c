@@ -18,6 +18,7 @@ void onError()
 
 int main()
 {
+    log_set_level(LOG_DEBUG);
     // setup.
     CONTEXT_RPG *pContext = init_RPG("C_RPG");
     if (pContext == NULL)

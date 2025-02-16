@@ -6,8 +6,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-Assetsheet_RPGE *create_Assetsheet_G_RPGE(SDL_Renderer *renderer, Vec2D vTableSize, Vec2D vPatchSize, char *ID,
-                                          char *pathIMG)
+Assetsheet_RPGE *create_Assetsheet_G_RPGE(SDL_Renderer *renderer, Vec2D vTableSize, Vec2D vPatchSize, const char *ID,
+                                        const char *pathIMG)
 {
     Assetsheet_RPGE *asset = (Assetsheet_RPGE *)malloc(sizeof(Assetsheet_RPGE));
     if (asset == NULL)
@@ -16,7 +16,7 @@ Assetsheet_RPGE *create_Assetsheet_G_RPGE(SDL_Renderer *renderer, Vec2D vTableSi
     }
     if (pathIMG == NULL || strlen(pathIMG) < 1)
     {
-        log_error("create_Assetsheet_RPGE: pathIMG is invalid");
+        log_error("create_Assetsheet_RPGE: pathIMG(%s) is invalid", pathIMG);
         errno = EINVAL;
         return NULL;
     }
@@ -63,6 +63,7 @@ Assetsheet_RPGE *create_Assetsheet_G_RPGE(SDL_Renderer *renderer, Vec2D vTableSi
         return NULL;
     }
     asset->vPatchSize = vPatchSize;
+    log_trace("[Created Assetsheet_RPG from %s]", pathIMG);
     return asset;
 }
 

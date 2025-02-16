@@ -5,13 +5,14 @@
 #include <SDL3_image/SDL_image.h>
 #include <stdlib.h>
 
-Display_RPGE *create_Display_RPGE(SDL_Renderer *renderer, enum SYSTEM_RPGE system, const int WINDOW_WIDTH,
+Display_RPGE* create_Display_RPGE(SDL_Renderer *renderer, enum SYSTEM_RPGE system, const int WINDOW_WIDTH,
                                   const int WINDOW_HEIGHT)
 {
     Display_RPGE *disp = (Display_RPGE *)malloc(sizeof(Display_RPGE));
     Vec2D res_system = getSystemResolution_RPGE(system);
     if (res_system.x == 0 || res_system.y == 0)
     {
+        log_error("create_Display_RPGE: Given System Resoulution(x=%d, y=%d) is invalid!", res_system.x, res_system.y);
         return NULL;
     }
     disp->texture =
@@ -47,6 +48,7 @@ Display_RPGE *create_Display_RPGE(SDL_Renderer *renderer, enum SYSTEM_RPGE syste
     destR.x = (float)(WINDOW_WIDTH - destR.w) / 2;
     destR.y = (float)(WINDOW_HEIGHT - destR.h) / 2;
     disp->destRect = destR;
+    log_debug("[Created Display_RPGE]");
     return disp;
 }
 

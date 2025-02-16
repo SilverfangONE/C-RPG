@@ -29,6 +29,7 @@ CONTEXT_RPG *init_RPG(char *pName)
         return NULL;
     }
     strncpy(gContext->pName, "C_RPG", sizeof(gContext->pName));
+    log_debug("[Created RPG_CONTEXT]");
     return gContext;
 }
 
