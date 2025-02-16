@@ -11,7 +11,7 @@ bool isValueConstValidJSON_UTIL(const cJSON* value, char* jsonFieldName, char* p
 bool isValueConstInvalidJSON_UTIL(const cJSON* value, char* jsonFieldName, char* pathJSON);
 bool isValueTypeValidJSON_UTIL(const cJSON* value, JsonTypeCheckFunc checkType);
 bool isValueTypeInvalidJSON_UTIL(const cJSON* value, JsonTypeCheckFunc checkFunc);
-bool isValueInvalidJSON_UTIL(cJSON* value);
-bool isValueValidJSON_UTIL(cJSON* value);
+bool isValueInvalidJSON_UTIL(const cJSON* value);
+bool isValueValidJSON_UTIL(const cJSON* value);
 Vec2D jsonToVec2D_UTIL_RPGE(const cJSON* json) ;
 #endif

@@ -1,6 +1,8 @@
 #ifndef RPGE_U_ARRAY
 #define RPGE_U_ARRAY
 
+#include "RPGE_U_vec.h"
+
 /**
  * @return NULL if erro occurd
  */

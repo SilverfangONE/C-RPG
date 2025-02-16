@@ -40,6 +40,8 @@ CONTEXT_RPGE* init_RPGE (
     const int WINDOW_WIDTH,
     const int WINDOW_HEIGHT,
     enum SYSTEM_RPGE system,
-    const char* pName
+    const char* pName,
+    const char* defaultFontPathJSON,
+    const char* defaultMenuPathJSON
 );
 #endif

@@ -1,10 +1,11 @@
-#include <stdlib.h>
 #include "RPGE_E_keymap.h"
+#include <stdlib.h>
 
 /**
  * Resets all fields from keymap to false, except for pressed ones.
  */
-void reset_Keymap_RPGE(Keymap_RPGE* keymap) {
+void reset_Keymap_RPGE(Keymap_RPGE *keymap)
+{
     keymap->down = false;
     keymap->up = false;
     keymap->left = false;
@@ -16,7 +17,8 @@ void reset_Keymap_RPGE(Keymap_RPGE* keymap) {
 /**
  * Rests all fields from keymap to false.
  */
-void resetAll_Keymap_RPGE(Keymap_RPGE* keymap) {
+void resetAll_Keymap_RPGE(Keymap_RPGE *keymap)
+{
     keymap->down = false;
     keymap->up = false;
     keymap->left = false;
@@ -29,12 +31,14 @@ void resetAll_Keymap_RPGE(Keymap_RPGE* keymap) {
     keymap->pressedRIGHT = false;
 }
 
-Keymap_RPGE* create_Keymap_RPGE() {
-    Keymap_RPGE* keymap = malloc(sizeof(Keymap_RPGE));
+Keymap_RPGE *create_Keymap_RPGE()
+{
+    Keymap_RPGE *keymap = malloc(sizeof(Keymap_RPGE));
     resetAll_Keymap_RPGE(keymap);
     return keymap;
 }
 
-void destroy_Keymap_RPGE(Keymap_RPGE* keymap) {
+void destroy_Keymap_RPGE(Keymap_RPGE *keymap)
+{
     free(keymap);
 }

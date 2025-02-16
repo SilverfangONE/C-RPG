@@ -1,0 +1,12 @@
+{
+    "ID": "MENU_ASSET",
+    "pathIMG": "",
+    "vTableSize": {
+        "x" : 6,
+        "y" : 3
+    },
+    "vPatchSize": {
+        "x" : 8,
+        "y" : 8
+    }
+}
