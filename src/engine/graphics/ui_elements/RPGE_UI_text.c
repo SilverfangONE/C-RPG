@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "log.h"
 
 int getAlphabetIndex_UI_RPGE(char letter)
 {
@@ -230,6 +231,7 @@ int getAlphabetSpecialIndex_UI_RPGE(char *letter)
     return -1;
 }
 
+
 int render_Text_UI_RPGE(SDL_Renderer *renderer, char *text, Vec2D vCoordinates, Vec2D vTable, Assetsheet_RPGE *font)
 {
     SDL_FRect dest;
@@ -249,36 +251,34 @@ int render_Text_UI_RPGE(SDL_Renderer *renderer, char *text, Vec2D vCoordinates, 
         }
         // render literal.
         int index;
-        if (text[literal] == '\n')
-        {
-            xTable = 0;
-            yTable++;
-            continue;
-        }
-        if (text[literal] == '\\')
-        {
-            char sp[6];
-            strncpy(sp, text + literal, 6);
-            int spi = getAlphabetSpecialIndex_UI_RPGE(sp);
-            if (spi > -1)
-            {
-                index = spi;
-                literal = +6;
-            }
-            else
-            {
+        switch (text[literal]) {
+            case '\n':
+                // if (xTable > 0) {
+                    xTable = 0;
+                    yTable++;
+                    continue;
+                // } 
+            case '\\':
+                char sp[6];
+                strncpy(sp, text + literal, 6);
+                int spi = getAlphabetSpecialIndex_UI_RPGE(sp);
+                if (spi > -1)
+                {
+                    index = spi;
+                    literal = +6;
+                    break;
+                }
+            default:
                 index = getAlphabetIndex_UI_RPGE(text[literal]);
                 if (index < 0)
                 {
                     errno = EINVAL;
                     return 1;
                 }
-            }
         }
-
         Vec2D cor = {.x = vCoordinates.x + xTable * dest.w, .y = vCoordinates.y + yTable * dest.h};
         renderTile_Assetsheet_G_RPGE(renderer, font, index, cor);
-
+        log_warn("[INDEX=%d | xTable=%d, yTable=%d | Vec2D {.x=%d, .y=%d}]", index,  xTable, yTable, cor.x, cor.y);
         xTable++;
     }
     return 0;

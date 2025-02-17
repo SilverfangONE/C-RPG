@@ -42,7 +42,7 @@ Label_UI_RPGE *build_Label_UI_RPGE(Assetsheet_RPGE *font, Assetsheet_RPGE *asset
     int maxRowSize = 1;
     int maxColSize = 1;
     int count = 0;
-    for (int i = 0; i < strlen(text) + 1; i++)
+    for (int i = 0; i < strlen(text); i++)
     {
         if ('\n' == text[i])
         {
@@ -60,7 +60,8 @@ Label_UI_RPGE *build_Label_UI_RPGE(Assetsheet_RPGE *font, Assetsheet_RPGE *asset
     vTable.x = 2 + maxColSize;
     vTable.y = 2 + maxRowSize;
     label->vTextCoordinates =
-        (Vec2D){.x = vCoordinates.x - asset->vPatchSize.x, .y = vCoordinates.y - asset->vPatchSize.y};
+        (Vec2D){.x = vCoordinates.x + asset->vPatchSize.x, .y = vCoordinates.y + asset->vPatchSize.y};
+    log_info("[vTextCoordinates {.x=%d, .y=%d}]", label->vTextCoordinates.x, label->vTextCoordinates.y); 
     label->background = build_Background_UI_RPGE(asset, vCoordinates, vTable);
     if (label->background == NULL)
         return NULL;

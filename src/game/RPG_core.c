@@ -38,12 +38,14 @@ bool render_RPG(CONTEXT_RPGE *eContext)
     CONTEXT_RPG *pContext = (CONTEXT_RPG *)eContext->pContext;
     // render.
     // render_TestIMG(eContext);
+    int indexCounter = 0;
     for (int yTile = 0; yTile < eContext->display->height / 8; yTile++) {
         for (int xTile = 0; xTile < eContext->display->width / 8; xTile++) {
+            if (indexCounter > 96) indexCounter = 0;
             renderTile_Assetsheet_G_RPGE(
                 eContext->renderer, 
-                eContext->menuAsset, 
-                3, 
+                eContext->defaultFont, 
+                indexCounter++, 
                 (Vec2D) {.x=xTile*8, .y=yTile*8}
             );
         }
