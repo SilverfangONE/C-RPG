@@ -1,6 +1,7 @@
 #include "RPGE_E_runner.h"
 #include "RPGE_E_context.h"
 #include "RPGE_E_keymap.h"
+#include "RPGE_E_time.h"
 #include "log.h"
 #include <SDL3/SDL.h>
 #include <SDL3_image/SDL_image.h>
@@ -8,7 +9,6 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <time.h>
-#include "RPGE_E_time.h"
 
 #ifdef _WIN32
 #include <windows.h>
@@ -29,11 +29,10 @@ void sleep_ms(int milliseconds)
  * Entry point of RPG-Engine.
  * @return returns 0, but will never be reached because of terminate_RPGE()
  */
-int run_RPGE(const int TARGET_FPS, CONTEXT_RPGE *eContext)
+int run_RPGE(CONTEXT_RPGE *eContext)
 {
     log_info("Start RPG-ENGINE ...");
-    int FRAME_TIME = 1000 / TARGET_FPS;
-    INIT_TIME_RPGE(eContext->timeManager, TARGET_FPS);
+    int FRAME_TIME = 1000 / eContext->_TARGET_FPS;
     while (true)
     {
         clock_t start_time = clock();
@@ -71,7 +70,7 @@ bool _processEventsSDL(CONTEXT_RPGE *eContext)
             terminate_RPGE(eContext, EXIT_SUCCESS);
             return true;
         }
-        break; 
+        break;
         case SDL_EVENT_KEY_UP: {
             switch (event.key.scancode)
             {

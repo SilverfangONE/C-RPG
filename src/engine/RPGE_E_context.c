@@ -2,10 +2,10 @@
 #include "RPGE_E_display.h"
 #include "RPGE_E_keymap.h"
 #include "RPGE_E_system_infos.h"
+#include "RPGE_E_time.h"
 #include "RPGE_G_assetsheet.h"
 #include "RPGE_JSON_assetsheet.h"
 #include "log.h"
-#include "RPGE_E_time.h"
 #include <errno.h>
 #include <stdlib.h>
 #include <string.h>
@@ -26,13 +26,15 @@
 CONTEXT_RPGE *init_RPGE(bool (*fupdatePtr)(struct CONTEXT_RPGE *eContext),
                         bool (*frenderPtr)(struct CONTEXT_RPGE *eContext), void (*fdestroyPContextPtr)(void *pContext),
                         void *pContext, const int WINDOW_WIDTH, const int WINDOW_HEIGHT, enum SYSTEM_RPGE system,
-                        const char *pName, const char *defaultFontPathJSON, const char *defaultMenuPathJSON)
+                        const char *pName, const char *defaultFontPathJSON, const char *defaultMenuPathJSON,
+                        int TARGET_FPS)
 {
     CONTEXT_RPGE *eContext = (CONTEXT_RPGE *)malloc(sizeof(CONTEXT_RPGE));
     if (eContext == NULL)
         return NULL;
     if (pContext == NULL)
     {
+        log_error("init_RPGE(): pContext%s is invalid", pContext);
         errno = EINVAL;
         return NULL;
     }
@@ -57,6 +59,7 @@ CONTEXT_RPGE *init_RPGE(bool (*fupdatePtr)(struct CONTEXT_RPGE *eContext),
 
     if (frenderPtr == NULL)
     {
+        log_error("init_RPGE(): frenderPtr%s is invalid", frenderPtr);
         errno = EINVAL;
         return NULL;
     }
@@ -64,6 +67,7 @@ CONTEXT_RPGE *init_RPGE(bool (*fupdatePtr)(struct CONTEXT_RPGE *eContext),
 
     if (fupdatePtr == NULL)
     {
+        log_error("init_RPGE(): fupdatePtr%s is invalid", fupdatePtr);
         errno = EINVAL;
         return NULL;
     }
@@ -71,10 +75,20 @@ CONTEXT_RPGE *init_RPGE(bool (*fupdatePtr)(struct CONTEXT_RPGE *eContext),
 
     if (fdestroyPContextPtr == NULL)
     {
+        log_error("init_RPGE(): fdestroyPContextPtr%s is invalid", fdestroyPContextPtr);
         errno = EINVAL;
         return NULL;
     }
     eContext->fdestroyPContextPtr = fdestroyPContextPtr;
+
+    if (TARGET_FPS < 1)
+    {
+        log_error("init_RPGE(): TARGET_FPS { %d } is invalid", TARGET_FPS);
+        errno = EINVAL;
+        return NULL;
+    }
+    eContext->_TARGET_FPS = TARGET_FPS;
+
     // load default ressouces
     eContext->defaultFont = load_Assetsheet_JSON_RPGE(eContext->renderer, defaultFontPathJSON);
     if (eContext->defaultFont == NULL)
@@ -82,8 +96,10 @@ CONTEXT_RPGE *init_RPGE(bool (*fupdatePtr)(struct CONTEXT_RPGE *eContext),
     eContext->menuAsset = load_Assetsheet_JSON_RPGE(eContext->renderer, defaultMenuPathJSON);
     if (eContext->menuAsset == NULL)
         return NULL;
-    // Time Manager
+
+    // Time Manager.
     eContext->timeManager = _create_TimerManager_TIME_RPGE();
+    INIT_TIME_RPGE(eContext->timeManager, eContext->_TARGET_FPS);
     log_debug("[Created CONTEXT_RPGE]");
     return eContext;
 }

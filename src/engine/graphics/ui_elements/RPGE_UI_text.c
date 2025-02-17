@@ -234,9 +234,12 @@ int getAlphabetSpecialIndex_UI_RPGE(char *letter)
 static int counter = 0;
 static int displayAll = 600; // 5 sec
 
+// TODO hier findet ein segementaion fault statt vorischt !!!!!
+// TODO binde den timer ein !
 int render_Text_UI_RPGE(SDL_Renderer *renderer, char *textBuffer, Vec2D vCoordinates, Vec2D vTable,
                         Assetsheet_RPGE *font)
 {
+    log_trace("go into render_text_uI_RPGE");
     SDL_FRect dest;
     SDL_FRect src;
     dest.w = font->vPatchSize.x;

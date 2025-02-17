@@ -32,6 +32,7 @@ typedef struct CONTEXT_RPGE {
     Assetsheet_RPGE* menuAsset;
     // timer
     TimerManager_TIME_RPGE* timeManager;
+    int _TARGET_FPS;
 } CONTEXT_RPGE;
 
 void terminate_RPGE(CONTEXT_RPGE* eContext, int);
@@ -45,6 +46,7 @@ CONTEXT_RPGE* init_RPGE (
     enum SYSTEM_RPGE system,
     const char* pName,
     const char* defaultFontPathJSON,
-    const char* defaultMenuPathJSON
+    const char* defaultMenuPathJSON,
+    int TARGET_FPS
 );
 #endif

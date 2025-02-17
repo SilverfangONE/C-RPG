@@ -28,9 +28,9 @@ int main()
         onError();
         return EXIT_FAILURE;
     }
-    CONTEXT_RPGE *eContext =
-        init_RPGE(&update_RPG, &render_RPG, &destory_VOID_CONTEXT_RPG, pContext, WINDOW_WIDTH, WINDOW_HEIGHT, SNES,
-                  pContext->pName, "./res/assets/engine/json/font.json", "./res/assets/engine/json/menu.json");
+    CONTEXT_RPGE *eContext = init_RPGE(&update_RPG, &render_RPG, &destory_VOID_CONTEXT_RPG, pContext, WINDOW_WIDTH,
+                                       WINDOW_HEIGHT, SNES, pContext->pName, "./res/assets/engine/json/font.json",
+                                       "./res/assets/engine/json/menu.json", TARGET_FPS);
     if (eContext == NULL)
     {
         onError();
@@ -45,9 +45,10 @@ int main()
     Label_UI_RPGE *label =
         build_Label_UI_RPGE(eContext->defaultFont, eContext->menuAsset, "Hello\n W\norld", (Vec2D){10, 10});
     pContext->label = label;
-        
+    // configure timer
+
     // start.
-    run_RPGE(TARGET_FPS, eContext);
+    run_RPGE(eContext);
 
     // clean up.
     destory_Label_UI_RPGE(label);
