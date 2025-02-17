@@ -33,12 +33,12 @@ int run_RPGE(const int TARGET_FPS, CONTEXT_RPGE *eContext)
 {
     log_info("Start RPG-ENGINE ...");
     int FRAME_TIME = 1000 / TARGET_FPS;
-    init_TIME_RPGE(TARGET_FPS);
+    INIT_TIME_RPGE(TARGET_FPS);
     while (true)
     {
         clock_t start_time = clock();
         // excute engine logics.
-        if (processEventsSDL(eContext))
+        if (_processEventsSDL(eContext))
             break;
         if (_update_RPGE(eContext))
             break;
@@ -50,15 +50,16 @@ int run_RPGE(const int TARGET_FPS, CONTEXT_RPGE *eContext)
         {
             sleep_ms(FRAME_TIME - (int)elapsed_ms);
         }
-        _update_TIME_RPGE();
+        _UPDATE_TIME_RPGE();
     }
+    QUIT_TIME_RPGE();
     return 0;
 }
 
 /**
  * @return if true is returned the program loop should stop, false it can go on.
  */
-bool processEventsSDL(CONTEXT_RPGE *eContext)
+bool _processEventsSDL(CONTEXT_RPGE *eContext)
 {
     reset_Keymap_RPGE(eContext->keymap);
     SDL_Event event;
@@ -70,7 +71,7 @@ bool processEventsSDL(CONTEXT_RPGE *eContext)
             terminate_RPGE(eContext, EXIT_SUCCESS);
             return true;
         }
-        break;
+        break; 
         case SDL_EVENT_KEY_UP: {
             switch (event.key.scancode)
             {

@@ -62,10 +62,15 @@ int destroyTimer_TIME_RPGE(unsigned int ID);
 void destroyTimerManager_TIME_RPGE(TimerManager_RPGE* manager);
 
 /**
- * Initzialize default TimerManger_RPGE struct for use.
+ * Initzialize default TimerManager_RPGE struct for use.
  * @param FPS frams per second of running program.
  */
-void init_TIME_RPGE(int FPS);
+void INIT_TIME_RPGE(int FPS);
+
+/**
+ * Quit _timerManager context.
+ */
+void QUIT_TIME_RPGE();
 
 /**
  * @param timer pointer to Timer_RPGE struct which should be added.
@@ -81,6 +86,6 @@ int removeTimer_TimerManager_TIME_RPGE(unsigned int ID);
 /**
  * update _timeManager tick
  */
-void _update_TIME_RPGE();
+void _UPDATE_TIME_RPGE();
 
 #endif

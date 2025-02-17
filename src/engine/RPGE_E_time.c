@@ -18,10 +18,14 @@ int setTimerManager_TIME_RPGE(TimerManager_RPGE* manager, int FPS) {
     return 0;
 }
 
-void init_TIME_RPGE(int FPS) {
+void INIT_TIME_RPGE(int FPS) {
     log_debug("[init _timerManager {FPS=%d}]", FPS);
     _timerManager = malloc(sizeof(TimerManager_RPGE));
     _FPS = FPS;
+}
+
+void QUIT_TIME_RPGE() {
+    destroyTimerManager_TIME_RPGE(_timerManager);
 }
 
 Timer_RPGE* setTimerTicks_TIME_RPGE(unsigned int ID, int ticks) {
@@ -99,7 +103,7 @@ bool checkTimer_TIME_RPGE(unsigned int ID) {
     }
 }
 
-void _update_TIME_RPGE() {
+void _UPDATE_TIME_RPGE() {
     for (int i = 0; i < _timerManager->length; i++) {
         if (_timerManager->timerList[i] == NULL) {
             _timerManager->timerList[i]->countTicks++;
