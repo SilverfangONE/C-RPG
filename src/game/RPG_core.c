@@ -68,8 +68,12 @@ bool render_RPG(CONTEXT_RPGE *eContext)
     } else {
         nextCharIndex++;
     }
-    if (!render_Label_UI_RPGE(eContext->renderer, pContext->label)) return 1;
-    if (!render_Dialog_UI_RPGE(eContext->renderer, pContext->dialog)) return 1;
+    if (render_Label_UI_RPGE(eContext->renderer, pContext->label)) { 
+        return 1;
+    }
+    if (render_Dialog_UI_RPGE(eContext->renderer, pContext->dialog)) {
+        // return 1;
+    }
 
     // counter shit.
     if (counter >= counterLimit) {

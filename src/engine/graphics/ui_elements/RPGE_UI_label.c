@@ -71,9 +71,15 @@ Label_UI_RPGE *build_Label_UI_RPGE(Assetsheet_RPGE *font, Assetsheet_RPGE *asset
 
 int render_Label_UI_RPGE(SDL_Renderer *renderer, Label_UI_RPGE *label)
 {
-    render_Background_UI_RPGE(renderer, label->background);
-    render_Text_UI_RPGE(renderer, label->textBuffer, label->vTextCoordinates, label->vTextTable, label->font);
-    return 1;
+    if (render_Background_UI_RPGE(renderer, label->background)) 
+    {
+        return 1;
+    }
+    if (render_Text_UI_RPGE(renderer, label->textBuffer, label->vTextCoordinates, label->vTextTable, label->font))
+    {
+        return 1;
+    }
+    return 0;
 }
 
 void destory_Label_UI_RPGE(Label_UI_RPGE* label) {
