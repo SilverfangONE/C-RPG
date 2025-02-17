@@ -3,6 +3,7 @@
 
 #include "RPGE_E_context.h"
 #include "RPGE_UI_label.h"
+#include "RPGE_UI_dialog.h"
 
 typedef struct Object_RPG {
     void* obj;
@@ -13,6 +14,7 @@ typedef struct Object_RPG {
 typedef struct CONTEXT_RPG {
     char* pName;
     Label_UI_RPGE* label;
+    Dialog_UI_RPGE* dialog;
 } CONTEXT_RPG;
 
 CONTEXT_RPG* init_RPG(char*);

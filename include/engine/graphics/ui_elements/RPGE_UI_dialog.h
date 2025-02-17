@@ -29,9 +29,10 @@ typedef struct Dialog_UI_RPGE {
  * @param asset Assetsheet_RPGE for menu asset
  * @param text The text to display in dialog
  * @param vCoordinates Vec2D wich contains the upper left edge Coordinates of the dialog
+ * @param vTextTable Vec2D wich contains table of chars of the dialog box
  * @return pointer to created Dialog_UI_RPGE struct, or NULL if an error occured.
  */
-Dialog_UI_RPGE* build_Dialog_UI_RPGE(Assetsheet_RPGE *font, Assetsheet_RPGE *asset, char* text, Vec2D vCoordinates, Vec2D vSizeTable);
+Dialog_UI_RPGE* build_Dialog_UI_RPGE(Assetsheet_RPGE *font, Assetsheet_RPGE *asset, char* text, Vec2D vCoordinates, Vec2D vTextTable);
 
 /**
  * Renderes given Dialog_UI_RPGE struct on the current render target.

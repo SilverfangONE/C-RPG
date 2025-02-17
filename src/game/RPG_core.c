@@ -7,11 +7,13 @@
 #include "RPGE_UI_label.h"
 #include "RPGE_E_system_infos.h"
 #include "RPGE_G_assetsheet.h"
+#include "RPGE_UI_dialog.h"
 
 bool update_RPG(CONTEXT_RPGE *eContext)
 {
     CONTEXT_RPG *pContext = (CONTEXT_RPG *)eContext->pContext;
     // update.
+    update_Dialog_UI_RPGE(pContext->dialog, eContext->keymap);
     return 0;
 }
 
@@ -51,5 +53,6 @@ bool render_RPG(CONTEXT_RPGE *eContext)
         }
     }    
     render_Label_UI_RPGE(eContext->renderer, pContext->label);
+    render_Dialog_UI_RPGE(eContext->renderer, pContext->dialog);
     return 0;
 }

@@ -131,10 +131,15 @@ int getAlphabetSpecialIndex_UI_RPGE(char *letter)
     return -1;
 }
 
-static int counter = 0;
-static int displayAll = 300; // = 5s 
+// TODO: create timer failites for gloabl project.
+// with something like setTimer(timerID, secs);
+// checkTimer(timerID) => returns true if timer alarms. and resets after timer 
+// destroyTimer(timerID)
 
-int render_Text_UI_RPGE(SDL_Renderer *renderer, char *text, Vec2D vCoordinates, Vec2D vTable, Assetsheet_RPGE *font)
+static int counter = 0;
+static int displayAll = 300; // 5 sec
+
+int render_Text_UI_RPGE(SDL_Renderer *renderer, char *textBuffer, Vec2D vCoordinates, Vec2D vTable, Assetsheet_RPGE *font)
 {
     SDL_FRect dest;
     SDL_FRect src;
@@ -144,7 +149,8 @@ int render_Text_UI_RPGE(SDL_Renderer *renderer, char *text, Vec2D vCoordinates, 
     src.h = font->vPatchSize.y;
     int yTable = 0;
     int xTable = 0;
-    for (int literal = 0; literal < strlen(text) && literal < vTable.x * vTable.y; literal++)
+    // iterate of textBuffer and look up right corosponding sprites to given chars.
+    for (int literal = 0; literal < strlen(textBuffer) && literal < vTable.x * vTable.y; literal++)
     {
         if (xTable >= vTable.x)
         {
@@ -153,16 +159,18 @@ int render_Text_UI_RPGE(SDL_Renderer *renderer, char *text, Vec2D vCoordinates, 
         }
         // render literal.
         int index;
-        switch (text[literal]) {
+        switch (textBuffer[literal]) {
+            // new line.
             case '\n':
                 if (xTable != 0) {
                     xTable = 0;
                     yTable++;
                 }
                 continue;
+            // TODO: add special chars in stlye like <$name$>
             case '\\':
                 char sp[6];
-                strncpy(sp, text + literal, 6);
+                strncpy(sp, textBuffer + literal, 6);
                 int spi = getAlphabetSpecialIndex_UI_RPGE(sp);
                 if (spi > -1)
                 {
@@ -170,8 +178,9 @@ int render_Text_UI_RPGE(SDL_Renderer *renderer, char *text, Vec2D vCoordinates, 
                     literal = +6;
                     break;
                 }
+            // lookup default chars.
             default:
-                index = getAlphabetIndex_UI_RPGE(text[literal]);
+                index = getAlphabetIndex_UI_RPGE(textBuffer[literal]);
                 if (index < 0)
                 {
                     errno = EINVAL;
@@ -180,12 +189,18 @@ int render_Text_UI_RPGE(SDL_Renderer *renderer, char *text, Vec2D vCoordinates, 
         }
         Vec2D cor = {.x = vCoordinates.x + xTable * dest.w, .y = vCoordinates.y + yTable * dest.h};
         renderTile_Assetsheet_G_RPGE(renderer, font, index, cor);
+        // logging after timer shit
         if(counter == displayAll) {
-            log_info("[Index=%d | literal: %c]", index, text[literal]);
+            log_info("[Index=%d | literal: %c]", index, textBuffer[literal]);
             log_warn("[INDEX=%d | xTable=%d, yTable=%d | Vec2D {.x=%d, .y=%d}]", index,  xTable, yTable, cor.x, cor.y);
         }
         xTable++;
     }
-    counter++;
+    // timer shit
+    if (counter == displayAll) {
+        counter = 0;
+    } else {
+        counter++;
+    }
     return 0;
 }

@@ -109,7 +109,7 @@ Background_UI_RPGE *build_Background_UI_RPGE(Assetsheet_RPGE *asset, Vec2D vCoor
     background->vCoordinates = vCoordinates;
     if (vTableSize.x == 0 || vTableSize.y == 0)
     {
-        log_error("create_Background_UI_RPGE: vTableSize(.x=%d, .y=%d) is invalid", vTableSize.x, vTableSize.y);
+        log_error("create_Background_UI_RPGE: vTableSize {.x=%d, .y=%d} is invalid", vTableSize.x, vTableSize.y);
         errno = EINVAL;
         return NULL;
     }
@@ -117,6 +117,9 @@ Background_UI_RPGE *build_Background_UI_RPGE(Assetsheet_RPGE *asset, Vec2D vCoor
     background->m_indices = constructBackgroundIndexArr_UI_RPGE(vTableSize);
     if (background->m_indices == NULL)
         return NULL;
+    log_trace("[background->vCoordinates {.x=%d, .y=%d}]", vCoordinates.x, vCoordinates.y);
+    log_trace("[background->vTableSize {.x=%d, .y=%d}]", vTableSize.x, vTableSize.y);
+    log_debug("[Created Background_UI_RPGE]");
     return background;
 }
 

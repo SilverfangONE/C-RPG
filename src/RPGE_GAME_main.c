@@ -1,5 +1,7 @@
 #include "RPGE_E_context.h"
 #include "RPGE_E_runner.h"
+#include "RPGE_UI_label.h"
+#include "RPGE_UI_dialog.h"
 #include "RPGE_E_system_infos.h"
 #include "RPG_context.h"
 #include "RPG_core.h"
@@ -35,10 +37,19 @@ int main()
         return EXIT_FAILURE;
     }
     // setup.
+    Dialog_UI_RPGE* dialog = build_Dialog_UI_RPGE(eContext->defaultFont, eContext->menuAsset, 
+        "Das Abenteuer, das RPG-Spiele auf Super Nintendo revolutioniert hat, hat seinen ersten Auftritt in Europa! Als ein Meteorit in der Nähe von Ness’ Haus einschlägt, macht der mutige Junge sich auf, um Näheres herauszufinden. Er ahnt ja nicht, dass dies der Anfang eines epischen Abenteuers ist, das sein Leben a",
+        (Vec2D) { 55, 55},
+        (Vec2D) { 20, 3}
+    );
+    pContext->dialog = dialog;
     Label_UI_RPGE* label = build_Label_UI_RPGE(eContext->defaultFont, eContext->menuAsset, "Hello\n W\norld", (Vec2D) { 10, 10});
-    pContext->label = label;
-    
+    pContext->label = label;    
     // start.
     run_RPGE(TARGET_FPS, eContext);
+
+    // clean up.
+    destory_Label_UI_RPGE(label);
+    destory_Dialog_UI_RPGE(dialog);
     return 0;
 }

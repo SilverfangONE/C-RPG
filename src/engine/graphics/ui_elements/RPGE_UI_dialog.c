@@ -49,6 +49,7 @@ Dialog_UI_RPGE* build_Dialog_UI_RPGE(Assetsheet_RPGE *font, Assetsheet_RPGE *ass
         .x=vCoordinates.x + font->vPatchSize.x, 
         .y=vCoordinates.y + font->vPatchSize.y 
     };
+    log_trace("[dialog->vTextCoordinates {.x=%d, .y=%d}]", dialog->vTextCoordinates.x, dialog->vTextCoordinates.y);
     // makreker text padding
     Vec2D vTableSize = (Vec2D) {.x=vTextTable.x + 2, .y=vTextTable.y + 2 + 1};
     dialog->vIndicatorCoordinates = (Vec2D) {
@@ -56,7 +57,8 @@ Dialog_UI_RPGE* build_Dialog_UI_RPGE(Assetsheet_RPGE *font, Assetsheet_RPGE *ass
         .x=vCoordinates.x + vTableSize.x * asset->vPatchSize.x - asset->vPatchSize.x,
         .y=vCoordinates.y + vTableSize.y * asset->vPatchSize.y - asset->vPatchSize.y,
     };
-
+    log_trace("[dialog->vIndicatorCoordinates {.x=%d, .y=%d}]", vTableSize.x, vTableSize.y);
+    
     // set values.
     dialog->show = true;
     dialog->nextDisplayCharIndex = 0;    
@@ -66,12 +68,13 @@ Dialog_UI_RPGE* build_Dialog_UI_RPGE(Assetsheet_RPGE *font, Assetsheet_RPGE *ass
     // build dialog window.
     dialog->font = font;
     dialog->background = build_Background_UI_RPGE(asset, vCoordinates, vTableSize);
+    log_debug("[Created Dialog_UI_RPGE]");
+    return dialog;
 }
 
 void destory_Dialog_UI_RPGE(Dialog_UI_RPGE* dialog) 
 {
     destroy_Background_UI_RPGE(dialog->background);
-    free(dialog->textBuffer);
     free(dialog);
 }
 
