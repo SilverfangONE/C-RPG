@@ -35,7 +35,7 @@ int main()
         return EXIT_FAILURE;
     }
     // setup.
-    Label_UI_RPGE* label = build_Label_UI_RPGE(eContext->defaultFont, eContext->menuAsset, "Hello World\nlol", (Vec2D) { 10, 10});
+    Label_UI_RPGE* label = build_Label_UI_RPGE(eContext->defaultFont, eContext->menuAsset, "Hello\n W\norld", (Vec2D) { 10, 10});
     pContext->label = label;
     
     // start.

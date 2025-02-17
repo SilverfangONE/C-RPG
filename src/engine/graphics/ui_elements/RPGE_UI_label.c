@@ -56,12 +56,13 @@ Label_UI_RPGE *build_Label_UI_RPGE(Assetsheet_RPGE *font, Assetsheet_RPGE *asset
     maxColSize = max_UTIL(maxColSize, count);
     // 2. create array with padding Boarders around char pads.
     label->vTextTable = (Vec2D){.x = maxColSize, .y = maxRowSize};
+    log_trace("[vTextTable {.x=%d, .y=%d}]", label->vTextTable.x, label->vTextTable.y);
     Vec2D vTable;
     vTable.x = 2 + maxColSize;
     vTable.y = 2 + maxRowSize;
     label->vTextCoordinates =
         (Vec2D){.x = vCoordinates.x + asset->vPatchSize.x, .y = vCoordinates.y + asset->vPatchSize.y};
-    log_info("[vTextCoordinates {.x=%d, .y=%d}]", label->vTextCoordinates.x, label->vTextCoordinates.y); 
+    log_trace("[vTextCoordinates {.x=%d, .y=%d}]", label->vTextCoordinates.x, label->vTextCoordinates.y); 
     label->background = build_Background_UI_RPGE(asset, vCoordinates, vTable);
     if (label->background == NULL)
         return NULL;
