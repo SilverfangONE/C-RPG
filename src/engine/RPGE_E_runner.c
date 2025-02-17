@@ -1,13 +1,13 @@
+#include "RPGE_E_runner.h"
+#include "RPGE_E_context.h"
+#include "RPGE_E_keymap.h"
+#include "log.h"
 #include <SDL3/SDL.h>
 #include <SDL3_image/SDL_image.h>
 #include <errno.h>
 #include <stdbool.h>
-#include <time.h>
 #include <stdlib.h>
-#include "log.h"
-#include "RPGE_E_context.h"
-#include "RPGE_E_keymap.h"
-#include "RPGE_E_runner.h"
+#include <time.h>
 
 #ifdef _WIN32
 #include <windows.h>
@@ -38,7 +38,7 @@ int run_RPGE(const int TARGET_FPS, CONTEXT_RPGE *eContext)
         // excute engine logics.
         if (processEventsSDL(eContext))
             break;
-        if (_update_RPGE(eContext)) 
+        if (_update_RPGE(eContext))
             break;
         if (_render_RPGE(eContext))
             break;
@@ -132,38 +132,44 @@ bool processEventsSDL(CONTEXT_RPGE *eContext)
     return false;
 }
 
-int _update_RPGE(CONTEXT_RPGE* eContext) {
+int _update_RPGE(CONTEXT_RPGE *eContext)
+{
     return eContext->fupdatePtr(eContext);
 }
 
-int _render_RPGE(CONTEXT_RPGE* eContext) {
+int _render_RPGE(CONTEXT_RPGE *eContext)
+{
     // clear window.
-    if(!SDL_RenderClear(eContext->renderer)) {
+    if (!SDL_RenderClear(eContext->renderer))
+    {
         log_error("%s", SDL_GetError());
         return 1;
     }
 
-    // render on display. 
+    // render on display.
     SDL_SetRenderTarget(eContext->renderer, eContext->display->texture);
-    
+
     // clear display.
-    if(!SDL_RenderClear(eContext->renderer)) {
+    if (!SDL_RenderClear(eContext->renderer))
+    {
         log_error("%s", SDL_GetError());
         return 1;
     }
 
     // invoke program render fun.
-    if(eContext->frenderPtr(eContext)) {
+    if (eContext->frenderPtr(eContext))
+    {
         return 1;
     }
 
     // render on window.
     SDL_SetRenderTarget(eContext->renderer, NULL);
-    if(!SDL_RenderTexture(eContext->renderer, eContext->display->texture, NULL, &eContext->display->destRect)) {
+    if (!SDL_RenderTexture(eContext->renderer, eContext->display->texture, NULL, &eContext->display->destRect))
+    {
         log_error("%s", SDL_GetError());
     }
-    
+
     // switch buffer.
-    SDL_RenderPresent(eContext->renderer); //updates the renderer
+    SDL_RenderPresent(eContext->renderer); // updates the renderer
     return 0;
 }

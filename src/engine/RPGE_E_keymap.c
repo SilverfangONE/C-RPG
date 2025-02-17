@@ -1,6 +1,6 @@
 #include "RPGE_E_keymap.h"
-#include <stdlib.h>
 #include "log.h"
+#include <stdlib.h>
 
 /**
  * Resets all fields from keymap to false, except for pressed ones.

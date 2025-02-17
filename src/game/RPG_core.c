@@ -1,13 +1,13 @@
 #include "RPG_core.h"
 #include "RPGE_E_context.h"
+#include "RPGE_E_system_infos.h"
+#include "RPGE_G_assetsheet.h"
+#include "RPGE_UI_dialog.h"
+#include "RPGE_UI_label.h"
 #include "RPG_context.h"
 #include "log.h"
 #include <stdbool.h>
 #include <stdlib.h>
-#include "RPGE_UI_label.h"
-#include "RPGE_E_system_infos.h"
-#include "RPGE_G_assetsheet.h"
-#include "RPGE_UI_dialog.h"
 
 bool update_RPG(CONTEXT_RPGE *eContext)
 {
@@ -17,7 +17,8 @@ bool update_RPG(CONTEXT_RPGE *eContext)
     return 0;
 }
 
-static int render_TestIMG(CONTEXT_RPGE *eContext) {
+static int render_TestIMG(CONTEXT_RPGE *eContext)
+{
     SDL_FRect srcR;
     srcR.w = 8;
     srcR.h = 8;
@@ -42,43 +43,51 @@ static int counterLimit = 200;
 bool render_RPG(CONTEXT_RPGE *eContext)
 {
     CONTEXT_RPG *pContext = (CONTEXT_RPG *)eContext->pContext;
-    
-    if (counter >= counterLimit) {
-        pContext->label->background->vCoordinates.x += 10;   
-        pContext->label->background->vCoordinates.y += 10;   
+
+    if (counter >= counterLimit)
+    {
+        pContext->label->background->vCoordinates.x += 10;
+        pContext->label->background->vCoordinates.y += 10;
     }
 
     // render.
     // render_TestIMG(eContext);
     int indexCounter = nextCharIndex;
-    for (int yTile = 0; yTile < eContext->display->height / 8; yTile++) {
-        for (int xTile = 0; xTile < eContext->display->width / 8; xTile++) {
-            if (indexCounter > 96) indexCounter = 0;
-            renderTile_Assetsheet_G_RPGE(
-                eContext->renderer, 
-                eContext->defaultFont, 
-                indexCounter++, 
-                (Vec2D) {.x=xTile*8, .y=yTile*8}
-            );
+    for (int yTile = 0; yTile < eContext->display->height / 8; yTile++)
+    {
+        for (int xTile = 0; xTile < eContext->display->width / 8; xTile++)
+        {
+            if (indexCounter > 96)
+                indexCounter = 0;
+            renderTile_Assetsheet_G_RPGE(eContext->renderer, eContext->defaultFont, indexCounter++,
+                                         (Vec2D){.x = xTile * 8, .y = yTile * 8});
         }
-    }    
+    }
     // sepcial shit
-    if(nextCharIndex > 96) {
+    if (nextCharIndex > 96)
+    {
         nextCharIndex = 0;
-    } else {
+    }
+    else
+    {
         nextCharIndex++;
     }
-    if (render_Label_UI_RPGE(eContext->renderer, pContext->label)) { 
+    if (render_Label_UI_RPGE(eContext->renderer, pContext->label))
+    {
         return 1;
     }
-    if (render_Dialog_UI_RPGE(eContext->renderer, pContext->dialog)) {
+    if (render_Dialog_UI_RPGE(eContext->renderer, pContext->dialog))
+    {
         // return 1;
     }
 
     // counter shit.
-    if (counter >= counterLimit) {
+    if (counter >= counterLimit)
+    {
         counter = 0;
-    } else {
+    }
+    else
+    {
         counter++;
     }
     return 0;

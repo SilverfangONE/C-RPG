@@ -5,7 +5,7 @@
 #include <SDL3_image/SDL_image.h>
 #include <stdlib.h>
 
-Display_RPGE* create_Display_RPGE(SDL_Renderer *renderer, enum SYSTEM_RPGE system, const int WINDOW_WIDTH,
+Display_RPGE *create_Display_RPGE(SDL_Renderer *renderer, enum SYSTEM_RPGE system, const int WINDOW_WIDTH,
                                   const int WINDOW_HEIGHT)
 {
     Display_RPGE *disp = (Display_RPGE *)malloc(sizeof(Display_RPGE));

@@ -1,8 +1,8 @@
 #include "RPG_context.h"
+#include "RPGE_UI_label.h"
 #include "log.h"
 #include <stdlib.h>
 #include <string.h>
-#include "RPGE_UI_label.h"
 
 /**
  * Creates CONTEXT_RPG Struct with given params.

@@ -7,7 +7,7 @@
 #include <string.h>
 
 Assetsheet_RPGE *create_Assetsheet_G_RPGE(SDL_Renderer *renderer, Vec2D vTableSize, Vec2D vPatchSize, const char *ID,
-                                        const char *pathIMG)
+                                          const char *pathIMG)
 {
     Assetsheet_RPGE *asset = (Assetsheet_RPGE *)malloc(sizeof(Assetsheet_RPGE));
     if (asset == NULL)
@@ -80,7 +80,6 @@ int renderTile_Assetsheet_G_RPGE(SDL_Renderer *renderer, Assetsheet_RPGE *asset,
     srcR.h = TILE_SIZE_Y;
     srcR.x = (tileIndex % asset->vTableSize.x) * TILE_SIZE_X;
     srcR.y = (tileIndex / asset->vTableSize.x) * TILE_SIZE_Y;
-
 
     SDL_FRect destR;
     destR.w = TILE_SIZE_X;

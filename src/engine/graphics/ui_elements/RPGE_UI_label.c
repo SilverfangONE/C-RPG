@@ -62,7 +62,7 @@ Label_UI_RPGE *build_Label_UI_RPGE(Assetsheet_RPGE *font, Assetsheet_RPGE *asset
     vTable.y = 2 + maxRowSize;
     label->vTextCoordinates =
         (Vec2D){.x = vCoordinates.x + asset->vPatchSize.x, .y = vCoordinates.y + asset->vPatchSize.y};
-    log_trace("[label->vTextCoordinates {.x=%d, .y=%d}]", label->vTextCoordinates.x, label->vTextCoordinates.y); 
+    log_trace("[label->vTextCoordinates {.x=%d, .y=%d}]", label->vTextCoordinates.x, label->vTextCoordinates.y);
     label->background = build_Background_UI_RPGE(asset, vCoordinates, vTable);
     if (label->background == NULL)
         return NULL;
@@ -71,7 +71,7 @@ Label_UI_RPGE *build_Label_UI_RPGE(Assetsheet_RPGE *font, Assetsheet_RPGE *asset
 
 int render_Label_UI_RPGE(SDL_Renderer *renderer, Label_UI_RPGE *label)
 {
-    if (render_Background_UI_RPGE(renderer, label->background)) 
+    if (render_Background_UI_RPGE(renderer, label->background))
     {
         return 1;
     }
@@ -82,7 +82,8 @@ int render_Label_UI_RPGE(SDL_Renderer *renderer, Label_UI_RPGE *label)
     return 0;
 }
 
-void destory_Label_UI_RPGE(Label_UI_RPGE* label) {
+void destory_Label_UI_RPGE(Label_UI_RPGE *label)
+{
     destroy_Background_UI_RPGE(label->background);
     free(label->textBuffer);
     free(label);
