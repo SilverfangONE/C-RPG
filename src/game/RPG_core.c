@@ -17,7 +17,6 @@ bool update_RPG(CONTEXT_RPGE *eContext)
     return 0;
 }
 
-
 static int render_TestIMG(CONTEXT_RPGE *eContext) {
     SDL_FRect srcR;
     srcR.w = 8;
@@ -35,12 +34,23 @@ static int render_TestIMG(CONTEXT_RPGE *eContext) {
     return 0;
 }
 
+// special shit.
+static int nextCharIndex = 0;
+static int counter = 0;
+static int counterLimit = 200;
+
 bool render_RPG(CONTEXT_RPGE *eContext)
 {
     CONTEXT_RPG *pContext = (CONTEXT_RPG *)eContext->pContext;
+    
+    if (counter >= counterLimit) {
+        pContext->label->background->vCoordinates.x += 10;   
+        pContext->label->background->vCoordinates.y += 10;   
+    }
+
     // render.
     // render_TestIMG(eContext);
-    int indexCounter = 0;
+    int indexCounter = nextCharIndex;
     for (int yTile = 0; yTile < eContext->display->height / 8; yTile++) {
         for (int xTile = 0; xTile < eContext->display->width / 8; xTile++) {
             if (indexCounter > 96) indexCounter = 0;
@@ -52,7 +62,20 @@ bool render_RPG(CONTEXT_RPGE *eContext)
             );
         }
     }    
-    render_Label_UI_RPGE(eContext->renderer, pContext->label);
-    render_Dialog_UI_RPGE(eContext->renderer, pContext->dialog);
+    // sepcial shit
+    if(nextCharIndex > 96) {
+        nextCharIndex = 0;
+    } else {
+        nextCharIndex++;
+    }
+    if (!render_Label_UI_RPGE(eContext->renderer, pContext->label)) return 1;
+    if (!render_Dialog_UI_RPGE(eContext->renderer, pContext->dialog)) return 1;
+
+    // counter shit.
+    if (counter >= counterLimit) {
+        counter = 0;
+    } else {
+        counter++;
+    }
     return 0;
 }

@@ -137,7 +137,7 @@ int getAlphabetSpecialIndex_UI_RPGE(char *letter)
 // destroyTimer(timerID)
 
 static int counter = 0;
-static int displayAll = 300; // 5 sec
+static int displayAll = 600; // 5 sec
 
 int render_Text_UI_RPGE(SDL_Renderer *renderer, char *textBuffer, Vec2D vCoordinates, Vec2D vTable, Assetsheet_RPGE *font)
 {
@@ -192,7 +192,7 @@ int render_Text_UI_RPGE(SDL_Renderer *renderer, char *textBuffer, Vec2D vCoordin
         // logging after timer shit
         if(counter == displayAll) {
             log_info("[Index=%d | literal: %c]", index, textBuffer[literal]);
-            log_warn("[INDEX=%d | xTable=%d, yTable=%d | Vec2D {.x=%d, .y=%d}]", index,  xTable, yTable, cor.x, cor.y);
+            log_info("[INDEX=%d | xTable=%d, yTable=%d | Vec2D {.x=%d, .y=%d}]", index,  xTable, yTable, cor.x, cor.y);
         }
         xTable++;
     }

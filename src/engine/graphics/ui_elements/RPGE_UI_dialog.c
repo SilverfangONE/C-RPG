@@ -94,6 +94,7 @@ int render_Dialog_UI_RPGE(SDL_Renderer* renderer, Dialog_UI_RPGE* dialog)
         textDisplayBuffer[i] = dialog->textBuffer[dialog->nextDisplayCharIndex + i];
     }
     // render text on background.
+    log_warn("render_Dialog_UI_RPGE: ello");
     if (render_Text_UI_RPGE(renderer, textDisplayBuffer, dialog->vTextCoordinates, dialog->vTextTable, dialog->font)) return 1;
     
     // render text scroll indicator.

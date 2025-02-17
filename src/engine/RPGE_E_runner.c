@@ -137,14 +137,22 @@ int _update_RPGE(CONTEXT_RPGE* eContext) {
 }
 
 int _render_RPGE(CONTEXT_RPGE* eContext) {
-    // reset.
+    // clear window.
     if(!SDL_RenderClear(eContext->renderer)) {
         log_error("%s", SDL_GetError());
+        return 1;
     }
 
     // render on display. 
     SDL_SetRenderTarget(eContext->renderer, eContext->display->texture);
     
+    // clear display.
+    if(!SDL_RenderClear(eContext->renderer)) {
+        log_error("%s", SDL_GetError());
+        return 1;
+    }
+
+    // invoke program render fun.
     if(eContext->frenderPtr(eContext)) {
         return 1;
     }
