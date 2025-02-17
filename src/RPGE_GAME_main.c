@@ -42,10 +42,12 @@ int main()
         "Das Abenteuer, das RPG-Spiele auf Super Nintendo revolutioniert hat, hat seinen ersten Auftritt in Europa! ",
         (Vec2D){55, 55}, (Vec2D){20, 3});
     pContext->dialog = dialog;
+
     Label_UI_RPGE *label =
         build_Label_UI_RPGE(eContext->defaultFont, eContext->menuAsset, "Hello\n W\norld", (Vec2D){10, 10});
     pContext->label = label;
     // configure timer
+    setTimerSec_TIME_RPGE(5, 5);
 
     // start.
     run_RPGE(eContext);

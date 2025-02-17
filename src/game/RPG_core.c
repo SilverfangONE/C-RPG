@@ -13,7 +13,7 @@ bool update_RPG(CONTEXT_RPGE *eContext)
 {
     CONTEXT_RPG *pContext = (CONTEXT_RPG *)eContext->pContext;
     // update.
-    update_Dialog_UI_RPGE(pContext->dialog, eContext->keymap);
+    // update_Dialog_UI_RPGE(pContext->dialog, eContext->keymap);
     return 0;
 }
 
@@ -37,18 +37,10 @@ static int render_TestIMG(CONTEXT_RPGE *eContext)
 
 // special shit.
 static int nextCharIndex = 0;
-static int counter = 0;
-static int counterLimit = 200;
 
 bool render_RPG(CONTEXT_RPGE *eContext)
 {
     CONTEXT_RPG *pContext = (CONTEXT_RPG *)eContext->pContext;
-
-    if (counter >= counterLimit)
-    {
-        pContext->label->background->vCoordinates.x += 10;
-        pContext->label->background->vCoordinates.y += 10;
-    }
 
     // render.
     // render_TestIMG(eContext);
@@ -83,13 +75,5 @@ bool render_RPG(CONTEXT_RPGE *eContext)
     }
 
     // counter shit.
-    if (counter >= counterLimit)
-    {
-        counter = 0;
-    }
-    else
-    {
-        counter++;
-    }
     return 0;
 }

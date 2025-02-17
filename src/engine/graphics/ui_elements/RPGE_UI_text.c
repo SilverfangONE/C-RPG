@@ -1,4 +1,5 @@
 #include "RPGE_UI_text.h"
+#include "RPGE_E_time.h"
 #include "RPGE_G_assetsheet.h"
 #include "RPGE_U_vec.h"
 #include "log.h"
@@ -231,9 +232,6 @@ int getAlphabetSpecialIndex_UI_RPGE(char *letter)
 // checkTimer(timerID) => returns true if timer alarms. and resets after timer
 // destroyTimer(timerID)
 
-static int counter = 0;
-static int displayAll = 600; // 5 sec
-
 // TODO hier findet ein segementaion fault statt vorischt !!!!!
 // TODO binde den timer ein !
 int render_Text_UI_RPGE(SDL_Renderer *renderer, char *textBuffer, Vec2D vCoordinates, Vec2D vTable,
@@ -291,7 +289,7 @@ int render_Text_UI_RPGE(SDL_Renderer *renderer, char *textBuffer, Vec2D vCoordin
         Vec2D cor = {.x = vCoordinates.x + xTable * dest.w, .y = vCoordinates.y + yTable * dest.h};
         renderTile_Assetsheet_G_RPGE(renderer, font, index, cor);
         // logging after timer shit
-        if (counter == displayAll)
+        if (checkTimer_TIME_RPGE(5))
         {
             log_info("[Index=%d | literal: %c]", index, textBuffer[literal]);
             log_info("[INDEX=%d | xTable=%d, yTable=%d | Vec2D {.x=%d, .y=%d}]", index, xTable, yTable, cor.x, cor.y);
@@ -299,13 +297,5 @@ int render_Text_UI_RPGE(SDL_Renderer *renderer, char *textBuffer, Vec2D vCoordin
         xTable++;
     }
     // timer shit
-    if (counter == displayAll)
-    {
-        counter = 0;
-    }
-    else
-    {
-        counter++;
-    }
     return 0;
 }
