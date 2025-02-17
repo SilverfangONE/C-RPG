@@ -16,21 +16,21 @@ typedef struct Label_UI_RPGE {
 } Label_UI_RPGE;
 
 /**
- * Builds a Label_UI_RPGE struct with given params. 
+ * Builds a Label_UI_RPGE struct with given params (in heap). 
  * 
  * @param font Assetsheet_RPGE for font asset
  * @param asset Assetsheet_RPGE for menu asset
  * @param text The text to display on the label
  * @param vCoordinates Vec2D wich contains the upper left edge Coordinates of the label  
- * @return pointer to created Label_UI_RPGE struct in heap, or NULL if error occured.
+ * @return pointer to created Label_UI_RPGE struct, or NULL if error occured.
  */
 Label_UI_RPGE* build_Label_UI_RPGE(Assetsheet_RPGE *font, Assetsheet_RPGE *asset, char* text, Vec2D vCoordinates);
 
 /**
- * Renderes Given Label_UI_RPGE struct on current render target.
+ * Renderes given Label_UI_RPGE struct on the current render target.
  * 
  * @param render SDL_Renderer* pointer for SDL context
- * @param label Label_UI_RPGE which should be rendered on the current render target
+ * @param label Label_UI_RPGE which should get rendered
  * @return 0 if no error occored during exection, otherwise 1
  */
 int render_Label_UI_RPGE(SDL_Renderer* renderer, Label_UI_RPGE* label);
@@ -40,6 +40,6 @@ int render_Label_UI_RPGE(SDL_Renderer* renderer, Label_UI_RPGE* label);
  * 
  * @param label Label_UI_RPGE struct which should get freed from heap
  */
-void destory_Dialog_UI_RPGE(Label_UI_RPGE* label);
+void destory_Label_UI_RPGE(Label_UI_RPGE* label);
 
 #endif

@@ -13,7 +13,12 @@ enum MENU_TILE_TYPE {
     MENU_EAST_BOARDER_MID,
     MENU_WEST_BOARDER_MID,
     MENU_SOUTH_BOARRDER_MID,
-    MENU_MID
+    MENU_MID,
+    MENU_ARROW_UP,
+    MENU_ARROW_DOWN,
+    MENU_ARROW_LEFT,
+    MENU_CHECKBOX_ENABLED,
+    MENU_CHECKBOX_NOT_ENABLED
 };
 int lookup_BackgroundTiles_UI_RPGE(enum MENU_TILE_TYPE tile);
 int set_flookupBackgroundTiles_UI_RPGE(int (*newflookupBackgroundTiles_UI_RPGE)(enum MENU_TILE_TYPE));

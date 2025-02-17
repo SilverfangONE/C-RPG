@@ -75,3 +75,9 @@ int render_Label_UI_RPGE(SDL_Renderer *renderer, Label_UI_RPGE *label)
     render_Text_UI_RPGE(renderer, label->textBuffer, label->vTextCoordinates, label->vTextTable, label->font);
     return 1;
 }
+
+void destory_Label_UI_RPGE(Label_UI_RPGE* label) {
+    destroy_Background_UI_RPGE(label->background);
+    free(label->textBuffer);
+    free(label);
+}

@@ -14,22 +14,32 @@ int default_getIndex_Background_MENU_TILE_UI_RPGE(enum MENU_TILE_TYPE tile)
     {
     case MENU_UP_LEFT_CORN:
         return 0;
-    case MENU_UP_RIGTH_CORN:
-        return 2;
-    case MENU_DOWN_LEFT_CORN:
-        return 12;
-    case MENU_DOWN_RIGTH_CORN:
-        return 14;
     case MENU_NORTH_BOARDER_MID:
         return 1;
-    case MENU_EAST_BOARDER_MID:
-        return 8;
+    case MENU_UP_RIGTH_CORN:
+        return 2;
+    case MENU_ARROW_UP:
+        return 3;
     case MENU_WEST_BOARDER_MID:
         return 6;
-    case MENU_SOUTH_BOARRDER_MID:
-        return 13;
     case MENU_MID:
         return 7;
+    case MENU_EAST_BOARDER_MID:
+        return 8;
+    case MENU_ARROW_DOWN:
+        return 9;
+    case MENU_DOWN_LEFT_CORN:
+        return 12;
+    case MENU_SOUTH_BOARRDER_MID:
+        return 13;
+    case MENU_DOWN_RIGTH_CORN:
+        return 14;
+    case MENU_ARROW_LEFT:
+        return 15;
+    case MENU_CHECKBOX_NOT_ENABLED:
+        return 16;
+    case MENU_CHECKBOX_ENABLED:
+        return 17;
     default:
         return -1;
     }
