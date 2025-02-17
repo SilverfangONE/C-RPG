@@ -8,6 +8,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <time.h>
+#include "RPGE_E_time.h"
 
 #ifdef _WIN32
 #include <windows.h>
@@ -32,6 +33,7 @@ int run_RPGE(const int TARGET_FPS, CONTEXT_RPGE *eContext)
 {
     log_info("Start RPG-ENGINE ...");
     int FRAME_TIME = 1000 / TARGET_FPS;
+    init_TIME_RPGE(TARGET_FPS);
     while (true)
     {
         clock_t start_time = clock();
@@ -48,6 +50,7 @@ int run_RPGE(const int TARGET_FPS, CONTEXT_RPGE *eContext)
         {
             sleep_ms(FRAME_TIME - (int)elapsed_ms);
         }
+        _update_TIME_RPGE();
     }
     return 0;
 }
