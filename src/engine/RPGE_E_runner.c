@@ -33,7 +33,7 @@ int run_RPGE(const int TARGET_FPS, CONTEXT_RPGE *eContext)
 {
     log_info("Start RPG-ENGINE ...");
     int FRAME_TIME = 1000 / TARGET_FPS;
-    INIT_TIME_RPGE(TARGET_FPS);
+    INIT_TIME_RPGE(eContext->timeManager, TARGET_FPS);
     while (true)
     {
         clock_t start_time = clock();
@@ -50,7 +50,7 @@ int run_RPGE(const int TARGET_FPS, CONTEXT_RPGE *eContext)
         {
             sleep_ms(FRAME_TIME - (int)elapsed_ms);
         }
-        _UPDATE_TIME_RPGE();
+        _update_TIME_RPGE();
     }
     QUIT_TIME_RPGE();
     return 0;

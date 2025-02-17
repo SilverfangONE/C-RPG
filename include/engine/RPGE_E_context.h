@@ -7,6 +7,7 @@
 #include "RPGE_E_display.h"
 #include "RPGE_G_assetsheet.h"
 #include "RPGE_E_keymap.h"
+#include "RPGE_E_time.h"
 
 /**
  * Global Context for the RPG-ENGINE
@@ -29,6 +30,8 @@ typedef struct CONTEXT_RPGE {
     // resouces.
     Assetsheet_RPGE* defaultFont;
     Assetsheet_RPGE* menuAsset;
+    // timer
+    TimerManager_TIME_RPGE* timeManager;
 } CONTEXT_RPGE;
 
 void terminate_RPGE(CONTEXT_RPGE* eContext, int);

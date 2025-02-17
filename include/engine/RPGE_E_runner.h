@@ -3,6 +3,7 @@
 
 #include <stdbool.h>
 #include "RPGE_E_context.h"
+#include "RPGE_E_time.h"
 
 // TODO add timer facilites for debugging in program loop.
 

@@ -3,10 +3,11 @@
 #include <stdlib.h>
 #include "log.h"
 
-static TimerManager_RPGE* _timerManager;
+static TimerManager_TIME_RPGE* _timerManager;
 static int _FPS;
 
-int setTimerManager_TIME_RPGE(TimerManager_RPGE* manager, int FPS) {
+int INIT_TIME_RPGE(TimerManager_TIME_RPGE* manager, int FPS)
+{
     if (manager == NULL) {
         log_error("setTimerManager_TIME(): manager%s is invalid", manager);
         errno = EINVAL;
@@ -18,33 +19,26 @@ int setTimerManager_TIME_RPGE(TimerManager_RPGE* manager, int FPS) {
     return 0;
 }
 
-void INIT_TIME_RPGE(int FPS) {
-    log_debug("[init _timerManager {FPS=%d}]", FPS);
-    _timerManager = malloc(sizeof(TimerManager_RPGE));
-    _FPS = FPS;
-}
-
 void QUIT_TIME_RPGE() {
-    destroyTimerManager_TIME_RPGE(_timerManager);
+    _destroyTimerManager_TIME_RPGE(_timerManager);
 }
 
 Timer_RPGE* setTimerTicks_TIME_RPGE(unsigned int ID, int ticks) {
-    Timer_RPGE* timer = malloc(sizeof(Timer_RPGE));
-    timer->countTicks = 0;
-    timer->ID = ID;
-    timer->limitTicks = ticks;
+    Timer_RPGE* timer = _create_TimerTicks_TIME_RPGE(ID, ticks);
+    if (timer == NULL) return NULL;
+    if (_addTimer_TimerManager_TIME_RPGE(timer)) {
+        free(timer);
+        return NULL;
+    } 
     return timer;
 }
 
 Timer_RPGE* setTimerSec_TIME_RPGE(unsigned int ID, int sec) {
-    Timer_RPGE* timer = malloc(sizeof(Timer_RPGE));
-    timer->countTicks = 0;
-    timer->ID = ID;
-    timer->limitTicks = sec * _FPS;
+    Timer_RPGE* timer = setTimerTicks_TIME_RPGE(ID, sec * _FPS);
     return timer;
 }
 
-int addTimer_TimerManager_TIME_RPGE(Timer_RPGE* timer) {
+int _addTimer_TimerManager_TIME_RPGE(Timer_RPGE* timer) {
     if (timer == NULL) {
         log_error("addTimer_TimerManager_TIME_RPGE(): timer%s is invalid", timer);
         errno = EINVAL;
@@ -60,7 +54,7 @@ int addTimer_TimerManager_TIME_RPGE(Timer_RPGE* timer) {
     return 1;
 }
 
-int removeTimer_TimerManager_TIME_RPGE(unsigned int ID) {
+int removeTimer_TIME_RPGE(unsigned int ID) {
     for (int i = 0; i < _timerManager->length; i++) {
         if (_timerManager->timerList[i]->ID == ID) {
             free(_timerManager->timerList[i]);
@@ -72,22 +66,12 @@ int removeTimer_TimerManager_TIME_RPGE(unsigned int ID) {
     return 1;
 }
 
-void destroyTimerManager_TIME_RPGE(TimerManager_RPGE* manager) {
+void _destroyTimerManager_TIME_RPGE(TimerManager_TIME_RPGE* manager) {
     // free timer 
     for (int i = 0; i < manager->length; i++) {
         free(manager->timerList[i]);
     }
     free(manager);
-}
-
-int destroyTimer_TIME_RPGE(unsigned int ID) {
-    for (int i = 0; i < _timerManager->length; i++) {
-        if(_timerManager->timerList[i]->ID == ID) {
-            free(_timerManager->timerList[i]);
-            return 0;
-        }
-    }
-    return 1;
 }
 
 bool checkTimer_TIME_RPGE(unsigned int ID) {
@@ -103,10 +87,33 @@ bool checkTimer_TIME_RPGE(unsigned int ID) {
     }
 }
 
-void _UPDATE_TIME_RPGE() {
+void _update_TIME_RPGE() {
     for (int i = 0; i < _timerManager->length; i++) {
         if (_timerManager->timerList[i] == NULL) {
             _timerManager->timerList[i]->countTicks++;
         }
     }
+}
+
+TimerManager_TIME_RPGE* _create_TimerManager_TIME_RPGE() {
+    TimerManager_TIME_RPGE* manager = malloc(sizeof(TimerManager_TIME_RPGE));
+    manager->length = 30;
+    for (int i = 0; i < manager->length; i++) {
+        manager->timerList[i] = NULL;
+    }
+    log_trace("[Created TimeManager_TIME_RPGE]");
+    return manager;
+}
+
+Timer_RPGE* _create_TimerSec_TIME_RPGE(unsigned int ID, int sec, int FPS) {
+    return _create_TimerTicks_TIME_RPGE(ID, FPS* sec);
+}
+
+Timer_RPGE* _create_TimerTicks_TIME_RPGE(unsigned int ID, int ticks) {
+    Timer_RPGE* timer = malloc(sizeof(Timer_RPGE));
+    if (timer == NULL) return NULL;
+    timer->countTicks = 0;
+    timer->ID = ID;
+    timer->limitTicks = ticks;
+    return timer;
 }

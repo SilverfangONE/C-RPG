@@ -15,6 +15,7 @@ typedef struct CONTEXT_RPG {
     char* pName;
     Label_UI_RPGE* label;
     Dialog_UI_RPGE* dialog;
+    
 } CONTEXT_RPG;
 
 CONTEXT_RPG* init_RPG(char*);

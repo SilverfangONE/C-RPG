@@ -5,6 +5,7 @@
 #include "RPGE_G_assetsheet.h"
 #include "RPGE_JSON_assetsheet.h"
 #include "log.h"
+#include "RPGE_E_time.h"
 #include <errno.h>
 #include <stdlib.h>
 #include <string.h>
@@ -81,6 +82,8 @@ CONTEXT_RPGE *init_RPGE(bool (*fupdatePtr)(struct CONTEXT_RPGE *eContext),
     eContext->menuAsset = load_Assetsheet_JSON_RPGE(eContext->renderer, defaultMenuPathJSON);
     if (eContext->menuAsset == NULL)
         return NULL;
+    // Time Manager
+    eContext->timeManager = _create_TimerManager_TIME_RPGE();
     log_debug("[Created CONTEXT_RPGE]");
     return eContext;
 }
@@ -98,6 +101,7 @@ void terminate_RPGE(CONTEXT_RPGE *eContext, int _Code)
     SDL_DestroyWindow(eContext->window);
     SDL_DestroyRenderer(eContext->renderer);
     SDL_Quit();
+    free(eContext->timeManager);
     free(eContext);
     switch (_Code)
     {

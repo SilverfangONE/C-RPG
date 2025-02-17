@@ -72,7 +72,7 @@ bool render_RPG(CONTEXT_RPGE *eContext)
     {
         nextCharIndex++;
     }
-    
+
     if (render_Label_UI_RPGE(eContext->renderer, pContext->label))
     {
         return 1;

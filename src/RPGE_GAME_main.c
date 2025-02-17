@@ -39,14 +39,13 @@ int main()
     // setup.
     Dialog_UI_RPGE *dialog = build_Dialog_UI_RPGE(
         eContext->defaultFont, eContext->menuAsset,
-        "Das Abenteuer, das RPG-Spiele auf Super Nintendo revolutioniert hat, hat seinen ersten Auftritt in Europa! "
-        "Als ein Meteorit in der Nähe von Ness’ Haus einschlägt, macht der mutige Junge sich auf, um Näheres "
-        "herauszufinden. Er ahnt ja nicht, dass dies der Anfang eines epischen Abenteuers ist, das sein Leben a",
+        "Das Abenteuer, das RPG-Spiele auf Super Nintendo revolutioniert hat, hat seinen ersten Auftritt in Europa! ",
         (Vec2D){55, 55}, (Vec2D){20, 3});
     pContext->dialog = dialog;
     Label_UI_RPGE *label =
         build_Label_UI_RPGE(eContext->defaultFont, eContext->menuAsset, "Hello\n W\norld", (Vec2D){10, 10});
     pContext->label = label;
+        
     // start.
     run_RPGE(TARGET_FPS, eContext);
 

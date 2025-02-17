@@ -20,6 +20,7 @@ enum MENU_TILE_TYPE {
     MENU_CHECKBOX_ENABLED,
     MENU_CHECKBOX_NOT_ENABLED
 };
+
 int lookup_BackgroundTiles_UI_RPGE(enum MENU_TILE_TYPE tile);
 int set_flookupBackgroundTiles_UI_RPGE(int (*newflookupBackgroundTiles_UI_RPGE)(enum MENU_TILE_TYPE));
 void set_flookupBackgroundTiles_DEFAULT_UI_RPGE();
