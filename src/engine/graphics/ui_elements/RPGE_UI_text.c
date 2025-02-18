@@ -423,10 +423,18 @@ Vec2D _calc_vTableSize_TEXT_NARROW_UI_RPGE(Assetsheet_RPGE *asset, Assetsheet_RP
     {
         return (Vec2D){.x = -1, .y = -1};
     }
+
+    int xPreTable = vTextTable.x * vSubPatchSize.x / font->vPatchSize.x;
+    if (vTextTable.x * vSubPatchSize.x % font->vPatchSize.x != 0) {
+        xPreTable++;
+    }
+
+    int yPreTable = vTextTable.y * vSubPatchSize.y / font->vPatchSize.y;
+
     return (Vec2D){
-        .x =
-            ((vTextTable.x + 2 + (vPaddingHorizontal.x + vPaddingHorizontal.y)) * font->vPatchSize.x) / vSubPatchSize.x,
-        .y = ((vTextTable.y + 2 + (vPaddingVertical.x + vPaddingVertical.y)) * font->vPatchSize.y) / vSubPatchSize.y};
+        .x = xPreTable + 2 + (vPaddingHorizontal.x + vPaddingHorizontal.y),
+        .y = yPreTable + 2 + (vPaddingVertical.x + vPaddingVertical.y)
+    };
 }
 
 Vec2D _calc_vTextTable_TEXT_UI_RPGE(char *textBuffer)
