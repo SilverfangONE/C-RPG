@@ -40,7 +40,6 @@ static int nextCharIndex = 0;
 
 bool render_RPG(CONTEXT_RPGE *eContext)
 {
-    log_warn("render_RPG():");
     CONTEXT_RPG *pContext = (CONTEXT_RPG *)eContext->pContext;
 
     // render.
@@ -65,17 +64,16 @@ bool render_RPG(CONTEXT_RPGE *eContext)
     {
         nextCharIndex++;
     }
-
-    /*
+    
     if (render_Label_UI_RPGE(eContext->renderer, pContext->label))
     {
         return 1;
     }
     if (render_Dialog_UI_RPGE(eContext->renderer, pContext->dialog))
     {
+        // something is happing in there that dont work.
         // return 1;
     }
-    */
 
     // counter shit.
     return 0;

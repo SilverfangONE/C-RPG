@@ -237,7 +237,6 @@ int getAlphabetSpecialIndex_UI_RPGE(char *letter)
 int render_Text_UI_RPGE(SDL_Renderer *renderer, char *textBuffer, Vec2D vCoordinates, Vec2D vTable,
                         Assetsheet_RPGE *font)
 {
-    log_trace("go into render_text_uI_RPGE");
     SDL_FRect dest;
     SDL_FRect src;
     dest.w = font->vPatchSize.x;

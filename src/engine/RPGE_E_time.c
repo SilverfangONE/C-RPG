@@ -4,9 +4,8 @@
 #include <stdlib.h>
 
 static TimerManager_TIME_RPGE *_timerManager;
-static int _FPS;
 
-int INIT_TIME_RPGE(TimerManager_TIME_RPGE *manager, int FPS)
+int INIT_TIME_RPGE(TimerManager_TIME_RPGE *manager, int FPS, int tickSizeCap)
 {
     if (manager == NULL)
     {
@@ -15,8 +14,9 @@ int INIT_TIME_RPGE(TimerManager_TIME_RPGE *manager, int FPS)
         return 1;
     }
     _timerManager = manager;
-    _FPS = FPS;
-    log_debug("[set new _timerManager {FPS=%d}]", FPS);
+    _timerManager->tickSizeCap = tickSizeCap;
+    _timerManager->FPS = FPS;
+    log_debug("[set new _timerManager {FPS=%d, slotSize=%d, tickSizeCap=%d}]", _timerManager, _timerManager->length, _timerManager->tickSizeCap);
     return 0;
 }
 
@@ -40,7 +40,7 @@ Timer_RPGE *setTimerTicks_TIME_RPGE(unsigned int ID, int ticks)
 
 Timer_RPGE *setTimerSec_TIME_RPGE(unsigned int ID, int sec)
 {
-    Timer_RPGE *timer = setTimerTicks_TIME_RPGE(ID, sec * _FPS);
+    Timer_RPGE *timer = setTimerTicks_TIME_RPGE(ID, sec * _timerManager->FPS);
     return timer;
 }
 
@@ -97,7 +97,7 @@ bool checkTimer_TIME_RPGE(unsigned int ID)
         {
             if (_timerManager->timerList[i]->limitTicks == _timerManager->timerList[i]->countTicks)
             {
-                _timerManager->timerList[i]->countTicks = 0;
+                _timerManager->timerList[i]->toReset = true;
                 return true;
             }
             return false;
@@ -107,11 +107,22 @@ bool checkTimer_TIME_RPGE(unsigned int ID)
 
 void _update_TIME_RPGE()
 {
+    // check if TIME_RPGE is init.
+    if (_timerManager == NULL) {
+        log_warn("_update_TIME_RPGE(): no _timerManager is set!");
+        return;
+    }
     for (int i = 0; i < _timerManager->length; i++)
     {
-        if (_timerManager->timerList[i] == NULL)
+        // check if slot is not empty and a timer needs to be updated 
+        if (_timerManager->timerList[i] != NULL)
         {
-            _timerManager->timerList[i]->countTicks++;
+            if (_timerManager->timerList[i]->countTicks >= _timerManager->tickSizeCap || _timerManager->timerList[i]->toReset) {
+                _timerManager->timerList[i]->toReset = false;
+                _timerManager->timerList[i]->countTicks = 0;
+            } else {
+                _timerManager->timerList[i]->countTicks++;
+            }
         }
     }
 }
@@ -138,6 +149,7 @@ Timer_RPGE *_create_TimerTicks_TIME_RPGE(unsigned int ID, int ticks)
     Timer_RPGE *timer = malloc(sizeof(Timer_RPGE));
     if (timer == NULL)
         return NULL;
+    timer->toReset = false;
     timer->countTicks = 0;
     timer->ID = ID;
     timer->limitTicks = ticks;

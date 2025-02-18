@@ -7,11 +7,14 @@ typedef struct Timer_RPGE {
     unsigned int ID;
     int countTicks;
     int limitTicks;
+    bool toReset;
 } Timer_RPGE;
 
 typedef struct TimerManager_TIME_RPGE {
     Timer_RPGE* timerList[30];
     int length;
+    int tickSizeCap;
+    int FPS;
 } TimerManager_TIME_RPGE;
 
 /**
@@ -21,7 +24,7 @@ typedef struct TimerManager_TIME_RPGE {
  * @param FPS frams per second of running program 
  * @return 0 if no error occured
  */
-int INIT_TIME_RPGE(TimerManager_TIME_RPGE* manager, int FPS);
+int INIT_TIME_RPGE(TimerManager_TIME_RPGE* manager, int FPS, int tickSizeCap);
 
 /**
  * Creates Timer_RPGE struct which is managed by TimerManager_TIME_RPGE _timerManager struct.
