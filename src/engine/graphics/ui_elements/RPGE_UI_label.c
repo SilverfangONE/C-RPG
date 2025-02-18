@@ -66,6 +66,7 @@ Label_UI_RPGE *build_Label_UI_RPGE(Assetsheet_RPGE *font, Assetsheet_RPGE *asset
     label->background = build_Background_UI_RPGE(asset, vCoordinates, vTable);
     if (label->background == NULL)
         return NULL;
+    log_debug("[Created Label_UI_RPGE {text='%s'}]", label->textBuffer);
     return label;
 }
 

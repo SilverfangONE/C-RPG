@@ -73,7 +73,7 @@ Dialog_UI_RPGE *build_Dialog_UI_RPGE(Assetsheet_RPGE *font, Assetsheet_RPGE *ass
     // build dialog window.
     dialog->font = font;
     dialog->background = build_Background_UI_RPGE(asset, vCoordinates, vTableSize);
-    log_debug("[Created Dialog_UI_RPGE]");
+    log_debug("[Created Dialog_UI_RPGE {text='%s'}]", dialog->textBuffer);
     return dialog;
 }
 

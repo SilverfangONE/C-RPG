@@ -40,6 +40,7 @@ static int nextCharIndex = 0;
 
 bool render_RPG(CONTEXT_RPGE *eContext)
 {
+    log_warn("render_RPG():");
     CONTEXT_RPG *pContext = (CONTEXT_RPG *)eContext->pContext;
 
     // render.
@@ -65,6 +66,7 @@ bool render_RPG(CONTEXT_RPGE *eContext)
         nextCharIndex++;
     }
 
+    /*
     if (render_Label_UI_RPGE(eContext->renderer, pContext->label))
     {
         return 1;
@@ -73,6 +75,7 @@ bool render_RPG(CONTEXT_RPGE *eContext)
     {
         // return 1;
     }
+    */
 
     // counter shit.
     return 0;
