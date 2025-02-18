@@ -16,7 +16,8 @@ int INIT_TIME_RPGE(TimerManager_TIME_RPGE *manager, int FPS, int tickSizeCap)
     _timerManager = manager;
     _timerManager->tickSizeCap = tickSizeCap;
     _timerManager->FPS = FPS;
-    log_debug("[set new _timerManager {FPS=%d, slotSize=%d, tickSizeCap=%d}]", _timerManager, _timerManager->length, _timerManager->tickSizeCap);
+    log_debug("[set new _timerManager {FPS=%d, slotSize=%d, tickSizeCap=%d}]", _timerManager, _timerManager->length,
+              _timerManager->tickSizeCap);
     return 0;
 }
 
@@ -108,19 +109,24 @@ bool checkTimer_TIME_RPGE(unsigned int ID)
 void _update_TIME_RPGE()
 {
     // check if TIME_RPGE is init.
-    if (_timerManager == NULL) {
+    if (_timerManager == NULL)
+    {
         log_warn("_update_TIME_RPGE(): no _timerManager is set!");
         return;
     }
     for (int i = 0; i < _timerManager->length; i++)
     {
-        // check if slot is not empty and a timer needs to be updated 
+        // check if slot is not empty and a timer needs to be updated
         if (_timerManager->timerList[i] != NULL)
         {
-            if (_timerManager->timerList[i]->countTicks >= _timerManager->tickSizeCap || _timerManager->timerList[i]->toReset) {
+            if (_timerManager->timerList[i]->countTicks >= _timerManager->tickSizeCap ||
+                _timerManager->timerList[i]->toReset)
+            {
                 _timerManager->timerList[i]->toReset = false;
                 _timerManager->timerList[i]->countTicks = 0;
-            } else {
+            }
+            else
+            {
                 _timerManager->timerList[i]->countTicks++;
             }
         }
