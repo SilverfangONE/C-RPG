@@ -42,14 +42,33 @@ Label_UI_RPGE *build_Label_UI_RPGE(Assetsheet_RPGE *font, Assetsheet_RPGE *asset
 
     // 2. create array with padding Boarders around char pads.
     label->vTextTable = _calc_vTextTable_TEXT_UI_RPGE(text);
+    if ( label->vTextTable.x < 0 || label->vTextTable.y < 0)
+    {
+        log_error("build_Dialog_UI_RPGE: vTextTable {.x=%d, .y=%d} is invalid calculated", label->vTextTable.x, label->vTextTable.y);
+        errno = EINVAL;
+        return NULL;
+    }
     log_trace("[label->vTextTable {.x=%d, .y=%d}]", label->vTextTable.x, label->vTextTable.y);
 
     label->vTextCoordinates = _calc_vTextCoordinates_TEXT_UI_RPGE(asset, vCoordinates);
+    if ( label->vTextCoordinates.x < 0 || label->vTextCoordinates.y < 0)
+    {
+        log_error("build_Dialog_UI_RPGE: vTextCoordinates {.x=%d, .y=%d} is invalid calculated", label->vTextCoordinates.x, label->vTextCoordinates.y);
+        errno = EINVAL;
+        return NULL;
+    }
     log_trace("[label->vTextCoordinates {.x=%d, .y=%d}]", label->vTextCoordinates.x, label->vTextCoordinates.y);
-    label->background =
-        build_Background_UI_RPGE(asset, vCoordinates,
-                                 _calc_vTableSize_TEXT_NARROW_UI_RPGE(asset, font, label->vTextTable, (Vec2D){0, 0},
-                                                                      (Vec2D){0, 0}, (Vec2D){6, 8}));
+    
+    Vec2D vTableSize = _calc_vTableSize_TEXT_NARROW_UI_RPGE(asset, font, label->vTextTable, (Vec2D){0, 0},  (Vec2D){0, 0}, (Vec2D){6, 8});
+    if ( vTableSize.x < 0 || vTableSize.y < 0)
+    {
+        log_error("build_Dialog_UI_RPGE: vTableSize {.x=%d, .y=%d} is invalid calculated", vTableSize.x, vTableSize.y);
+        errno = EINVAL;
+        return NULL;
+    }
+    log_trace("[label->vTableSize {.x=%d, .y=%d}]", vTableSize.x, vTableSize.y);
+
+    label->background = build_Background_UI_RPGE(asset, vCoordinates, vTableSize);
     if (label->background == NULL)
         return NULL;
     label->show = true;

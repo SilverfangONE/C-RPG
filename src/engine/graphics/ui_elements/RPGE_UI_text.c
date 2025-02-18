@@ -446,6 +446,7 @@ Vec2D _calc_vTextTable_TEXT_UI_RPGE(char *textBuffer)
     }
     maxColSize = max_UTIL(maxColSize, count);
     // 2. create array with padding Boarders around char pads.
+    log_trace("[_calc_vTextTable_TEXT_UI_RPGE: {.x=%d, .y=%d}]", maxColSize, maxRowSize);
     return (Vec2D){.x = maxColSize, .y = maxRowSize};
 }
 

@@ -62,6 +62,8 @@ Dialog_UI_RPGE *build_Dialog_UI_RPGE(Assetsheet_RPGE *font, Assetsheet_RPGE *ass
                                                               (Vec2D){.x = 0, .y = 0}, (Vec2D){.x = 0, .y = 1});
     if (dialog->vTextTable.x < 0 || dialog->vTextTable.y < 0)
     {
+        log_error("build_Dialog_UI_RPGE: vTextTable {.x=%d, .y=%d} is invalid calculated", dialog->vTextTable.x, dialog->vTextTable.y);
+        errno = EINVAL;
         return NULL;
     }
     log_trace("[dialog->vTextTable {.=x%d, .y=%d}]", dialog->vTextTable, dialog->vTextTable);
