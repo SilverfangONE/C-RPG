@@ -14,7 +14,7 @@
 #include <string.h>
 
 Dialog_UI_RPGE *build_Dialog_UI_RPGE(Assetsheet_RPGE *font, Assetsheet_RPGE *asset, char *text, Vec2D vCoordinates,
-                                     Vec2D vTextTable)
+                                     Vec2D vTableSize)
 {
     Dialog_UI_RPGE *dialog = malloc(sizeof(Dialog_UI_RPGE));
     if (dialog == NULL)
@@ -45,9 +45,9 @@ Dialog_UI_RPGE *build_Dialog_UI_RPGE(Assetsheet_RPGE *font, Assetsheet_RPGE *ass
         errno = EINVAL;
         return NULL;
     }
-    if (vTextTable.x < 1 || vTextTable.y < 1)
+    if (vTableSize.x < 1 || vTableSize.y < 1)
     {
-        log_error("build_Dialog_UI_RPGE: vTableSize {.x=%d, .y=%d} is invalid", vTextTable.x, vTextTable.y);
+        log_error("build_Dialog_UI_RPGE: vTableSize {.x=%d, .y=%d} is invalid", vTableSize.x, vTableSize.y);
         errno = EINVAL;
         return NULL;
     }
@@ -57,7 +57,15 @@ Dialog_UI_RPGE *build_Dialog_UI_RPGE(Assetsheet_RPGE *font, Assetsheet_RPGE *ass
         (Vec2D){.x = vCoordinates.x + font->vPatchSize.x, .y = vCoordinates.y + font->vPatchSize.y};
     log_trace("[dialog->vTextCoordinates {.x=%d, .y=%d}]", dialog->vTextCoordinates.x, dialog->vTextCoordinates.y);
     // makreker text padding
-    Vec2D vTableSize = (Vec2D){.x = vTextTable.x + 2, .y = vTextTable.y + 2 + 1};
+
+    dialog->vTextTable = _calc_vTextTable_TEXT_NARROW_UI_RPGE(asset, font, vTableSize, (Vec2D){.x = 6, .y = 8},
+                                                              (Vec2D){.x = 0, .y = 0}, (Vec2D){.x = 0, .y = 1});
+    if (dialog->vTextTable.x < 0 || dialog->vTextTable.y < 0)
+    {
+        return NULL;
+    }
+    log_trace("[dialog->vTextTable {.=x%d, .y=%d}]", dialog->vTextTable, dialog->vTextTable);
+
     dialog->vIndicatorCoordinates = (Vec2D){
         // make korrekt padding.
         .x = vCoordinates.x + vTableSize.x * asset->vPatchSize.x - asset->vPatchSize.x * 2,
@@ -71,7 +79,6 @@ Dialog_UI_RPGE *build_Dialog_UI_RPGE(Assetsheet_RPGE *font, Assetsheet_RPGE *ass
     dialog->nextDisplayCharIndex = 0;
     strncpy(dialog->textBuffer, text, sizeof(dialog->textBuffer) - 1);
     dialog->textBuffer[sizeof(dialog->textBuffer)] = '\0';
-    dialog->vTextTable = vTextTable;
     // build dialog window.
     dialog->font = font;
     dialog->background = build_Background_UI_RPGE(asset, vCoordinates, vTableSize);
@@ -114,7 +121,8 @@ int render_Dialog_UI_RPGE(SDL_Renderer *renderer, Dialog_UI_RPGE *dialog)
                   dialog->textDisplayBufferSize);
     }
     // render text on background.
-    if (renderV2_Text_UI_RPGE(renderer, textDisplayBuffer, dialog->vTextCoordinates, dialog->vTextTable, dialog->font))
+    if (render_Text_NARROW_UI_RPGE(renderer, textDisplayBuffer, dialog->vTextCoordinates, dialog->vTextTable,
+                                   dialog->font))
         return 1;
     // render text scroll indicator.
     // an arrow on the right downer egde some where
@@ -123,15 +131,15 @@ int render_Dialog_UI_RPGE(SDL_Renderer *renderer, Dialog_UI_RPGE *dialog)
     {
         // marker only gets rendered if ther is more text in the textBuffer which hasn't been displayed yet.
         renderTile_Assetsheet_G_RPGE(renderer, dialog->background->asset,
-                                        lookup_BackgroundTiles_UI_RPGE(MENU_ARROW_LEFT),
-                                        dialog->vIndicatorCoordinates);
+                                     lookup_BackgroundTiles_UI_RPGE(MENU_ARROW_LEFT), dialog->vIndicatorCoordinates);
     }
     return 0;
 }
 
 int update_Dialog_UI_RPGE(Dialog_UI_RPGE *dialog, Keymap_RPGE *keymap)
 {
-    if (!dialog->show) return 0;
+    if (!dialog->show)
+        return 0;
 
     // if enter is pushed for next text.
     if (!keymap->enter)
@@ -148,7 +156,7 @@ int update_Dialog_UI_RPGE(Dialog_UI_RPGE *dialog, Keymap_RPGE *keymap)
     // close if no more text needs to be displayed.
     if (dialog->nextDisplayCharIndex >= strlen(dialog->textBuffer))
     {
-        // reset. 
+        // reset.
         dialog->nextDisplayCharIndex = 0;
         dialog->show = false;
     }

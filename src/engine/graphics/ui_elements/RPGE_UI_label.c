@@ -3,7 +3,6 @@
 #include "RPGE_UI_background.h"
 #include "RPGE_UI_label.h"
 #include "RPGE_UI_text.h"
-#include "RPGE_U_math.h"
 #include "RPGE_U_vec.h"
 #include "log.h"
 #include <errno.h>
@@ -40,31 +39,17 @@ Label_UI_RPGE *build_Label_UI_RPGE(Assetsheet_RPGE *font, Assetsheet_RPGE *asset
         errno = EINVAL;
         return NULL;
     }
-    int maxRowSize = 1;
-    int maxColSize = 1;
-    int count = 0;
-    for (int i = 0; i < strlen(text); i++)
-    {
-        if ('\n' == text[i])
-        {
-            maxColSize = max_UTIL(maxColSize, count);
-            maxRowSize++;
-            count = 0;
-            continue;
-        }
-        count++;
-    }
-    maxColSize = max_UTIL(maxColSize, count);
+
     // 2. create array with padding Boarders around char pads.
-    label->vTextTable = (Vec2D){.x = maxColSize, .y = maxRowSize};
+    label->vTextTable = _calc_vTextTable_TEXT_UI_RPGE(text);
     log_trace("[label->vTextTable {.x=%d, .y=%d}]", label->vTextTable.x, label->vTextTable.y);
-    Vec2D vTable;
-    vTable.x = 2 + maxColSize;
-    vTable.y = 2 + maxRowSize;
-    label->vTextCoordinates =
-        (Vec2D){.x = vCoordinates.x + asset->vPatchSize.x, .y = vCoordinates.y + asset->vPatchSize.y};
+
+    label->vTextCoordinates = _calc_vTextCoordinates_TEXT_UI_RPGE(asset, vCoordinates);
     log_trace("[label->vTextCoordinates {.x=%d, .y=%d}]", label->vTextCoordinates.x, label->vTextCoordinates.y);
-    label->background = build_Background_UI_RPGE(asset, vCoordinates, vTable);
+    label->background =
+        build_Background_UI_RPGE(asset, vCoordinates,
+                                 _calc_vTableSize_TEXT_NARROW_UI_RPGE(asset, font, label->vTextTable, (Vec2D){0, 0},
+                                                                      (Vec2D){0, 0}, (Vec2D){6, 8}));
     if (label->background == NULL)
         return NULL;
     label->show = true;
@@ -80,7 +65,8 @@ int render_Label_UI_RPGE(SDL_Renderer *renderer, Label_UI_RPGE *label)
         {
             return 1;
         }
-        if (renderV2_Text_UI_RPGE(renderer, label->textBuffer, label->vTextCoordinates, label->vTextTable, label->font))
+        if (render_Text_NARROW_UI_RPGE(renderer, label->textBuffer, label->vTextCoordinates, label->vTextTable,
+                                       label->font))
         {
             return 1;
         }

@@ -99,13 +99,15 @@ int renderTile_Assetsheet_G_RPGE(SDL_Renderer *renderer, Assetsheet_RPGE *asset,
 /**
  * speficie speficic place in tile which should get rendered
  */
-int renderTileV2_Assetsheet_G_RPGE(SDL_Renderer *renderer, Assetsheet_RPGE *asset, int tileIndex, Vec2D vCoordinates, Vec2D vSubPatchSize, Vec2D vSubTileOffset)
+int renderTileV2_Assetsheet_G_RPGE(SDL_Renderer *renderer, Assetsheet_RPGE *asset, int tileIndex, Vec2D vCoordinates,
+                                   Vec2D vSubPatchSize, Vec2D vSubTileOffset)
 {
-    if (vSubPatchSize.x > asset->vPatchSize.x || vSubPatchSize.y > asset->vPatchSize.y ) 
+    if (vSubPatchSize.x > asset->vPatchSize.x || vSubPatchSize.y > asset->vPatchSize.y)
     {
-        log_error("renderTileV2_Assetsheet_G_RPGE: vSubPatch { .x=%d, y.=%d, width=%d, height=%d} is bigger than orginal vPatchSize {width=%d, height=%d}", 
-            vSubTileOffset.x, vSubTileOffset.y, vSubPatchSize.x, vSubPatchSize.y, 
-            asset->vPatchSize.x, asset->vPatchSize);
+        log_error("renderTileV2_Assetsheet_G_RPGE: vSubPatch { .x=%d, y.=%d, width=%d, height=%d} is bigger than "
+                  "orginal vPatchSize {width=%d, height=%d}",
+                  vSubTileOffset.x, vSubTileOffset.y, vSubPatchSize.x, vSubPatchSize.y, asset->vPatchSize.x,
+                  asset->vPatchSize);
         errno = EINVAL;
         return 1;
     }

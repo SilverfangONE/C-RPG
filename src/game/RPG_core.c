@@ -11,7 +11,8 @@
 
 bool update_RPG(CONTEXT_RPGE *eContext)
 {
-    if (checkTimer_TIME_RPGE(7)) log_debug("[update_RPG()]");
+    if (checkTimer_TIME_RPGE(7))
+        log_debug("[update_RPG()]");
     CONTEXT_RPG *pContext = (CONTEXT_RPG *)eContext->pContext;
     // update.
     update_Dialog_UI_RPGE(pContext->dialog, eContext->keymap);
@@ -25,13 +26,13 @@ static int render_TestIMG(CONTEXT_RPGE *eContext)
     srcR.h = 8;
     srcR.x = (7 % 6) * 8;
     srcR.y = (7 / 6) * 8;
-    
+
     SDL_FRect destR;
     destR.w = 8;
     destR.h = 8;
     destR.x = 0;
     destR.y = 0;
-    
+
     SDL_RenderTexture(eContext->renderer, eContext->menuAsset->imgText, &srcR, &destR);
     return 0;
 }
@@ -41,7 +42,8 @@ static int nextCharIndex = 0;
 
 bool render_RPG(CONTEXT_RPGE *eContext)
 {
-    if (checkTimer_TIME_RPGE(7)) log_debug("[render_RPG()]");
+    if (checkTimer_TIME_RPGE(7))
+        log_debug("[render_RPG()]");
     CONTEXT_RPG *pContext = (CONTEXT_RPG *)eContext->pContext;
 
     // render.

@@ -94,10 +94,12 @@ bool checkTimer_TIME_RPGE(unsigned int ID)
 {
     for (int i = 0; i < _timerManager->length; i++)
     {
-        if (_timerManager->timerList[i] == NULL) {
+        if (_timerManager->timerList[i] == NULL)
+        {
             continue;
         }
-        if (_timerManager->timerList[i]->ID != ID) {
+        if (_timerManager->timerList[i]->ID != ID)
+        {
             continue;
         }
         // check limitTicks with countTicks.

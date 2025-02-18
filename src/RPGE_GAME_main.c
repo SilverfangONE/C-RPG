@@ -40,7 +40,7 @@ int main()
     Dialog_UI_RPGE *dialog = build_Dialog_UI_RPGE(
         eContext->defaultFont, eContext->menuAsset,
         "Das Abenteuer, das RPG-Spiele auf Super Nintendo revolutioniert hat, hat seinen ersten Auftritt in Europa! ",
-        (Vec2D){55, 55}, (Vec2D){20, 3});
+        (Vec2D){55, 55}, (Vec2D){22, 6});
     pContext->dialog = dialog;
 
     Label_UI_RPGE *label =
