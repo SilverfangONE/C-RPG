@@ -94,16 +94,22 @@ bool checkTimer_TIME_RPGE(unsigned int ID)
 {
     for (int i = 0; i < _timerManager->length; i++)
     {
-        if (_timerManager->timerList[i]->ID == ID)
-        {
-            if (_timerManager->timerList[i]->limitTicks == _timerManager->timerList[i]->countTicks)
-            {
-                _timerManager->timerList[i]->toReset = true;
-                return true;
-            }
-            return false;
+        if (_timerManager->timerList[i] == NULL) {
+            continue;
         }
+        if (_timerManager->timerList[i]->ID != ID) {
+            continue;
+        }
+        // check limitTicks with countTicks.
+        if (_timerManager->timerList[i]->limitTicks == _timerManager->timerList[i]->countTicks)
+        {
+            _timerManager->timerList[i]->toReset = true;
+            return true;
+        }
+        return false;
     }
+    log_warn("checkTimer_TIME_RPGE(): Timer {.ID=%d} doesn't exist", ID);
+    return false;
 }
 
 void _update_TIME_RPGE()
@@ -156,7 +162,8 @@ Timer_RPGE *_create_TimerTicks_TIME_RPGE(unsigned int ID, int ticks)
     if (timer == NULL)
         return NULL;
     timer->toReset = false;
-    timer->countTicks = 0;
+    // first time call is true;
+    timer->countTicks = ticks;
     timer->ID = ID;
     timer->limitTicks = ticks;
     return timer;

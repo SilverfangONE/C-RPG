@@ -121,19 +121,18 @@ int render_Dialog_UI_RPGE(SDL_Renderer *renderer, Dialog_UI_RPGE *dialog)
     // check if some text hasn't been display yet
     if (dialog->nextDisplayCharIndex + dialog->textDisplayBufferSize < strlen(dialog->textBuffer))
     {
-        if (!checkTimer_TIME_RPGE(1))
-        {
-            // marker only gets rendered if ther is more text in the textBuffer which hasn't been displayed yet.
-            renderTile_Assetsheet_G_RPGE(renderer, dialog->background->asset,
-                                         lookup_BackgroundTiles_UI_RPGE(MENU_ARROW_LEFT),
-                                         dialog->vIndicatorCoordinates);
-        }
+        // marker only gets rendered if ther is more text in the textBuffer which hasn't been displayed yet.
+        renderTile_Assetsheet_G_RPGE(renderer, dialog->background->asset,
+                                        lookup_BackgroundTiles_UI_RPGE(MENU_ARROW_LEFT),
+                                        dialog->vIndicatorCoordinates);
     }
     return 0;
 }
 
 int update_Dialog_UI_RPGE(Dialog_UI_RPGE *dialog, Keymap_RPGE *keymap)
 {
+    if (!dialog->show) return 0;
+
     // if enter is pushed for next text.
     if (!keymap->enter)
     {
@@ -149,6 +148,8 @@ int update_Dialog_UI_RPGE(Dialog_UI_RPGE *dialog, Keymap_RPGE *keymap)
     // close if no more text needs to be displayed.
     if (dialog->nextDisplayCharIndex >= strlen(dialog->textBuffer))
     {
+        // reset. 
+        dialog->nextDisplayCharIndex = 0;
         dialog->show = false;
     }
     return 0;

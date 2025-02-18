@@ -25,4 +25,9 @@ void destory_Assetsheet_G_RPGE(Assetsheet_RPGE* assetsheet);
  * @return 0 no error occored, 1 if erro occord 
  */
 int renderTile_Assetsheet_G_RPGE(SDL_Renderer* renderer, Assetsheet_RPGE* asset, int tileIndex, Vec2D vCoordinates);
+
+/**
+ * can create subPatches vom ogrinal Tile 
+ */
+int renderTileV2_Assetsheet_G_RPGE(SDL_Renderer *renderer, Assetsheet_RPGE *asset, int tileIndex, Vec2D vCoordinates, Vec2D vSubPatchSize, Vec2D vSubTileOffset);
 #endif

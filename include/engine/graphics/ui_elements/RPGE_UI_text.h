@@ -9,4 +9,8 @@
 int getAlphabetIndex_UI_RPGE(char letter);
 int getAlphabetSpecialIndex_UI_RPGE(char* letter);
 int render_Text_UI_RPGE(SDL_Renderer* renderer, char* text, Vec2D vCoordinates, Vec2D vTable, Assetsheet_RPGE* font);
+/**
+ * currently only for 8 bit font which accuatly has an offset x wise with 2 pixel 
+ */
+int renderV2_Text_UI_RPGE(SDL_Renderer *renderer, char *textBuffer, Vec2D vCoordinates, Vec2D vTable, Assetsheet_RPGE *font);
 #endif

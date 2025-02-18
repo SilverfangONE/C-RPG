@@ -96,6 +96,45 @@ int renderTile_Assetsheet_G_RPGE(SDL_Renderer *renderer, Assetsheet_RPGE *asset,
     return 0;
 }
 
+/**
+ * speficie speficic place in tile which should get rendered
+ */
+int renderTileV2_Assetsheet_G_RPGE(SDL_Renderer *renderer, Assetsheet_RPGE *asset, int tileIndex, Vec2D vCoordinates, Vec2D vSubPatchSize, Vec2D vSubTileOffset)
+{
+    if (vSubPatchSize.x > asset->vPatchSize.x || vSubPatchSize.y > asset->vPatchSize.y ) 
+    {
+        log_error("renderTileV2_Assetsheet_G_RPGE: vSubPatch { .x=%d, y.=%d, width=%d, height=%d} is bigger than orginal vPatchSize {width=%d, height=%d}", 
+            vSubTileOffset.x, vSubTileOffset.y, vSubPatchSize.x, vSubPatchSize.y, 
+            asset->vPatchSize.x, asset->vPatchSize);
+        errno = EINVAL;
+        return 1;
+    }
+
+    const int TILE_SIZE_X = vSubPatchSize.x;
+    const int TILE_SIZE_Y = vSubPatchSize.y;
+
+    // render stuff.
+    SDL_FRect srcR;
+    srcR.w = TILE_SIZE_X;
+    srcR.h = TILE_SIZE_Y;
+    srcR.x = ((tileIndex % asset->vTableSize.x) * TILE_SIZE_X) - vSubTileOffset.x;
+    srcR.y = ((tileIndex / asset->vTableSize.x) * TILE_SIZE_Y) - vSubTileOffset.y;
+
+    SDL_FRect destR;
+    destR.w = TILE_SIZE_X;
+    destR.h = TILE_SIZE_Y;
+    destR.x = vCoordinates.x;
+    destR.y = vCoordinates.y;
+
+    if (!SDL_RenderTexture(renderer, asset->imgText, &srcR, &destR))
+    {
+        log_error("%s", SDL_GetError());
+        errno = ENOMSG;
+        return 1;
+    }
+    return 0;
+}
+
 void destory_Assetsheet_G_RPGE(Assetsheet_RPGE *asset)
 {
     free(asset->ID);
