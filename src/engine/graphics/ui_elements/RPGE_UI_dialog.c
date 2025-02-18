@@ -114,7 +114,7 @@ int render_Dialog_UI_RPGE(SDL_Renderer *renderer, Dialog_UI_RPGE *dialog)
                   dialog->textDisplayBufferSize);
     }
     // render text on background.
-    if (render_Text_UI_RPGE(renderer, textDisplayBuffer, dialog->vTextCoordinates, dialog->vTextTable, dialog->font))
+    if (renderV2_Text_UI_RPGE(renderer, textDisplayBuffer, dialog->vTextCoordinates, dialog->vTextTable, dialog->font))
         return 1;
     // render text scroll indicator.
     // an arrow on the right downer egde some where

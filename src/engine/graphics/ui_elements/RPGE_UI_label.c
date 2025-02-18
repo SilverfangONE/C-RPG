@@ -80,7 +80,7 @@ int render_Label_UI_RPGE(SDL_Renderer *renderer, Label_UI_RPGE *label)
         {
             return 1;
         }
-        if (render_Text_UI_RPGE(renderer, label->textBuffer, label->vTextCoordinates, label->vTextTable, label->font))
+        if (renderV2_Text_UI_RPGE(renderer, label->textBuffer, label->vTextCoordinates, label->vTextTable, label->font))
         {
             return 1;
         }

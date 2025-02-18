@@ -238,11 +238,8 @@ int render_Text_UI_RPGE(SDL_Renderer *renderer, char *textBuffer, Vec2D vCoordin
                         Assetsheet_RPGE *font)
 {
     SDL_FRect dest;
-    SDL_FRect src;
     dest.w = font->vPatchSize.x;
     dest.h = font->vPatchSize.y;
-    src.w = font->vPatchSize.x;
-    src.h = font->vPatchSize.y;
     int yTable = 0;
     int xTable = 0;
     // iterate of textBuffer and look up right corosponding sprites to given chars.
@@ -304,12 +301,11 @@ int render_Text_UI_RPGE(SDL_Renderer *renderer, char *textBuffer, Vec2D vCoordin
  */
 int renderV2_Text_UI_RPGE(SDL_Renderer *renderer, char *textBuffer, Vec2D vCoordinates, Vec2D vTable, Assetsheet_RPGE *font) 
 {
+        Vec2D vSubTileOffset = {.x=0, .y=0};
+        Vec2D vSubPatchSize = {.x=6, .y=8};
         SDL_FRect dest;
-        SDL_FRect src;
-        dest.w = font->vPatchSize.x - 2;
-        dest.h = font->vPatchSize.y;
-        src.w = font->vPatchSize.x;
-        src.h = font->vPatchSize.y;
+        dest.w = vSubPatchSize.x;
+        dest.h = vSubPatchSize.y;
         int yTable = 0;
         int xTable = 0;
         // iterate of textBuffer and look up right corosponding sprites to given chars.
@@ -353,8 +349,6 @@ int renderV2_Text_UI_RPGE(SDL_Renderer *renderer, char *textBuffer, Vec2D vCoord
                 }
             }
             Vec2D vCor = {.x = vCoordinates.x + xTable * dest.w, .y = vCoordinates.y + yTable * dest.h};
-            Vec2D vSubTileOffset = {.x=0, .y=0};
-            Vec2D vSubPatchSize = {.x=6, .y=8};
             renderTileV2_Assetsheet_G_RPGE(renderer, font, index, vCor, vSubPatchSize, vSubTileOffset);
             // logging after timer shit
             if (checkTimer_TIME_RPGE(10))

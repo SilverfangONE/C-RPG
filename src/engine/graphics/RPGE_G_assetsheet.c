@@ -110,19 +110,21 @@ int renderTileV2_Assetsheet_G_RPGE(SDL_Renderer *renderer, Assetsheet_RPGE *asse
         return 1;
     }
 
-    const int TILE_SIZE_X = vSubPatchSize.x;
-    const int TILE_SIZE_Y = vSubPatchSize.y;
+    const int TILE_SIZE_X = asset->vPatchSize.x;
+    const int TILE_SIZE_Y = asset->vPatchSize.y;
+    const int SUB_TILE_SIZE_X = vSubPatchSize.x;
+    const int SUB_TILE_SIZE_Y = vSubPatchSize.y;
 
     // render stuff.
     SDL_FRect srcR;
-    srcR.w = TILE_SIZE_X;
-    srcR.h = TILE_SIZE_Y;
+    srcR.w = SUB_TILE_SIZE_X;
+    srcR.h = SUB_TILE_SIZE_Y;
     srcR.x = ((tileIndex % asset->vTableSize.x) * TILE_SIZE_X) - vSubTileOffset.x;
     srcR.y = ((tileIndex / asset->vTableSize.x) * TILE_SIZE_Y) - vSubTileOffset.y;
 
     SDL_FRect destR;
-    destR.w = TILE_SIZE_X;
-    destR.h = TILE_SIZE_Y;
+    destR.w = SUB_TILE_SIZE_X;
+    destR.h = SUB_TILE_SIZE_Y;
     destR.x = vCoordinates.x;
     destR.y = vCoordinates.y;
 
