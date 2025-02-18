@@ -53,8 +53,7 @@ Dialog_UI_RPGE *build_Dialog_UI_RPGE(Assetsheet_RPGE *font, Assetsheet_RPGE *ass
     }
 
     // calc coordinates.
-    dialog->vTextCoordinates =
-        (Vec2D){.x = vCoordinates.x + font->vPatchSize.x, .y = vCoordinates.y + font->vPatchSize.y};
+    dialog->vTextCoordinates = _calc_vTextCoordinates_TEXT_UI_RPGE(asset, vCoordinates);
     log_trace("[dialog->vTextCoordinates {.x=%d, .y=%d}]", dialog->vTextCoordinates.x, dialog->vTextCoordinates.y);
     // makreker text padding
 

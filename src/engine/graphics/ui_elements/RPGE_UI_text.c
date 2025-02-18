@@ -370,9 +370,9 @@ static bool checkMenuAssetAndFontAsset_TEXT_NARROW_UI_RPGE(Assetsheet_RPGE *asse
     {
         log_error("_calc_vTextTable_TEXT_WIDE_UI_RPGE(): asset->vPatchSize != font->vPatchSize, tilesizes need to "
                   "match to calc vTextTable (WIDE)");
-        return false;
+        return true;
     }
-    return true;
+    return false;
 }
 
 // calc from vTableSize with vPatchSize.
@@ -391,6 +391,7 @@ Vec2D _calc_vTextTable_TEXT_WIDE_UI_RPGE(Assetsheet_RPGE *asset, Assetsheet_RPGE
 Vec2D _calc_vTextTable_TEXT_NARROW_UI_RPGE(Assetsheet_RPGE *asset, Assetsheet_RPGE *font, Vec2D vTableSize,
                                            Vec2D vSubPatchSize, Vec2D vPaddingHorizontal, Vec2D vPaddingVertical)
 {
+    log_info("[_calc_vTextTable_TEXT_NARROW_UI_RPGE(): vTableSize {.x=%d, .y=%d}]", vTableSize.x, vTableSize.y);
     // check if tilesize is the same asset == font
     if (checkMenuAssetAndFontAsset_TEXT_NARROW_UI_RPGE(asset, font))
     {
