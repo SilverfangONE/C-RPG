@@ -13,7 +13,7 @@ bool update_RPG(CONTEXT_RPGE *eContext)
 {
     CONTEXT_RPG *pContext = (CONTEXT_RPG *)eContext->pContext;
     // update.
-    // update_Dialog_UI_RPGE(pContext->dialog, eContext->keymap);
+    update_Dialog_UI_RPGE(pContext->dialog, eContext->keymap);
     return 0;
 }
 

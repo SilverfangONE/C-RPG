@@ -288,7 +288,7 @@ int render_Text_UI_RPGE(SDL_Renderer *renderer, char *textBuffer, Vec2D vCoordin
         Vec2D cor = {.x = vCoordinates.x + xTable * dest.w, .y = vCoordinates.y + yTable * dest.h};
         renderTile_Assetsheet_G_RPGE(renderer, font, index, cor);
         // logging after timer shit
-        if (checkTimer_TIME_RPGE(5))
+        if (checkTimer_TIME_RPGE(10))
         {
             log_info("[Index=%d | literal: %c]", index, textBuffer[literal]);
             log_info("[INDEX=%d | xTable=%d, yTable=%d | Vec2D {.x=%d, .y=%d}]", index, xTable, yTable, cor.x, cor.y);

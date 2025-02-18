@@ -6,8 +6,10 @@
 #include "RPGE_G_assetsheet.h"
 #include "RPGE_U_vec.h"
 #include "RPGE_UI_background.h"
+#include <stdbool.h>
 
 typedef struct Label_UI_RPGE {
+    bool show;
     char textBuffer[250];
     Assetsheet_RPGE* font;
     Vec2D vTextTable;

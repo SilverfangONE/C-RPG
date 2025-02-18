@@ -7,6 +7,7 @@
 #include "RPGE_U_vec.h"
 #include "log.h"
 #include <errno.h>
+#include <stdbool.h>
 #include <stdlib.h>
 
 Label_UI_RPGE *build_Label_UI_RPGE(Assetsheet_RPGE *font, Assetsheet_RPGE *asset, char *text, Vec2D vCoordinates)
@@ -66,26 +67,29 @@ Label_UI_RPGE *build_Label_UI_RPGE(Assetsheet_RPGE *font, Assetsheet_RPGE *asset
     label->background = build_Background_UI_RPGE(asset, vCoordinates, vTable);
     if (label->background == NULL)
         return NULL;
+    label->show = true;
     log_debug("[Created Label_UI_RPGE {text='%s'}]", label->textBuffer);
     return label;
 }
 
 int render_Label_UI_RPGE(SDL_Renderer *renderer, Label_UI_RPGE *label)
 {
-    if (render_Background_UI_RPGE(renderer, label->background))
+    if (label->show)
     {
-        return 1;
+        if (render_Background_UI_RPGE(renderer, label->background))
+        {
+            return 1;
+        }
+        if (render_Text_UI_RPGE(renderer, label->textBuffer, label->vTextCoordinates, label->vTextTable, label->font))
+        {
+            return 1;
+        }
+        return 0;
     }
-    if (render_Text_UI_RPGE(renderer, label->textBuffer, label->vTextCoordinates, label->vTextTable, label->font))
-    {
-        return 1;
-    }
-    return 0;
 }
 
 void destory_Label_UI_RPGE(Label_UI_RPGE *label)
 {
     destroy_Background_UI_RPGE(label->background);
-    free(label->textBuffer);
     free(label);
 }

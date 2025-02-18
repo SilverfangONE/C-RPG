@@ -1,5 +1,6 @@
 #include "RPGE_UI_dialog.h"
 #include "RPGE_E_keymap.h"
+#include "RPGE_E_time.h"
 #include "RPGE_G_assetsheet.h"
 #include "RPGE_UI_background.h"
 #include "RPGE_UI_text.h"
@@ -59,10 +60,11 @@ Dialog_UI_RPGE *build_Dialog_UI_RPGE(Assetsheet_RPGE *font, Assetsheet_RPGE *ass
     Vec2D vTableSize = (Vec2D){.x = vTextTable.x + 2, .y = vTextTable.y + 2 + 1};
     dialog->vIndicatorCoordinates = (Vec2D){
         // make korrekt padding.
-        .x = vCoordinates.x + vTableSize.x * asset->vPatchSize.x - asset->vPatchSize.x,
-        .y = vCoordinates.y + vTableSize.y * asset->vPatchSize.y - asset->vPatchSize.y,
+        .x = vCoordinates.x + vTableSize.x * asset->vPatchSize.x - asset->vPatchSize.x * 2,
+        .y = vCoordinates.y + vTableSize.y * asset->vPatchSize.y - asset->vPatchSize.y * 2,
     };
-    log_trace("[dialog->vIndicatorCoordinates {.x=%d, .y=%d}]", vTableSize.x, vTableSize.y);
+    log_trace("[dialog->vIndicatorCoordinates {.x=%d, .y=%d}]", dialog->vIndicatorCoordinates.x,
+              dialog->vIndicatorCoordinates.y);
 
     // set values.
     dialog->show = true;
@@ -73,7 +75,10 @@ Dialog_UI_RPGE *build_Dialog_UI_RPGE(Assetsheet_RPGE *font, Assetsheet_RPGE *ass
     // build dialog window.
     dialog->font = font;
     dialog->background = build_Background_UI_RPGE(asset, vCoordinates, vTableSize);
-    log_debug("[Created Dialog_UI_RPGE {text='%s'}]", dialog->textBuffer);
+    // calc displayTextBufferSize.
+    dialog->textDisplayBufferSize = dialog->vTextTable.x * dialog->vTextTable.y;
+    log_debug("[Created Dialog_UI_RPGE {.textBuffer='%s', .textDisplayBufferSize=%d}]", dialog->textBuffer,
+              dialog->textDisplayBufferSize);
     return dialog;
 }
 
@@ -102,24 +107,29 @@ int render_Dialog_UI_RPGE(SDL_Renderer *renderer, Dialog_UI_RPGE *dialog)
     {
         textDisplayBuffer[i] = dialog->textBuffer[dialog->nextDisplayCharIndex + i];
     }
+    // check builded text buffer.
+    if (checkTimer_TIME_RPGE(10))
+    {
+        log_trace("[textDisplayBuffer { textBuffer='%s', bufferSize=%d}]", textDisplayBuffer,
+                  dialog->textDisplayBufferSize);
+    }
     // render text on background.
     if (render_Text_UI_RPGE(renderer, textDisplayBuffer, dialog->vTextCoordinates, dialog->vTextTable, dialog->font))
         return 1;
     // render text scroll indicator.
     // an arrow on the right downer egde some where
     // check if some text hasn't been display yet
-    if (dialog->nextDisplayCharIndex + getDisplayBufferSize_Dialog_UI_RPGE(dialog) >= strlen(dialog->textBuffer))
+    if (dialog->nextDisplayCharIndex + dialog->textDisplayBufferSize < strlen(dialog->textBuffer))
     {
-        // marker only gets rendered if ther is more text in the textBuffer which hasn't been displayed yet.
-        renderTile_Assetsheet_G_RPGE(renderer, dialog->background->asset,
-                                     lookup_BackgroundTiles_UI_RPGE(MENU_ARROW_DOWN), dialog->vIndicatorCoordinates);
+        if (!checkTimer_TIME_RPGE(1))
+        {
+            // marker only gets rendered if ther is more text in the textBuffer which hasn't been displayed yet.
+            renderTile_Assetsheet_G_RPGE(renderer, dialog->background->asset,
+                                         lookup_BackgroundTiles_UI_RPGE(MENU_ARROW_LEFT),
+                                         dialog->vIndicatorCoordinates);
+        }
     }
     return 0;
-}
-
-int getDisplayBufferSize_Dialog_UI_RPGE(Dialog_UI_RPGE *dialog)
-{
-    return dialog->vTextTable.x * dialog->vTextTable.y;
 }
 
 int update_Dialog_UI_RPGE(Dialog_UI_RPGE *dialog, Keymap_RPGE *keymap)
@@ -131,7 +141,10 @@ int update_Dialog_UI_RPGE(Dialog_UI_RPGE *dialog, Keymap_RPGE *keymap)
     }
 
     // goes on and updates Dialog_UI_RPGE struct.
-    dialog->nextDisplayCharIndex = +getDisplayBufferSize_Dialog_UI_RPGE(dialog);
+    dialog->nextDisplayCharIndex += dialog->textDisplayBufferSize;
+
+    log_trace("[Dialog_UI_RPGE: indexBuffer %d / %d]", dialog->nextDisplayCharIndex, strlen(dialog->textBuffer));
+    log_trace("[Dialog_UI_RPGE: textDisplayBufferSize %d]", dialog->textDisplayBufferSize);
 
     // close if no more text needs to be displayed.
     if (dialog->nextDisplayCharIndex >= strlen(dialog->textBuffer))

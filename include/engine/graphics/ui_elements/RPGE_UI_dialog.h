@@ -58,10 +58,4 @@ int update_Dialog_UI_RPGE(Dialog_UI_RPGE* dialog, Keymap_RPGE* keymap);
  * @param dialog Dialog_UI_RPGE struct which should get freed from heap
  */
 void destory_Dialog_UI_RPGE(Dialog_UI_RPGE* dialog);
-
-/**
- * Calculate the to display textBufferSize from Dialog_UI_RPGE struct.
- * @return the calcualted to display textBufferSize 
- */
-int getDisplayBufferSize_Dialog_UI_RPGE(Dialog_UI_RPGE* dialog);
 #endif
