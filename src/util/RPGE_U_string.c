@@ -1,5 +1,6 @@
 #include "RPGE_U_string.h"
 #include <string.h>
+#include "log.h"
 
 void strncpys_UTIL (char* dest, char* src)
 {

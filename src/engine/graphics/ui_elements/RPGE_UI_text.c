@@ -14,7 +14,7 @@
 
 // TODO create text component which holds
 
-Text_UI_RPGE* build_Text_UI_RPGE(Assetsheet_RPGE* aFont, Vec2D vTableSize, Vec2D vCoordinates, int textBufferSize, enum TextType_UI_RPGE type)
+Text_UI_RPGE* build_Text_UI_RPGE(Assetsheet_RPGE* aFont, Vec2D vTableSize, Vec2D vCoordinates, size_t textBufferSize, enum TextType_UI_RPGE type)
 {   
     Text_UI_RPGE* text_UI = malloc(sizeof(Text_UI_RPGE));
     // validate params
@@ -46,14 +46,19 @@ Text_UI_RPGE* build_Text_UI_RPGE(Assetsheet_RPGE* aFont, Vec2D vTableSize, Vec2D
         errno = EINVAL;
         return NULL;
     }
-
+    
     // set values.
     text_UI->font = aFont;
     text_UI->show = true;
     text_UI->vCoordinates = vCoordinates;
     text_UI->vTableSize = vTableSize;
-    text_UI->textBuffer = malloc(sizeof(char) * (textBufferSize + 1));
-    text_UI->textBuffer[sizeof(char) * textBufferSize] = '\0';
+    text_UI->textBuffer = (char*) malloc(textBufferSize);
+    text_UI->textBuffer[sizeof(text_UI->textBuffer) - 1] = '\0';
+    // log values.
+    log_trace("[text_UI->show = %s}]", (text_UI->show)? "true":"false");
+    log_trace("[text_UI->vCoordinates {.x=%d, .y=%d}]", text_UI->vCoordinates.x, text_UI->vCoordinates.y);
+    log_trace("[text_UI->vTable {.x=%d, .y=%d}]", text_UI->vTableSize.x, text_UI->vTableSize.y);
+    log_trace("[text_UI->textBufferSize = %d]", sizeof(text_UI->textBuffer));
     return text_UI;
 }
 
@@ -70,6 +75,7 @@ void write_Text_UI_RPGE(Text_UI_RPGE* text_UI, char* text)
         log_warn("write_Text_UI_RPGE(): given text is bigger than textBuffer size {%d / %d}", strlen(text), sizeof(text_UI->textBuffer) - 1);
     }
     strncpys_UTIL(text_UI->textBuffer, text);
+    log_trace("[write_Text_UI_RPGE(): text_UI->textBuffer = {'%s'}]", text_UI->textBuffer);
 }
 
 void clear_Text_UI_RPGE(Text_UI_RPGE* text_UI) 
@@ -79,6 +85,10 @@ void clear_Text_UI_RPGE(Text_UI_RPGE* text_UI)
 
 int render_Text_UI_RPGE(SDL_Renderer* renderer, Text_UI_RPGE* text_UI) 
 {
+    if (!text_UI->show) 
+    {
+        return 0;
+    } 
     switch(text_UI->type) 
     {
         case TEXT_TYPE_NARROW_RPGE:

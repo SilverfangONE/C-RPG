@@ -7,18 +7,6 @@
 #include "RPGE_UI_input.h"
 #include <errno.h>
 
-/**
- * just one line label with input 
- */
-typedef struct InputField_UI_RPGE {
-    bool show;
-    char *textBuffer;
-    Assetsheet_RPGE* font;
-    Vec2D vTextTable;
-    Vec2D vTextCoordinates;
-    Background_UI_RPGE* background;
-} InputField_UI_RPGE;
-
 int update_InputField_UI_RPGE(InputField_UI_RPGE* input, Keymap_RPGE* keymap) 
 {
     return 0;

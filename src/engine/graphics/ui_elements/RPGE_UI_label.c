@@ -9,88 +9,51 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
-Label_UI_RPGE *build_Label_UI_RPGE(Assetsheet_RPGE *font, Assetsheet_RPGE *asset, char *text, Vec2D vCoordinates)
+Label_UI_RPGE *build_Label_UI_RPGE(Assetsheet_RPGE *font, Assetsheet_RPGE *asset, char *text, Vec2D vCoordinates, enum TextType_UI_RPGE textType)
 {
     Label_UI_RPGE *label = (Label_UI_RPGE *)malloc(sizeof(Label_UI_RPGE));
+    // validate values.
     if (label == NULL)
         return NULL;
-    if (font == NULL)
-    {
-        log_error("create_Label_UI_RPGE(): Font is invalid!");
-        errno = EINVAL;
-        return NULL;
-    }
-    label->font = font;
-
     if (text == NULL || strlen(text) == 0)
     {
         log_error("create_Label_UI_RPGE(): Text is invalid!");
         errno = EINVAL;
         return NULL;
     }
-    strncpy(label->textBuffer, text, sizeof(label->textBuffer) - 1);
-    label->textBuffer[sizeof(label->textBuffer)] = '\0';
-
-    // build text. box
-    // 1. determine size of char patches.
-    if (asset == NULL)
-    {
-        log_error("create_Label_UI_RPGE(): Asset is invalid!");
-        errno = EINVAL;
-        return NULL;
-    }
-
-    // 2. create array with padding Boarders around char pads.
-    label->vTextTable = _calc_vTextTable_TEXT_UI_RPGE(text);
-    if ( label->vTextTable.x < 0 || label->vTextTable.y < 0)
-    {
-        log_error("create_Label_UI_RPGE(): vTextTable {.x=%d, .y=%d} is invalid calculated", label->vTextTable.x, label->vTextTable.y);
-        errno = EINVAL;
-        return NULL;
-    }
-    log_trace("[label->vTextTable {.x=%d, .y=%d}]", label->vTextTable.x, label->vTextTable.y);
-
-    label->vTextCoordinates = _calc_vTextCoordinates_TEXT_UI_RPGE(asset, vCoordinates);
-    if ( label->vTextCoordinates.x < 0 || label->vTextCoordinates.y < 0)
-    {
-        log_error("create_Label_UI_RPGE(): vTextCoordinates {.x=%d, .y=%d} is invalid calculated", label->vTextCoordinates.x, label->vTextCoordinates.y);
-        errno = EINVAL;
-        return NULL;
-    }
-    log_trace("[label->vTextCoordinates {.x=%d, .y=%d}]", label->vTextCoordinates.x, label->vTextCoordinates.y);
-    
-    Vec2D vTableSize = _calc_vTableSize_TEXT_NARROW_UI_RPGE(asset, font, label->vTextTable, (Vec2D){0, 0},  (Vec2D){0, 0}, (Vec2D){6, 8});
-    if ( vTableSize.x < 0 || vTableSize.y < 0)
-    {
-        log_error("create_Label_UI_RPGE(): vTableSize {.x=%d, .y=%d} is invalid calculated", vTableSize.x, vTableSize.y);
-        errno = EINVAL;
-        return NULL;
-    }
-    log_trace("[label->vTableSize {.x=%d, .y=%d}]", vTableSize.x, vTableSize.y);
+    // set values.
+    Vec2D vTextTable = _calc_vTextTable_TEXT_UI_RPGE(text);
+    Vec2D vTextCoordinates = _calc_vTextCoordinates_TEXT_UI_RPGE(asset, vCoordinates);
+    Vec2D vTableSize = _calc_vTableSize_TEXT_NARROW_UI_RPGE(asset, font, vTextTable, (Vec2D){0, 0},  (Vec2D){0, 0}, (Vec2D){6, 8});
+    log_trace("SIZE OF %s: %d", text, sizeof(text));
+    label->text_UI = build_Text_UI_RPGE(font, vTextTable, vTextCoordinates, sizeof(text), textType);
+    write_Text_UI_RPGE(label->text_UI, text);
 
     label->background = build_Background_UI_RPGE(asset, vCoordinates, vTableSize);
-    if (label->background == NULL)
+    if (label->background == NULL) {
         return NULL;
+    }
     label->show = true;
-    log_debug("[Created Label_UI_RPGE {text='%s'}]", label->textBuffer);
+    // log values.
+    log_debug("[Created Label_UI_RPGE {text='%s'}]", label->text_UI->textBuffer);
     return label;
 }
 
 int render_Label_UI_RPGE(SDL_Renderer *renderer, Label_UI_RPGE *label)
 {
-    if (label->show)
+    if (!label->show) 
     {
-        if (render_Background_UI_RPGE(renderer, label->background))
-        {
-            return 1;
-        }
-        if (_render_Text_NARROW_UI_RPGE(renderer, label->textBuffer, label->vTextCoordinates, label->vTextTable,
-                                       label->font))
-        {
-            return 1;
-        }
         return 0;
     }
+    if (render_Background_UI_RPGE(renderer, label->background))
+    {
+        return 1;
+    }
+    if (render_Text_UI_RPGE(renderer, label->text_UI))
+    {
+        return 1;
+    }
+    return 0;
 }
 
 void destory_Label_UI_RPGE(Label_UI_RPGE *label)

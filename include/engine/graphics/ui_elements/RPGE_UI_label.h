@@ -6,14 +6,12 @@
 #include "RPGE_G_assetsheet.h"
 #include "RPGE_U_vec.h"
 #include "RPGE_UI_background.h"
+#include "RPGE_UI_text.h"
 #include <stdbool.h>
 
 typedef struct Label_UI_RPGE {
     bool show;
-    char textBuffer[250];
-    Assetsheet_RPGE* font;
-    Vec2D vTextTable;
-    Vec2D vTextCoordinates;
+    Text_UI_RPGE* text_UI;
     Background_UI_RPGE* background;
 } Label_UI_RPGE;
 
@@ -22,11 +20,11 @@ typedef struct Label_UI_RPGE {
  * 
  * @param font Assetsheet_RPGE for font asset
  * @param asset Assetsheet_RPGE for menu asset
- * @param text The text to display on the label
+ * @param text_UI The text_UI to display on the label
  * @param vCoordinates Vec2D wich contains the upper left edge Coordinates of the label  
  * @return pointer to created Label_UI_RPGE struct, or NULL if error occured.
  */
-Label_UI_RPGE* build_Label_UI_RPGE(Assetsheet_RPGE *font, Assetsheet_RPGE *asset, char* text, Vec2D vCoordinates);
+Label_UI_RPGE *build_Label_UI_RPGE(Assetsheet_RPGE *font, Assetsheet_RPGE *asset, char *text, Vec2D vCoordinates, enum TextType_UI_RPGE textType);
 
 /**
  * Renderes given Label_UI_RPGE struct on the current render target.

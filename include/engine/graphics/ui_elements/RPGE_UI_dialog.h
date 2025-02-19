@@ -8,6 +8,7 @@
 #include "RPGE_U_vec.h"
 #include "RPGE_UI_background.h"
 #include "RPGE_E_keymap.h"
+#include "RPGE_UI_text.h"
 
 typedef struct Dialog_UI_RPGE {
     // 4 KiB
@@ -27,12 +28,12 @@ typedef struct Dialog_UI_RPGE {
  * 
  * @param font Assetsheet_RPGE for font asset
  * @param asset Assetsheet_RPGE for menu asset
- * @param text The text to display in dialog
+ * @param text_UI The text_UI to display in dialog
  * @param vCoordinates Vec2D wich contains the upper left edge Coordinates of the dialog
  * @param vTableSize Vec2D wich contains size of Dialog-Box in rows and cols of patches from background
  * @return pointer to created Dialog_UI_RPGE struct, or NULL if an error occured.
  */
-Dialog_UI_RPGE* build_Dialog_UI_RPGE(Assetsheet_RPGE *font, Assetsheet_RPGE *asset, char* text, Vec2D vCoordinates, Vec2D vTableSize);
+Dialog_UI_RPGE* build_Dialog_UI_RPGE(Assetsheet_RPGE *font, Assetsheet_RPGE *asset, char* text_UI, Vec2D vCoordinates, Vec2D vTableSize);
 
 /**
  * Renderes given Dialog_UI_RPGE struct on the current render target.

@@ -20,7 +20,7 @@ typedef struct Text_UI_RPGE {
     enum TextType_UI_RPGE type;
 } Text_UI_RPGE;
 
-Text_UI_RPGE* build_Text_UI_RPGE(Assetsheet_RPGE* aFont, Vec2D vTableSize, Vec2D vCoordinates, int textBufferSize, enum TextType_UI_RPGE type);
+Text_UI_RPGE* build_Text_UI_RPGE(Assetsheet_RPGE* aFont, Vec2D vTableSize, Vec2D vCoordinates, size_t textBufferSize, enum TextType_UI_RPGE type);
 void destroy_Text_UI_RPGE(Text_UI_RPGE* text_UI);
 void write_Text_UI_RPGE(Text_UI_RPGE* text_UI, char* text);
 void clear_Text_UI_RPGE(Text_UI_RPGE* text_UI);
@@ -28,7 +28,7 @@ int render_Text_UI_RPGE(SDL_Renderer* renderer, Text_UI_RPGE* text_UI);
 
 int getAlphabetIndex_UI_RPGE(char letter);
 int getAlphabetSpecialIndex_UI_RPGE(char* letter);
-int _render_Text_WIDE_UI_RPGE(SDL_Renderer* renderer, char* text, Vec2D vCoordinates, Vec2D vTable, Assetsheet_RPGE* font);
+int _render_Text_WIDE_UI_RPGE(SDL_Renderer* renderer, char* text_UI, Vec2D vCoordinates, Vec2D vTable, Assetsheet_RPGE* font);
 /**
  * currently only for 8 bit font which accuatly has an offset x wise with 2 pixel 
  */
