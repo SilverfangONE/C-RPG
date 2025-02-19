@@ -24,10 +24,12 @@ Label_UI_RPGE *build_Label_UI_RPGE(Assetsheet_RPGE *font, Assetsheet_RPGE *asset
     // set values.
     Vec2D vTextTable = _calc_vTextTable_TEXT_UI_RPGE(text);
     Vec2D vTextCoordinates = _calc_vTextCoordinates_TEXT_UI_RPGE(asset, vCoordinates);
-    Vec2D vTableSize = _calc_vTableSize_TEXT_NARROW_UI_RPGE(asset, font, vTextTable, (Vec2D){0, 0},  (Vec2D){0, 0}, (Vec2D){6, 8});
+    
+    Vec2D vTableSize;
+
     log_trace("SIZE OF %s: %d", text, sizeof(text));
-    label->text_UI = build_Text_UI_RPGE(font, vTextTable, vTextCoordinates, sizeof(text), textType);
-    write_Text_UI_RPGE(label->text_UI, text);
+    label->text_UI = build_Text_UI_RPGE(font, vTextTable, vTextCoordinates, text, textType);
+    // write_Text_UI_RPGE(label->text_UI, text);
 
     label->background = build_Background_UI_RPGE(asset, vCoordinates, vTableSize);
     if (label->background == NULL) {

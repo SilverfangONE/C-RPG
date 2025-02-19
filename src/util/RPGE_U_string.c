@@ -5,7 +5,7 @@
 void strncpys_UTIL (char* dest, char* src)
 {
     strncpy(dest, src, sizeof(dest) - 1);
-    dest[sizeof(dest)] = '\0';
+    dest[sizeof(dest) - 1] = '\0';
 }
 
 void strc_UTIL (char* string)

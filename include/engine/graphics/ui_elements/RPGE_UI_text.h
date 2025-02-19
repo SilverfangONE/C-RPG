@@ -13,11 +13,13 @@ enum TextType_UI_RPGE {
 
 typedef struct Text_UI_RPGE {
     bool show;
-    char* textBuffer;
+    // 4 KiB
+    char textBuffer[4096];
     Assetsheet_RPGE* font;
     Vec2D vTableSize;
     Vec2D vCoordinates;
     enum TextType_UI_RPGE type;
+    Vec2D* vSubTextPatchSize;
 } Text_UI_RPGE;
 
 Text_UI_RPGE* build_Text_UI_RPGE(Assetsheet_RPGE* aFont, Vec2D vTableSize, Vec2D vCoordinates, char* text, enum TextType_UI_RPGE type);

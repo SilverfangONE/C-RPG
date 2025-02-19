@@ -40,7 +40,7 @@ Text_UI_RPGE* build_Text_UI_RPGE(Assetsheet_RPGE* aFont, Vec2D vTableSize, Vec2D
         errno = EINVAL;
         return NULL;
     }
-    if (text != NULL || strlen(text) < 1) 
+    if (text == NULL || strnlen(text, sizeof(text_UI->textBuffer)) < 1) 
     {
         log_error("build_Text_UI_RPGE(): text {%s} is invalid!", text);
         errno = EINVAL;
@@ -49,12 +49,12 @@ Text_UI_RPGE* build_Text_UI_RPGE(Assetsheet_RPGE* aFont, Vec2D vTableSize, Vec2D
     
     // set values.
     text_UI->font = aFont;
+    text_UI->type = type;
     text_UI->show = true;
     text_UI->vCoordinates = vCoordinates;
-    text_UI->vTableSize = vTableSize;
-    text_UI->textBuffer = (char*) malloc(sizeof(char) * strlen(text) + 1);
-    text_UI->textBuffer[sizeof(text_UI->textBuffer) - 1] = '\0'; 
-    strncpys_UTIL(text_UI->textBuffer, text);
+    text_UI->vTableSize = vTableSize; 
+    strncpy(text_UI->textBuffer, text, sizeof(text_UI->textBuffer) - 1);
+    text_UI->textBuffer[sizeof(text_UI->textBuffer) - 1] = '\0';
     
     // log values.
     log_trace("[text_UI->show = %s}]", (text_UI->show)? "true":"false");
@@ -67,15 +67,14 @@ Text_UI_RPGE* build_Text_UI_RPGE(Assetsheet_RPGE* aFont, Vec2D vTableSize, Vec2D
 
 void destroy_Text_UI_RPGE(Text_UI_RPGE* text_UI) 
 {
-    free(text_UI->textBuffer);
     free(text_UI);
 }
 
 void write_Text_UI_RPGE(Text_UI_RPGE* text_UI, char* text) 
 {
-    if (sizeof(text_UI->textBuffer - 1) < strlen(text))  
+    if (sizeof(text_UI->textBuffer) < sizeof(text))  
     {
-        log_warn("write_Text_UI_RPGE(): given text is bigger than textBuffer size {%d / %d}", strlen(text), sizeof(text_UI->textBuffer) - 1);
+        log_warn("write_Text_UI_RPGE(): given text is bigger than textBuffer size {%d / %d}", strnlen(text, sizeof(text_UI->textBuffer)), sizeof(text_UI->textBuffer) - 1);
     }
     strncpys_UTIL(text_UI->textBuffer, text);
     log_trace("[write_Text_UI_RPGE(): text_UI->textBuffer = {'%s'}]", text_UI->textBuffer);
@@ -84,25 +83,6 @@ void write_Text_UI_RPGE(Text_UI_RPGE* text_UI, char* text)
 void clear_Text_UI_RPGE(Text_UI_RPGE* text_UI) 
 {
     strc_UTIL(text_UI->textBuffer);
-}
-
-int render_Text_UI_RPGE(SDL_Renderer* renderer, Text_UI_RPGE* text_UI) 
-{
-    if (!text_UI->show) 
-    {
-        return 0;
-    } 
-    switch(text_UI->type) 
-    {
-        case TEXT_TYPE_NARROW_RPGE:
-            return _render_Text_NARROW_UI_RPGE(renderer, text_UI->textBuffer, text_UI->vCoordinates, text_UI->vTableSize, text_UI->font);
-        case TEXT_TYPE_WIDE_RPGE:
-            return _render_Text_WIDE_UI_RPGE(renderer, text_UI->textBuffer, text_UI->vCoordinates, text_UI->vTableSize, text_UI->font);
-        default:
-            log_error("render_Text_UI_RPGE(): type is undifined");
-            errno = EINVAL;
-            return 1;
-    }
 }
 
 int getAlphabetIndex_UI_RPGE(char c)
@@ -322,6 +302,112 @@ int getAlphabetSpecialIndex_UI_RPGE(char *letter)
     return -1;
 }
 
+
+int render_Text_UI_RPGE(SDL_Renderer* renderer, Text_UI_RPGE* text_UI) 
+{
+    if (!text_UI->show) 
+    {
+        return 0;
+    } 
+      
+    SDL_FRect dest;
+    switch (text_UI->type) 
+    {
+        case TEXT_TYPE_NARROW_RPGE:
+            // validate if vSubTextPatchSize has been set.
+            if (text_UI->vSubTextPatchSize == NULL) {
+                log_error("render_Text_UI_RPGE(): text_UI->vSubTextPatchSize is NULL");
+                errno = EINVAL;
+                return 1;
+            }
+            dest.w = text_UI->vSubTextPatchSize->x;
+            dest.h = text_UI->vSubTextPatchSize->y;           
+            break;
+        case TEXT_TYPE_WIDE_RPGE:
+            dest.w = text_UI->font->vPatchSize.x;
+            dest.h = text_UI->font->vPatchSize.y;
+            break;
+        default:
+            log_error("render_Text_UI_RPGE(): type is undefined");
+            errno = EINVAL;
+            return 1;
+
+    }
+    int yTable = 0;
+    int xTable = 0;
+    
+    // iterate of textBuffer and look up right corosponding sprites to given chars.
+    for (int literal = 0; literal < strnlen(text_UI->textBuffer, sizeof(text_UI->textBuffer) - 1) + 1 && literal < text_UI->vTableSize.x * text_UI->vTableSize.y; literal++)
+    {
+        if (xTable >= text_UI->vTableSize.x)
+        {
+            xTable = 0;
+            yTable++;
+        }
+        // render literal.
+        int index;
+        switch (text_UI->textBuffer[literal])
+        {
+        // new line.
+        case '\n':
+            if (xTable != 0)
+            {
+                xTable = 0;
+                yTable++;
+            }
+            continue;
+        // TODO: add special chars in stlye like <$name$>
+        case '\\':
+            char sp[6];
+            strncpy(sp, text_UI->textBuffer + literal, 6);
+            int spi = getAlphabetSpecialIndex_UI_RPGE(sp);
+            if (spi > -1)
+            {
+                index = spi;
+                literal = +6;
+                break;
+            }
+        // lookup default chars.
+        default:
+            index = getAlphabetIndex_UI_RPGE(text_UI->textBuffer[literal]);
+            if (index < 0)
+            {
+                errno = EINVAL;
+                return 1;
+            }
+        }
+        Vec2D cor = {.x = text_UI->vCoordinates.x + xTable * dest.w, .y = text_UI->vCoordinates.y + yTable * dest.h};
+        
+        switch(text_UI->type) 
+        {
+            case TEXT_TYPE_NARROW_RPGE:
+                // by error forward to caller.
+                if (renderTileV2_Assetsheet_G_RPGE(renderer, text_UI->font, index, cor, *text_UI->vSubTextPatchSize, (Vec2D) { 0, 0}))
+                {
+                    return 1;
+                }
+                break;
+            case TEXT_TYPE_WIDE_RPGE:
+                // by error forward to caller.
+                if(renderTile_Assetsheet_G_RPGE(renderer, text_UI->font, index, cor)) 
+                {
+                    return 1;
+                }
+                break;
+        }
+        // logging after timer shit
+        if (checkTimer_TIME_RPGE(10))
+        {
+            log_info("[Index=%d | literal: %c]", index, text_UI->textBuffer[literal]);
+            log_info("[INDEX=%d | xTable=%d, yTable=%d | Vec2D {.x=%d, .y=%d}]", index, xTable, yTable, cor.x, cor.y);
+        }
+        xTable++;
+    }
+    // timer shit
+    return 0;
+}
+
+
 // TODO: create timer failites for gloabl project.
 // with something like setTimer(timerID, secs);
 // checkTimer(timerID) => returns true if timer alarms. and resets after timer
@@ -338,7 +424,7 @@ int _render_Text_WIDE_UI_RPGE(SDL_Renderer *renderer, char *textBuffer, Vec2D vC
     int yTable = 0;
     int xTable = 0;
     // iterate of textBuffer and look up right corosponding sprites to given chars.
-    for (int literal = 0; literal < strlen(textBuffer) && literal < vTable.x * vTable.y; literal++)
+    for (int literal = 0; literal < strnlen(textBuffer, 4096) + 1 && literal < vTable.x * vTable.y; literal++)
     {
         if (xTable >= vTable.x)
         {
@@ -405,7 +491,7 @@ int _render_Text_NARROW_UI_RPGE(SDL_Renderer *renderer, char *textBuffer, Vec2D 
     int yTable = 0;
     int xTable = 0;
     // iterate of textBuffer and look up right corosponding sprites to given chars.
-    for (int literal = 0; literal < strlen(textBuffer) && literal < vTable.x * vTable.y; literal++)
+    for (int literal = 0; literal < strlen(textBuffer) + 1 && literal < vTable.x * vTable.y; literal++)
     {
         if (xTable >= vTable.x)
         {
@@ -458,78 +544,41 @@ int _render_Text_NARROW_UI_RPGE(SDL_Renderer *renderer, char *textBuffer, Vec2D 
     return 0;
 }
 
-static bool checkMenuAssetAndFontAsset_TEXT_NARROW_UI_RPGE(Assetsheet_RPGE *asset, Assetsheet_RPGE *font)
-{
-    if (!(asset->vPatchSize.x == font->vPatchSize.x && asset->vPatchSize.y == font->vPatchSize.y))
-    {
-        log_error("_calc_vTextTable_TEXT_WIDE_UI_RPGE(): asset->vPatchSize != font->vPatchSize, tilesizes need to "
-                  "match to calc vTextTable (WIDE)");
-        return true;
-    }
-    return false;
-}
-
-// calc from vTableSize with vPatchSize.
-Vec2D _calc_vTextTable_TEXT_WIDE_UI_RPGE(Assetsheet_RPGE *asset, Assetsheet_RPGE *font, Vec2D vTableSize,
-                                         Vec2D vPaddingHorizontal, Vec2D vPaddingVertical)
+Vec2D _calc_vBackgroundTableSize_TEXT_UI_RPGE(Assetsheet_RPGE* backgroundAsset, Text_UI_RPGE* text_UI, Vec2D vPaddingHorizontal, Vec2D vPaddingVertical)
 {
     // check if tilesize is the same asset == font
-    if (checkMenuAssetAndFontAsset_TEXT_NARROW_UI_RPGE(asset, font))
+    if (!(backgroundAsset->vPatchSize.x == text_UI->font->vPatchSize.x && backgroundAsset->vPatchSize.y == text_UI->font->vPatchSize.y))
     {
+        log_error("_calc_vBackgroundTableSize_TEXT_UI_RPGE(): asset->vPatchSize != font->vPatchSize, tilesizes needs to be the same");
+        errno = EINVAL;
         return (Vec2D){.x = -1, .y = -1};
     }
-    return (Vec2D){.x = vTableSize.x - 2 - (vPaddingHorizontal.x + vPaddingHorizontal.y),
-                   .y = vTableSize.y - 2 - (vPaddingVertical.x + vPaddingVertical.y)};
+    switch (text_UI->type) {
+        // narrow text.    
+        // calc from vTableSize with vPatchSize.
+        case TEXT_TYPE_NARROW_RPGE:
+        int xPreTable = text_UI->vTableSize.x * text_UI->vTableSize.x / text_UI->font->vPatchSize.x;
+        if (text_UI->vTableSize.x * text_UI->vTableSize.x % text_UI->font->vPatchSize.x != 0) {
+            xPreTable++;
+        }
+        
+        int yPreTable = text_UI->vTableSize.y * text_UI->vSubTextPatchSize->y / text_UI->font->vPatchSize.y;
+        
+            return (Vec2D){
+                .x = xPreTable + 2 + (vPaddingHorizontal.x + vPaddingHorizontal.y),
+                .y = yPreTable + 2 + (vPaddingVertical.x + vPaddingVertical.y)
+            };
+        case TEXT_TYPE_WIDE_RPGE:
+        // wide text.
+            return (Vec2D){.x = text_UI->vTableSize.x + 2 + (vPaddingHorizontal.x + vPaddingHorizontal.y),
+                    .y = text_UI->vTableSize.y + 2 + (vPaddingVertical.x + vPaddingVertical.y)};
+        default:
+            log_error("create_Label_UI_RPGE(): textType is undefined");
+            errno = EINVAL;
+            return (Vec2D){ -1, -1};
+    }
 }
 
-Vec2D _calc_vTextTable_TEXT_NARROW_UI_RPGE(Assetsheet_RPGE *asset, Assetsheet_RPGE *font, Vec2D vTableSize,
-                                           Vec2D vSubPatchSize, Vec2D vPaddingHorizontal, Vec2D vPaddingVertical)
-{
-    log_info("[_calc_vTextTable_TEXT_NARROW_UI_RPGE(): vTableSize {.x=%d, .y=%d}]", vTableSize.x, vTableSize.y);
-    // check if tilesize is the same asset == font
-    if (checkMenuAssetAndFontAsset_TEXT_NARROW_UI_RPGE(asset, font))
-    {
-        return (Vec2D){.x = -1, .y = -1};
-    }
-    return (Vec2D){
-        .x =
-            ((vTableSize.x - 2 - (vPaddingHorizontal.x + vPaddingHorizontal.y)) * font->vPatchSize.x) / vSubPatchSize.x,
-        .y = ((vTableSize.y - 2 - (vPaddingVertical.x + vPaddingVertical.y)) * font->vPatchSize.y) / vSubPatchSize.y};
-}
-
-Vec2D _calc_vTableSize_TEXT_WIDE_UI_RPGE(Assetsheet_RPGE *asset, Assetsheet_RPGE *font, Vec2D vTextTable,
-                                         Vec2D vPaddingHorizontal, Vec2D vPaddingVertical, Vec2D vSubPatchSize)
-{
-    // check if tilesize is the same asset == font
-    if (checkMenuAssetAndFontAsset_TEXT_NARROW_UI_RPGE(asset, font))
-    {
-        return (Vec2D){.x = -1, .y = -1};
-    }
-    return (Vec2D){.x = vTextTable.x + 2 + (vPaddingHorizontal.x + vPaddingHorizontal.y),
-                   .y = vTextTable.y + 2 + (vPaddingVertical.x + vPaddingVertical.y)};
-}
-
-Vec2D _calc_vTableSize_TEXT_NARROW_UI_RPGE(Assetsheet_RPGE *asset, Assetsheet_RPGE *font, Vec2D vTextTable,
-                                           Vec2D vPaddingHorizontal, Vec2D vPaddingVertical, Vec2D vSubPatchSize)
-{
-    // check if tilesize is the same asset == font
-    if (checkMenuAssetAndFontAsset_TEXT_NARROW_UI_RPGE(asset, font))
-    {
-        return (Vec2D){.x = -1, .y = -1};
-    }
-
-    int xPreTable = vTextTable.x * vSubPatchSize.x / font->vPatchSize.x;
-    if (vTextTable.x * vSubPatchSize.x % font->vPatchSize.x != 0) {
-        xPreTable++;
-    }
-
-    int yPreTable = vTextTable.y * vSubPatchSize.y / font->vPatchSize.y;
-
-    return (Vec2D){
-        .x = xPreTable + 2 + (vPaddingHorizontal.x + vPaddingHorizontal.y),
-        .y = yPreTable + 2 + (vPaddingVertical.x + vPaddingVertical.y)
-    };
-}
 
 Vec2D _calc_vTextTable_TEXT_UI_RPGE(char *textBuffer)
 {
