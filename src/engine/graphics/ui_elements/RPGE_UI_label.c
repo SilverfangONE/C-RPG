@@ -16,7 +16,7 @@ Label_UI_RPGE *build_Label_UI_RPGE(Assetsheet_RPGE *font, Assetsheet_RPGE *asset
         return NULL;
     if (font == NULL)
     {
-        log_error("create_Label_UI_RPGE: Font is invalid!");
+        log_error("create_Label_UI_RPGE(): Font is invalid!");
         errno = EINVAL;
         return NULL;
     }
@@ -24,7 +24,7 @@ Label_UI_RPGE *build_Label_UI_RPGE(Assetsheet_RPGE *font, Assetsheet_RPGE *asset
 
     if (text == NULL || strlen(text) == 0)
     {
-        log_error("create_Label_UI_RPGE: Text is invalid!");
+        log_error("create_Label_UI_RPGE(): Text is invalid!");
         errno = EINVAL;
         return NULL;
     }
@@ -35,7 +35,7 @@ Label_UI_RPGE *build_Label_UI_RPGE(Assetsheet_RPGE *font, Assetsheet_RPGE *asset
     // 1. determine size of char patches.
     if (asset == NULL)
     {
-        log_error("create_Label_UI_RPGE: Asset is invalid!");
+        log_error("create_Label_UI_RPGE(): Asset is invalid!");
         errno = EINVAL;
         return NULL;
     }
@@ -44,7 +44,7 @@ Label_UI_RPGE *build_Label_UI_RPGE(Assetsheet_RPGE *font, Assetsheet_RPGE *asset
     label->vTextTable = _calc_vTextTable_TEXT_UI_RPGE(text);
     if ( label->vTextTable.x < 0 || label->vTextTable.y < 0)
     {
-        log_error("build_Dialog_UI_RPGE: vTextTable {.x=%d, .y=%d} is invalid calculated", label->vTextTable.x, label->vTextTable.y);
+        log_error("create_Label_UI_RPGE(): vTextTable {.x=%d, .y=%d} is invalid calculated", label->vTextTable.x, label->vTextTable.y);
         errno = EINVAL;
         return NULL;
     }
@@ -53,7 +53,7 @@ Label_UI_RPGE *build_Label_UI_RPGE(Assetsheet_RPGE *font, Assetsheet_RPGE *asset
     label->vTextCoordinates = _calc_vTextCoordinates_TEXT_UI_RPGE(asset, vCoordinates);
     if ( label->vTextCoordinates.x < 0 || label->vTextCoordinates.y < 0)
     {
-        log_error("build_Dialog_UI_RPGE: vTextCoordinates {.x=%d, .y=%d} is invalid calculated", label->vTextCoordinates.x, label->vTextCoordinates.y);
+        log_error("create_Label_UI_RPGE(): vTextCoordinates {.x=%d, .y=%d} is invalid calculated", label->vTextCoordinates.x, label->vTextCoordinates.y);
         errno = EINVAL;
         return NULL;
     }
@@ -62,7 +62,7 @@ Label_UI_RPGE *build_Label_UI_RPGE(Assetsheet_RPGE *font, Assetsheet_RPGE *asset
     Vec2D vTableSize = _calc_vTableSize_TEXT_NARROW_UI_RPGE(asset, font, label->vTextTable, (Vec2D){0, 0},  (Vec2D){0, 0}, (Vec2D){6, 8});
     if ( vTableSize.x < 0 || vTableSize.y < 0)
     {
-        log_error("build_Dialog_UI_RPGE: vTableSize {.x=%d, .y=%d} is invalid calculated", vTableSize.x, vTableSize.y);
+        log_error("create_Label_UI_RPGE(): vTableSize {.x=%d, .y=%d} is invalid calculated", vTableSize.x, vTableSize.y);
         errno = EINVAL;
         return NULL;
     }

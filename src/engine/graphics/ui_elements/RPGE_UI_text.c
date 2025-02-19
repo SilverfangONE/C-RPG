@@ -11,6 +11,17 @@
 #include <string.h>
 #include "RPGE_U_math.h"
 
+// TODO create text component which holds
+/*
+typedef struct TEXT_UI_RPGE {
+    bool show;
+    char *textBuffer;
+    Assetsheet_RPGE* font;
+    Vec2D vTextTable;
+    Vec2D vTextCoordinates;
+} TEXT_UI_RPGE;
+*/
+
 int getAlphabetIndex_UI_RPGE(char c)
 {
     switch (c)
