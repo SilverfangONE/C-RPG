@@ -14,7 +14,7 @@
 
 // TODO create text component which holds
 
-Text_UI_RPGE* build_Text_UI_RPGE(Assetsheet_RPGE* aFont, Vec2D vTableSize, Vec2D vCoordinates, size_t textBufferSize, enum TextType_UI_RPGE type)
+Text_UI_RPGE* build_Text_UI_RPGE(Assetsheet_RPGE* aFont, Vec2D vTableSize, Vec2D vCoordinates, char* text, enum TextType_UI_RPGE type)
 {   
     Text_UI_RPGE* text_UI = malloc(sizeof(Text_UI_RPGE));
     // validate params
@@ -40,9 +40,9 @@ Text_UI_RPGE* build_Text_UI_RPGE(Assetsheet_RPGE* aFont, Vec2D vTableSize, Vec2D
         errno = EINVAL;
         return NULL;
     }
-    if (textBufferSize < 1) 
+    if (text != NULL || strlen(text) < 1) 
     {
-        log_error("build_Text_UI_RPGE(): textBufferSize {%d} is invalid!", textBufferSize);
+        log_error("build_Text_UI_RPGE(): text {%s} is invalid!", text);
         errno = EINVAL;
         return NULL;
     }
@@ -52,13 +52,16 @@ Text_UI_RPGE* build_Text_UI_RPGE(Assetsheet_RPGE* aFont, Vec2D vTableSize, Vec2D
     text_UI->show = true;
     text_UI->vCoordinates = vCoordinates;
     text_UI->vTableSize = vTableSize;
-    text_UI->textBuffer = (char*) malloc(textBufferSize);
-    text_UI->textBuffer[sizeof(text_UI->textBuffer) - 1] = '\0';
+    text_UI->textBuffer = (char*) malloc(sizeof(char) * strlen(text) + 1);
+    text_UI->textBuffer[sizeof(text_UI->textBuffer) - 1] = '\0'; 
+    strncpys_UTIL(text_UI->textBuffer, text);
+    
     // log values.
     log_trace("[text_UI->show = %s}]", (text_UI->show)? "true":"false");
     log_trace("[text_UI->vCoordinates {.x=%d, .y=%d}]", text_UI->vCoordinates.x, text_UI->vCoordinates.y);
     log_trace("[text_UI->vTable {.x=%d, .y=%d}]", text_UI->vTableSize.x, text_UI->vTableSize.y);
     log_trace("[text_UI->textBufferSize = %d]", sizeof(text_UI->textBuffer));
+    log_trace("[text_UI->text = %s]", text_UI->textBuffer);
     return text_UI;
 }
 
