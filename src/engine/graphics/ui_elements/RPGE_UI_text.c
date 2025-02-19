@@ -1,5 +1,6 @@
 #include "RPGE_UI_text.h"
 #include "RPGE_E_time.h"
+#include "RPGE_U_string.h"
 #include "RPGE_G_assetsheet.h"
 #include "RPGE_U_vec.h"
 #include "log.h"
@@ -12,15 +13,84 @@
 #include "RPGE_U_math.h"
 
 // TODO create text component which holds
-/*
-typedef struct TEXT_UI_RPGE {
-    bool show;
-    char *textBuffer;
-    Assetsheet_RPGE* font;
-    Vec2D vTextTable;
-    Vec2D vTextCoordinates;
-} TEXT_UI_RPGE;
-*/
+
+Text_UI_RPGE* build_Text_UI_RPGE(Assetsheet_RPGE* aFont, Vec2D vTableSize, Vec2D vCoordinates, int textBufferSize, enum TextType_UI_RPGE type)
+{   
+    Text_UI_RPGE* text_UI = malloc(sizeof(Text_UI_RPGE));
+    // validate params
+    if (text_UI == NULL)
+    {
+        return NULL;
+    }
+    if (aFont == NULL) 
+    {
+        log_error("build_Text_UI_RPGE(): font%s is invalid!", aFont);
+        errno = EINVAL;
+        return NULL;
+    }
+    if (vTableSize.x < 1 || vTableSize.y < 1) 
+    {
+        log_error("build_Text_UI_RPGE(): vTableSize {.x=%d, .y=%d} is invalid!", vTableSize.x, vTableSize.y);
+        errno = EINVAL;
+        return NULL;
+    }
+    if (vCoordinates.x < 0 || vCoordinates.y < 0) 
+    {
+        log_error("build_Text_UI_RPGE(): vCoordinates {.x=%d, .y=%d} is invalid!", vCoordinates.x, vCoordinates.y);
+        errno = EINVAL;
+        return NULL;
+    }
+    if (textBufferSize < 1) 
+    {
+        log_error("build_Text_UI_RPGE(): textBufferSize {%d} is invalid!", textBufferSize);
+        errno = EINVAL;
+        return NULL;
+    }
+
+    // set values.
+    text_UI->font = aFont;
+    text_UI->show = true;
+    text_UI->vCoordinates = vCoordinates;
+    text_UI->vTableSize = vTableSize;
+    text_UI->textBuffer = malloc(sizeof(char) * (textBufferSize + 1));
+    text_UI->textBuffer[sizeof(char) * textBufferSize] = '\0';
+    return text_UI;
+}
+
+void destroy_Text_UI_RPGE(Text_UI_RPGE* text_UI) 
+{
+    free(text_UI->textBuffer);
+    free(text_UI);
+}
+
+void write_Text_UI_RPGE(Text_UI_RPGE* text_UI, char* text) 
+{
+    if (sizeof(text_UI->textBuffer - 1) < strlen(text))  
+    {
+        log_warn("write_Text_UI_RPGE(): given text is bigger than textBuffer size {%d / %d}", strlen(text), sizeof(text_UI->textBuffer) - 1);
+    }
+    strncpys_UTIL(text_UI->textBuffer, text);
+}
+
+void clear_Text_UI_RPGE(Text_UI_RPGE* text_UI) 
+{
+    strc_UTIL(text_UI->textBuffer);
+}
+
+int render_Text_UI_RPGE(SDL_Renderer* renderer, Text_UI_RPGE* text_UI) 
+{
+    switch(text_UI->type) 
+    {
+        case TEXT_TYPE_NARROW_RPGE:
+            return _render_Text_NARROW_UI_RPGE(renderer, text_UI->textBuffer, text_UI->vCoordinates, text_UI->vTableSize, text_UI->font);
+        case TEXT_TYPE_WIDE_RPGE:
+            return _render_Text_WIDE_UI_RPGE(renderer, text_UI->textBuffer, text_UI->vCoordinates, text_UI->vTableSize, text_UI->font);
+        default:
+            log_error("render_Text_UI_RPGE(): type is undifined");
+            errno = EINVAL;
+            return 1;
+    }
+}
 
 int getAlphabetIndex_UI_RPGE(char c)
 {
@@ -246,7 +316,7 @@ int getAlphabetSpecialIndex_UI_RPGE(char *letter)
 
 // TODO hier findet ein segementaion fault statt vorischt !!!!!
 // TODO binde den timer ein !
-int render_Text_WIDE_UI_RPGE(SDL_Renderer *renderer, char *textBuffer, Vec2D vCoordinates, Vec2D vTable,
+int _render_Text_WIDE_UI_RPGE(SDL_Renderer *renderer, char *textBuffer, Vec2D vCoordinates, Vec2D vTable,
                              Assetsheet_RPGE *font)
 {
     SDL_FRect dest;
@@ -311,7 +381,7 @@ int render_Text_WIDE_UI_RPGE(SDL_Renderer *renderer, char *textBuffer, Vec2D vCo
 /**
  * currently only for 8 bit font which accuatly has an offset x wise with 2 pixel
  */
-int render_Text_NARROW_UI_RPGE(SDL_Renderer *renderer, char *textBuffer, Vec2D vCoordinates, Vec2D vTable,
+int _render_Text_NARROW_UI_RPGE(SDL_Renderer *renderer, char *textBuffer, Vec2D vCoordinates, Vec2D vTable,
                                Assetsheet_RPGE *font)
 {
     Vec2D vSubTileOffset = {.x = 0, .y = 0};

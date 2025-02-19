@@ -122,7 +122,7 @@ int render_Dialog_UI_RPGE(SDL_Renderer *renderer, Dialog_UI_RPGE *dialog)
                   dialog->textDisplayBufferSize);
     }
     // render text on background.
-    if (render_Text_NARROW_UI_RPGE(renderer, textDisplayBuffer, dialog->vTextCoordinates, dialog->vTextTable,
+    if (_render_Text_NARROW_UI_RPGE(renderer, textDisplayBuffer, dialog->vTextCoordinates, dialog->vTextTable,
                                    dialog->font))
         return 1;
     // render text scroll indicator.
