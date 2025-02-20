@@ -32,7 +32,8 @@ typedef struct Dialog_UI_RPGE {
  * @param vTableSize Vec2D wich contains size of Dialog-Box in rows and cols of patches from background
  * @return pointer to created Dialog_UI_RPGE struct, or NULL if an error occured.
  */
-Dialog_UI_RPGE* build_Dialog_UI_RPGE(Assetsheet_RPGE *font, Assetsheet_RPGE *asset, char* text_UI, Vec2D vCoordinates, Vec2D vTableSize);
+Dialog_UI_RPGE *build_Dialog_UI_RPGE(Assetsheet_RPGE *font, Assetsheet_RPGE *asset, char *text, Vec2D vCoordinates,
+    Vec2D vTableSize, enum TextType_UI_RPGE textType);
 
 /**
  * Renderes given Dialog_UI_RPGE struct on the current render target.

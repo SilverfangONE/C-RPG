@@ -15,7 +15,7 @@ void strc_UTIL(char *string)
         log_trace("strc_UTIL(): string is NULL");
         return;
     }
-    for (int i = 0; i < strlen(string); i++)
+    for (int i = 0; i < strnlen(string, sizeof(string)); i++)
     {
         string[i] = 0;
     }

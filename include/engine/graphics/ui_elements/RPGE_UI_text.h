@@ -38,8 +38,13 @@ int _render_Text_WIDE_UI_RPGE(SDL_Renderer* renderer, char* text_UI, Vec2D vCoor
 int _render_Text_NARROW_UI_RPGE(SDL_Renderer *renderer, char *textBuffer, Vec2D vCoordinates, Vec2D vTable, Assetsheet_RPGE *font);
 
 // calc from vTableSize with vPatchSize.
-Vec2D _calc_vTextTable_TEXT_UI_RPGE(Background_UI_RPGE* background, Text_UI_RPGE* text_UI, Vec2D vPaddingHorizontal, Vec2D vPaddingVertical);
-
+Vec2D _calc_vTextTable_TEXT_UI_RPGE(
+    Background_UI_RPGE *background, 
+    Assetsheet_RPGE* font,
+    enum TextType_UI_RPGE textType,
+    Vec2D vSubTextPatchSize,
+    Vec2D vPaddingHorizontal,
+    Vec2D vPaddingVertical);
 /**
  * with calcs table size for given text.
  */
@@ -48,4 +53,13 @@ Vec2D _calc_vTextTableV2_TEXT_UI_RPGE(char *textBuffer);
 // Vec2D _calc_vTableSize_TEXT_NARROW_UI_RPGE(Assetsheet_RPGE *asset, Assetsheet_RPGE *font, Vec2D vTextTable, Vec2D vPaddingHorizontal, Vec2D vPaddingVertical, Vec2D vSubPatchSize);
 Vec2D _calc_vBackgroundTableSize_TEXT_UI_RPGE(Assetsheet_RPGE* backgroundAsset, Text_UI_RPGE* text_UI, Vec2D vPaddingHorizontal, Vec2D vPaddingVertical);
 Vec2D _calc_vTextCoordinates_TEXT_UI_RPGE(Assetsheet_RPGE* asset, Vec2D vCoordinates);
+
+Background_UI_RPGE* build_Background_from_Text_UI_RPGE(Text_UI_RPGE* text_UI, Assetsheet_RPGE* backgroundAsset, Vec2D vCoordinates, Vec2D vPaddingHorizontal, Vec2D vPaddingVertical);
+Text_UI_RPGE* build_from_Background_Text_UI_RPGE(
+    Background_UI_RPGE *background, 
+    Assetsheet_RPGE* font,
+    enum TextType_UI_RPGE textType, 
+    Vec2D vPaddingHorizontal, 
+    Vec2D vPaddingVertical
+);
 #endif

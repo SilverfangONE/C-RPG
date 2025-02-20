@@ -53,28 +53,21 @@ Dialog_UI_RPGE *build_Dialog_UI_RPGE(Assetsheet_RPGE *font, Assetsheet_RPGE *ass
 
     // set values.
     // calc coordinates
-    Vec2D vTextCoordinates = _calc_vTextCoordinates_TEXT_UI_RPGE(asset, vCoordinates);
-    Vec2D vTextTable = _calc_vTextTable_TEXT_UI_RPGE(asset, font, vTableSize, (Vec2D){.x = 6, .y = 8});
-
-    dialog->text_UI = build_Text_UI_RPGE(font, vTextTable, vTextCoordinates, NULL, textType);
-
+    
     dialog->vIndicatorCoordinates = (Vec2D){
         // make korrekt padding.
         .x = vCoordinates.x + vTableSize.x * asset->vPatchSize.x - asset->vPatchSize.x * 2,
         .y = vCoordinates.y + vTableSize.y * asset->vPatchSize.y - asset->vPatchSize.y * 2,
     };
-
+    
     // set values.
     dialog->show = true;
     dialog->nextDisplayCharIndex = 0;
-
     strncpy(dialog->textDialogBuffer, text, sizeof(dialog->textDialogBuffer) - 1);
     dialog->textDialogBuffer[sizeof(dialog->textDialogBuffer)] = '\0';
-    // build dialog window.
     dialog->background = build_Background_UI_RPGE(asset, vCoordinates, vTableSize);
-    // calc displayTextBufferSize.
+    dialog->text_UI = build_from_Background_Text_UI_RPGE(dialog->background, font, textType, (Vec2D) {0, 0}, (Vec2D) {0, 0});
     dialog->textDisplayBufferSize = dialog->text_UI->vTableSize.x * dialog->text_UI->vTableSize.y;
-
     // log values.
     log_trace("[dialog->vIndicatorCoordinates {.x=%d, .y=%d}]", dialog->vIndicatorCoordinates.x,
               dialog->vIndicatorCoordinates.y);
@@ -100,14 +93,15 @@ int render_Dialog_UI_RPGE(SDL_Renderer *renderer, Dialog_UI_RPGE *dialog)
     if (render_Background_UI_RPGE(renderer, dialog->background))
         return 1;
     // TODO: maybe crap init data needs to be cleared
-    char textDisplayBuffer[dialog->];
+    char textDisplayBuffer[dialog->textDisplayBufferSize];
     // fills up textDisplayBuffer.
     // checks also if index is out of bounce of to displayingText in TextBuffer
-    for (int i = 0; i < dialog->textDisplayBufferSize && dialog->nextDisplayCharIndex + 1 < strlen(dialog->textBuffer);
+    for (int i = 0; i < dialog->textDisplayBufferSize && dialog->nextDisplayCharIndex + 1 < strlen(dialog->textDialogBuffer);
          i++)
     {
-        textDisplayBuffer[i] = dialog->textBuffer[dialog->nextDisplayCharIndex + i];
+        textDisplayBuffer[i] = dialog->textDialogBuffer[dialog->nextDisplayCharIndex + i];
     }
+    write_Text_UI_RPGE(dialog->text_UI, textDisplayBuffer);
     // check builded text buffer.
     if (checkTimer_TIME_RPGE(10))
     {
@@ -115,13 +109,12 @@ int render_Dialog_UI_RPGE(SDL_Renderer *renderer, Dialog_UI_RPGE *dialog)
                   dialog->textDisplayBufferSize);
     }
     // render text on background.
-    if (_render_Text_NARROW_UI_RPGE(renderer, textDisplayBuffer, dialog->vTextCoordinates, dialog->vTextTable,
-                                    dialog->font))
+    if (render_Text_UI_RPGE(renderer, dialog->text_UI))
         return 1;
     // render text scroll indicator.
     // an arrow on the right downer egde some where
     // check if some text hasn't been display yet
-    if (dialog->nextDisplayCharIndex + dialog->textDisplayBufferSize < strlen(dialog->textBuffer))
+    if (dialog->nextDisplayCharIndex + dialog->textDisplayBufferSize < strnlen(dialog->textDialogBuffer, sizeof(dialog->textDialogBuffer)))
     {
         // marker only gets rendered if ther is more text in the textBuffer which hasn't been displayed yet.
         renderTile_Assetsheet_G_RPGE(renderer, dialog->background->asset,
@@ -144,11 +137,11 @@ int update_Dialog_UI_RPGE(Dialog_UI_RPGE *dialog, Keymap_RPGE *keymap)
     // goes on and updates Dialog_UI_RPGE struct.
     dialog->nextDisplayCharIndex += dialog->textDisplayBufferSize;
 
-    log_trace("[Dialog_UI_RPGE: indexBuffer %d / %d]", dialog->nextDisplayCharIndex, strlen(dialog->textBuffer));
+    log_trace("[Dialog_UI_RPGE: indexBuffer %d / %d]", dialog->nextDisplayCharIndex, strlen(dialog->textDialogBuffer));
     log_trace("[Dialog_UI_RPGE: textDisplayBufferSize %d]", dialog->textDisplayBufferSize);
 
     // close if no more text needs to be displayed.
-    if (dialog->nextDisplayCharIndex >= strlen(dialog->textBuffer))
+    if (dialog->nextDisplayCharIndex >= strlen(dialog->textDialogBuffer))
     {
         // reset.
         dialog->nextDisplayCharIndex = 0;
