@@ -116,7 +116,7 @@ Background_UI_RPGE *build_Background_UI_RPGE(Assetsheet_RPGE *asset, Vec2D vCoor
     }
     // set values.
     background->m_indices = constructBackgroundIndexArr_UI_RPGE(vTableSize);
-    if (background->m_indices == NULL) 
+    if (background->m_indices == NULL)
     {
         return NULL;
     }

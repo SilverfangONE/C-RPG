@@ -14,15 +14,14 @@
 #include <string.h>
 
 Dialog_UI_RPGE *build_Dialog_UI_RPGE(Assetsheet_RPGE *font, Assetsheet_RPGE *asset, char *text, Vec2D vCoordinates,
-                                     Vec2D vTableSize)
+                                     Vec2D vTableSize, enum TextType_UI_RPGE textType)
 {
     Dialog_UI_RPGE *dialog = malloc(sizeof(Dialog_UI_RPGE));
     if (dialog == NULL)
         return NULL;
-    // check fun inputs.
+    // validate values.
     if (font == NULL)
     {
-        // TODO: maybe seg fault ?
         log_error("build_Dialog_UI_RPGE: font%s is invalid", font);
         errno = EINVAL;
         return NULL;
@@ -52,40 +51,34 @@ Dialog_UI_RPGE *build_Dialog_UI_RPGE(Assetsheet_RPGE *font, Assetsheet_RPGE *ass
         return NULL;
     }
 
-    // calc coordinates.
-    dialog->vTextCoordinates = _calc_vTextCoordinates_TEXT_UI_RPGE(asset, vCoordinates);
-    log_trace("[dialog->vTextCoordinates {.x=%d, .y=%d}]", dialog->vTextCoordinates.x, dialog->vTextCoordinates.y);
-    // makreker text padding
+    // set values.
+    // calc coordinates
+    Vec2D vTextCoordinates = _calc_vTextCoordinates_TEXT_UI_RPGE(asset, vCoordinates);
+    Vec2D vTextTable = _calc_vTextTable_TEXT_UI_RPGE(asset, font, vTableSize, (Vec2D){.x = 6, .y = 8});
 
-    dialog->vTextTable = _calc_vTextTable_TEXT_NARROW_UI_RPGE(asset, font, vTableSize, (Vec2D){.x = 6, .y = 8},
-                                                              (Vec2D){.x = 0, .y = 0}, (Vec2D){.x = 0, .y = 1});
-    if (dialog->vTextTable.x < 0 || dialog->vTextTable.y < 0)
-    {
-        log_error("build_Dialog_UI_RPGE: vTextTable {.x=%d, .y=%d} is invalid calculated", dialog->vTextTable.x, dialog->vTextTable.y);
-        errno = EINVAL;
-        return NULL;
-    }
-    log_trace("[dialog->vTextTable {.=x%d, .y=%d}]", dialog->vTextTable, dialog->vTextTable);
+    dialog->text_UI = build_Text_UI_RPGE(font, vTextTable, vTextCoordinates, NULL, textType);
 
     dialog->vIndicatorCoordinates = (Vec2D){
         // make korrekt padding.
         .x = vCoordinates.x + vTableSize.x * asset->vPatchSize.x - asset->vPatchSize.x * 2,
         .y = vCoordinates.y + vTableSize.y * asset->vPatchSize.y - asset->vPatchSize.y * 2,
     };
-    log_trace("[dialog->vIndicatorCoordinates {.x=%d, .y=%d}]", dialog->vIndicatorCoordinates.x,
-              dialog->vIndicatorCoordinates.y);
 
     // set values.
     dialog->show = true;
     dialog->nextDisplayCharIndex = 0;
-    strncpy(dialog->textBuffer, text, sizeof(dialog->textBuffer) - 1);
-    dialog->textBuffer[sizeof(dialog->textBuffer)] = '\0';
+
+    strncpy(dialog->textDialogBuffer, text, sizeof(dialog->textDialogBuffer) - 1);
+    dialog->textDialogBuffer[sizeof(dialog->textDialogBuffer)] = '\0';
     // build dialog window.
-    dialog->font = font;
     dialog->background = build_Background_UI_RPGE(asset, vCoordinates, vTableSize);
     // calc displayTextBufferSize.
-    dialog->textDisplayBufferSize = dialog->vTextTable.x * dialog->vTextTable.y;
-    log_debug("[Created Dialog_UI_RPGE {.textBuffer='%s', .textDisplayBufferSize=%d}]", dialog->textBuffer,
+    dialog->textDisplayBufferSize = dialog->text_UI->vTableSize.x * dialog->text_UI->vTableSize.y;
+
+    // log values.
+    log_trace("[dialog->vIndicatorCoordinates {.x=%d, .y=%d}]", dialog->vIndicatorCoordinates.x,
+              dialog->vIndicatorCoordinates.y);
+    log_debug("[Created Dialog_UI_RPGE {.textDialogBuffer='%s', .textDisplayBufferSize=%d}]", dialog->textDialogBuffer,
               dialog->textDisplayBufferSize);
     return dialog;
 }
@@ -107,7 +100,7 @@ int render_Dialog_UI_RPGE(SDL_Renderer *renderer, Dialog_UI_RPGE *dialog)
     if (render_Background_UI_RPGE(renderer, dialog->background))
         return 1;
     // TODO: maybe crap init data needs to be cleared
-    char textDisplayBuffer[dialog->textDisplayBufferSize];
+    char textDisplayBuffer[dialog->];
     // fills up textDisplayBuffer.
     // checks also if index is out of bounce of to displayingText in TextBuffer
     for (int i = 0; i < dialog->textDisplayBufferSize && dialog->nextDisplayCharIndex + 1 < strlen(dialog->textBuffer);
@@ -123,7 +116,7 @@ int render_Dialog_UI_RPGE(SDL_Renderer *renderer, Dialog_UI_RPGE *dialog)
     }
     // render text on background.
     if (_render_Text_NARROW_UI_RPGE(renderer, textDisplayBuffer, dialog->vTextCoordinates, dialog->vTextTable,
-                                   dialog->font))
+                                    dialog->font))
         return 1;
     // render text scroll indicator.
     // an arrow on the right downer egde some where

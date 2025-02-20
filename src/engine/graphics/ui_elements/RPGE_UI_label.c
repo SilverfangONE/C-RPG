@@ -9,7 +9,8 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
-Label_UI_RPGE *build_Label_UI_RPGE(Assetsheet_RPGE *font, Assetsheet_RPGE *asset, char *text, Vec2D vCoordinates, enum TextType_UI_RPGE textType)
+Label_UI_RPGE *build_Label_UI_RPGE(Assetsheet_RPGE *font, Assetsheet_RPGE *asset, char *text, Vec2D vCoordinates,
+                                   enum TextType_UI_RPGE textType)
 {
     Label_UI_RPGE *label = (Label_UI_RPGE *)malloc(sizeof(Label_UI_RPGE));
     // validate values.
@@ -24,7 +25,7 @@ Label_UI_RPGE *build_Label_UI_RPGE(Assetsheet_RPGE *font, Assetsheet_RPGE *asset
     // set values.
     Vec2D vTextTable = _calc_vTextTable_TEXT_UI_RPGE(text);
     Vec2D vTextCoordinates = _calc_vTextCoordinates_TEXT_UI_RPGE(asset, vCoordinates);
-    
+
     Vec2D vTableSize;
 
     log_trace("SIZE OF %s: %d", text, sizeof(text));
@@ -32,7 +33,8 @@ Label_UI_RPGE *build_Label_UI_RPGE(Assetsheet_RPGE *font, Assetsheet_RPGE *asset
     // write_Text_UI_RPGE(label->text_UI, text);
 
     label->background = build_Background_UI_RPGE(asset, vCoordinates, vTableSize);
-    if (label->background == NULL) {
+    if (label->background == NULL)
+    {
         return NULL;
     }
     label->show = true;
@@ -43,7 +45,7 @@ Label_UI_RPGE *build_Label_UI_RPGE(Assetsheet_RPGE *font, Assetsheet_RPGE *asset
 
 int render_Label_UI_RPGE(SDL_Renderer *renderer, Label_UI_RPGE *label)
 {
-    if (!label->show) 
+    if (!label->show)
     {
         return 0;
     }

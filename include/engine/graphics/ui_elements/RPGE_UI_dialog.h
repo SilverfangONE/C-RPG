@@ -9,17 +9,16 @@
 #include "RPGE_UI_background.h"
 #include "RPGE_E_keymap.h"
 #include "RPGE_UI_text.h"
+#include "RPGE_UI_text.h"
 
 typedef struct Dialog_UI_RPGE {
     // 4 KiB
     bool show;
-    char textBuffer[4096];
+    char textDialogBuffer[4096];
     int textDisplayBufferSize;
     int nextDisplayCharIndex;
-    Assetsheet_RPGE* font;
-    Vec2D vTextTable;
-    Vec2D vTextCoordinates;
     Vec2D vIndicatorCoordinates;
+    Text_UI_RPGE* text_UI;;
     Background_UI_RPGE* background;
 } Dialog_UI_RPGE;
 

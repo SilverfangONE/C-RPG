@@ -43,8 +43,8 @@ int main()
         (Vec2D){55, 55}, (Vec2D){22, 6});
     pContext->dialog = dialog;
 
-    Label_UI_RPGE *label =
-        build_Label_UI_RPGE(eContext->defaultFont, eContext->menuAsset, "Hello\nWorld", (Vec2D){10, 10}, TEXT_TYPE_WIDE_RPGE);
+    Label_UI_RPGE *label = build_Label_UI_RPGE(eContext->defaultFont, eContext->menuAsset, "Hello\nWorld",
+                                               (Vec2D){10, 10}, TEXT_TYPE_WIDE_RPGE);
     pContext->label = label;
     // configure timer
     setTimerSec_TIME_RPGE(10, 10);

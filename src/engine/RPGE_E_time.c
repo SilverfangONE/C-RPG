@@ -16,8 +16,8 @@ int INIT_TIME_RPGE(TimerManager_TIME_RPGE *manager, int FPS, int tickSizeCap)
     _timerManager = manager;
     _timerManager->tickSizeCap = tickSizeCap;
     _timerManager->FPS = FPS;
-    log_debug("[set new _timerManager {FPS=%d, slotSize=%d, tickSizeCap=%d}]", _timerManager->FPS, _timerManager->length,
-              _timerManager->tickSizeCap);
+    log_debug("[set new _timerManager {FPS=%d, slotSize=%d, tickSizeCap=%d}]", _timerManager->FPS,
+              _timerManager->length, _timerManager->tickSizeCap);
     return 0;
 }
 
