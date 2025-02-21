@@ -32,6 +32,13 @@ typedef struct Menu_C_RPGE {
 } Menu_C_RPGE;
 
 Menu_C_RPGE* build_Menu_C_RPGE();
-void destroy_Menu_C_RPGE();
 int add_UIComp_Menu_C_RPGE(void* comp, enum UI_COMP_Type_C_RPGE type);
+
+int update_Menu_C_RPGE(Menu_C_RPGE* menu);
+int _update_Menu_C_RPGE(void* menu);
+int render_Menu_C_RPGE(SDL_Renderer* renderer, Menu_C_RPGE* menu);
+int _render_Menu_C_RPGE(SDL_Renderer* renderer, void* menu);
+
+int destroy_Menu_C_RPGE(Menu_C_RPGE* room);
+int _destroy_Menu_C_RPGE(void* room);
 #endif

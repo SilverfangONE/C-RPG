@@ -12,5 +12,10 @@ typedef struct World_C_RPGE {
 } World_C_RPGE;
 
 int update_World_C_RPGE(World_C_RPGE* world);
+int _update_World_C_RPGE(void* world);
 int render_World_C_RPGE(SDL_Renderer* renderer, World_C_RPGE* world);
+int _render_World_C_RPGE(SDL_Renderer* renderer, void* world);
+
+int destroy_World_C_RPGE(World_C_RPGE* world);
+int _destroy_World_C_RPGE(void* world);
 #endif
