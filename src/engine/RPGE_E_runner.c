@@ -138,7 +138,9 @@ bool _processEventsSDL(CONTEXT_RPGE *eContext)
 
 int _update_RPGE(CONTEXT_RPGE *eContext)
 {
-    return eContext->fupdatePtr(eContext);
+    if(eContext->fupdatePtr(eContext)) return 1;
+    if(update_CONTAINER_STACK_RPGE()) return 1;
+    return 0;
 }
 
 int _render_RPGE(CONTEXT_RPGE *eContext)
@@ -161,10 +163,8 @@ int _render_RPGE(CONTEXT_RPGE *eContext)
     }
 
     // invoke program render fun.
-    if (eContext->frenderPtr(eContext))
-    {
-        return 1;
-    }
+    if (eContext->frenderPtr(eContext)) return 1;
+    if (render_CONTAINER_STACK_RPGE(eContext->renderer)) return 1;
 
     // render on window.
     SDL_SetRenderTarget(eContext->renderer, NULL);

@@ -48,7 +48,6 @@ bool _isContainerType_STACK_RPGE(ContainerType_RPGE type);
 int render_CONTAINER_STACK_RPGE(SDL_Renderer* renderer);
 int update_CONTAINER_STACK_RPGE();
 
-
 // flags
 void update_FLAGS_CONTAINER_STACK_RPGE();
 

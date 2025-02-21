@@ -12,7 +12,7 @@ static ContainerStack_RPGE *_CONTAINER_STACK;
 
 ContainerStack_RPGE* INIT_CONTAINER_STACK_RPGE()
 {
-    ContainerStack_RPGE* _CONTAINER_STACK = (ContainerStack_RPGE*) malloc(sizeof(ContainerStack_RPGE));
+    _CONTAINER_STACK = (ContainerStack_RPGE*) malloc(sizeof(ContainerStack_RPGE));
     if (_CONTAINER_STACK == NULL) return NULL;
     _CONTAINER_STACK->top = NULL;
     _CONTAINER_STACK->length = 0;
@@ -60,7 +60,7 @@ int _check_CONTAINER_STACK_RPGE()
 {
     if (_CONTAINER_STACK == NULL)
     {
-        log_error("push_Container_RPGE(): _CONTAINER_STACK {NULL} hasn't been set yet");
+        log_error("_check_CONTAINER_STACK_RPGE(): _CONTAINER_STACK {NULL} hasn't been set yet");
         errno = EPERM;
         return 1;
     }
