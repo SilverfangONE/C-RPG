@@ -13,7 +13,6 @@ typedef enum ContainerType_RPGE {
 } ContainerType_RPGE;
 
 typedef struct ContainerWrapper_RPGE {
-    bool prio;
     enum ContainerType_RPGE type;
     void* container;
     int (*fupdate)(void*);
@@ -22,8 +21,11 @@ typedef struct ContainerWrapper_RPGE {
 } ContainerWrapper_RPGE;
 
 typedef struct ContainerItem_RPGE {
+    bool _prio;
+    bool toRender;
+    bool toUpdate;
     ContainerItem_RPGE* next;
-    ContainerWrapper_RPGE* containerWrapper;
+    ContainerWrapper_RPGE* cw;
 } ContainerItem_RPGE;
 
 typedef struct ContainerStack_RPGE {

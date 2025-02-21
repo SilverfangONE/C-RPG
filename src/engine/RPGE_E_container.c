@@ -3,18 +3,20 @@
 #include "RPGE_C_menu.h"
 #include "RPGE_C_room.h"
 #include "RPGE_C_world.h"
-#include <errno.h>
-#include <stdlib.h>
 #include "log.h"
+#include <errno.h>
+#include <stdbool.h>
+#include <stdlib.h>
 
-static ContainerStack_RPGE* _CONTAINER_STACK;
+static ContainerStack_RPGE *_CONTAINER_STACK;
 
-bool _isContainerType_STACK_RPGE(ContainerType_RPGE type) {
-    switch (type) 
+bool _isContainerType_STACK_RPGE(ContainerType_RPGE type)
+{
+    switch (type)
     {
     case ROOM_CT_RPGE:
     case COMBAT_CT_RPGE:
-    case WORLD_CT_RPGE: 
+    case WORLD_CT_RPGE:
         return true;
     default:
         return false;
@@ -22,12 +24,14 @@ bool _isContainerType_STACK_RPGE(ContainerType_RPGE type) {
 }
 
 // destroy.
-static void _destroy_ContainerItem(ContainerItem_RPGE* conItem) {
-    free(conItem->containerWrapper);
+static void _destroy_ContainerItem(ContainerItem_RPGE *conItem)
+{
+    free(conItem->cw);
     free(conItem);
 }
 
-int _check_CONTAINER_STACK() {
+int _check_CONTAINER_STACK()
+{
     if (_CONTAINER_STACK == NULL)
     {
         log_error("push_Container_RPGE(): _CONTAINER_STACK {NULL} hasn't been set yet");
@@ -37,9 +41,10 @@ int _check_CONTAINER_STACK() {
     return 0;
 }
 
-int set_CONTAINER_STACK_RPGE(ContainerStack_RPGE* stack) 
+int set_CONTAINER_STACK_RPGE(ContainerStack_RPGE *stack)
 {
-    if (stack == NULL) {
+    if (stack == NULL)
+    {
         log_error("set_ContainerStack_RPGE(): stack is NULL");
         errno = EINVAL;
         return 1;
@@ -48,12 +53,13 @@ int set_CONTAINER_STACK_RPGE(ContainerStack_RPGE* stack)
     return 0;
 }
 
-ContainerItem_RPGE* _create_CONTAINER_WRAPPER(bool prio, void* container, enum ContainerType_RPGE type) 
+ContainerItem_RPGE *_create_CONTAINER_WRAPPER(void *container, enum ContainerType_RPGE type)
 {
-    ContainerWrapper_RPGE* cw = malloc(sizeof(ContainerWrapper_RPGE));
+    ContainerWrapper_RPGE *cw = malloc(sizeof(ContainerWrapper_RPGE));
     // validate values.
-    if (cw == NULL) return NULL;
-    if (!_isContainerType_STACK_RPGE(type)) 
+    if (cw == NULL)
+        return NULL;
+    if (!_isContainerType_STACK_RPGE(type))
     {
         log_error("_create_CONTAINER_WRAPPER(): type {%d} is undefined");
         errno = EINVAL;
@@ -67,7 +73,7 @@ ContainerItem_RPGE* _create_CONTAINER_WRAPPER(bool prio, void* container, enum C
     }
     // set values.
     // dispatch neccessary functions to wrapper.
-    switch (type) 
+    switch (type)
     {
     case ROOM_CT_RPGE:
         cw->fupdate = &_update_Room_C_RPGE;
@@ -89,90 +95,173 @@ ContainerItem_RPGE* _create_CONTAINER_WRAPPER(bool prio, void* container, enum C
         cw->frender = &_render_Menu_C_RPGE;
         cw->fdestroy = &_destroy_Menu_C_RPGE;
         break;
-    // code dupplication:
-    default:
-        log_error("_create_CONTAINER_WRAPPER(): type {%d} is undefined");
-        errno = EINVAL;
-        return NULL;
     }
 
-    cw->prio = prio;
     cw->type = type;
     cw->container = container;
     return cw;
 }
 
-int push_CONTAINER_STACK_RPGE(
-    bool prio, 
-    void* container, 
-    enum ContainerType_RPGE type
-)
+int push_CONTAINER_STACK_RPGE(bool prio, void *container, enum ContainerType_RPGE type)
 {
     // check if stack exists.
-    if(_check_CONTAINER_STACK()) return 1;
-    ContainerItem_RPGE* conItem = malloc(sizeof(ContainerItem_RPGE));
-    if (conItem == NULL) return 1;
-    conItem->containerWrapper = _create_CONTAINER_ITEM(prio, container, type);
-    if (conItem->containerWrapper == NULL) return 1;
+    if (_check_CONTAINER_STACK())
+        return 1;
+    
+    // create a ContainerItem to push container on stack.
+    ContainerItem_RPGE *conItem = malloc(sizeof(ContainerItem_RPGE));
+    if (conItem == NULL)
+        return 1;
+    conItem->cw = _create_CONTAINER_ITEM(prio, container, type);
+    if (conItem->cw == NULL)
+        return 1;
+    
+    // default toRender and toUpdate true because top element of stack now.
+    conItem->toRender = true;
+    conItem->toRender = true;
+    conItem->_prio = prio;
+        
     // push to stack.
     conItem->next = _CONTAINER_STACK->top;
     _CONTAINER_STACK->top = conItem;
     _CONTAINER_STACK->length++;
+    
+    // update toRender and toUpdate flags.
+    update_FLAGS_CONTAINER_STACK_RPGE();
+
     return 0;
 }
 
-int pop_CONTAINER_STACK_RPGE() 
+int pop_CONTAINER_STACK_RPGE()
 {
-    if (_CONTAINER_STACK < 1) return 1;
+    if (_CONTAINER_STACK < 1)
+        return 1;
     
-    ContainerItem_RPGE* conItem = _CONTAINER_STACK->top;
+    // remove element.
+    ContainerItem_RPGE *conItem = _CONTAINER_STACK->top;
     _CONTAINER_STACK->top = _CONTAINER_STACK->top->next;
+    // toRender and toUpdate flags true because top element of stack now.
+    _CONTAINER_STACK->top->toRender = true;
+    _CONTAINER_STACK->top->toUpdate = true;
+
+    // clear up.
     _destroy_ContainerItem(conItem);
     _CONTAINER_STACK->length--;
+
+    // update toRender and toUpdate flags.
+    update_FLAGS_CONTAINER_STACK_RPGE();
+
     return 0;
 }
 
 /**
  * render from buttom to top recursive.
  */
-static int _render_CONTAINER_STACK(SDL_Renderer* renderer, ContainerItem_RPGE* conItem) 
+static int _render_CONTAINER_STACK(SDL_Renderer *renderer, ContainerItem_RPGE *conItem)
 {
-    // render from buttom to top.
-    if (conItem->next != NULL) 
-    {
+    // traverse stack.
+    if (conItem->next != NULL)
         return _render_CONTAINER_STACK(renderer, conItem->next);
-    }
-    if (_toRender_CONTAINER_STACK_RPGE(conItem->containerWrapper->type))
-    return conItem->containerWrapper->frender(renderer, conItem->containerWrapper);
+    // render from buttom to top.
+    if (conItem->toRender || conItem->_prio)
+        return conItem->cw->frender(renderer, conItem->cw);
 }
 
-int render_CONTAINER_STACK_RPGE(SDL_Renderer* renderer) 
+int render_CONTAINER_STACK_RPGE(SDL_Renderer *renderer)
 {
     // render from buttom to top.
-    if(_check_CONTAINER_STACK()) return 1;
-    if (_CONTAINER_STACK->length < 1) {
+    if (_check_CONTAINER_STACK())
+        return 1;
+    if (_CONTAINER_STACK->length < 1)
+    {
         // nothing to render.
         return 0;
     }
     return _render_CONTAINER_STACK(renderer, _CONTAINER_STACK->top);
 }
 
-static int _update_CONTAINER_STACK(ContainerItem_RPGE* conItem) 
+static int _update_CONTAINER_STACK(ContainerItem_RPGE *conItem)
 {
     // update from top to buttom.
     // only top containerWrapper gets updated, except for prio containerWrapper.
-    
-    conItem->containerWrapper->fupdate(conItem->containerWrapper);
-    
+    if (conItem->toUpdate || conItem->_prio) 
+        // update container.
+        conItem->cw->fupdate(conItem->cw);
+    // traverse stack.
+    if (conItem->next != NULL)
+        return _update_CONTAINER_STACK(conItem->next);       
 }
 
-int update_CONTAINER_STACK_RPGE() {
+int update_CONTAINER_STACK_RPGE()
+{
     // update from top to buttom.
-    if(_check_CONTAINER_STACK()) return 1;
-    if (_CONTAINER_STACK->length < 1) {
+    if (_check_CONTAINER_STACK())
+        return 1;
+    if (_CONTAINER_STACK->length < 1)
+    {
         // nothing to update.
         return 0;
     }
-    return _render_CONTAINER_STACK(_CONTAINER_STACK->top);
+    return _update_CONTAINER_STACK(_CONTAINER_STACK->top);
 }
 
+// rules for which elements gets displayed and updated.
+static void _setToUpdateFlag_CONTAINER_ITEM(struct ContainerItem_RPGE* top, struct ContainerItem_RPGE* next) {
+    if(next != NULL) {
+        if(top->toUpdate) {
+            switch(top->cw->type) {
+                case MENU_CT_RPGE:
+                    next->toUpdate = false;
+                case ROOM_CT_RPGE:
+                    next->toUpdate = false;
+                    return;
+                case COMBAT_CT_RPGE:
+                    next->toUpdate = false;
+                    return;
+                case WORLD_CT_RPGE:
+                    next->toUpdate = false;
+                    return;
+            }
+        } else {
+            next->toUpdate = false;
+        }
+    }
+}
+
+static void _setToRenderFlag_CONTAINER_ITEM(struct ContainerItem_RPGE* top, struct ContainerItem_RPGE* next) {
+    if(next != NULL) {
+        if(top->toRender) {
+            switch(top->cw->type) {
+                case MENU_CT_RPGE:
+                    next->toRender = true;
+                case ROOM_CT_RPGE:
+                    next->toRender = false;
+                    return;
+                case COMBAT_CT_RPGE:
+                    next->toRender = false;
+                    return;
+                case WORLD_CT_RPGE:
+                    next->toRender = false;
+                    return;
+            }
+        } else {
+            next->toRender = false;
+        }
+    }
+}
+
+static void _update_FLAGS_CONTAINER_STACK_RPGE(ContainerItem_RPGE* item) {
+    if(item == NULL || item->next == NULL) {
+        return;
+    }
+    // update toRenders.
+    _setToRenderFlag_CONTAINER_ITEM(item, item->next);
+    // update toUpdates.
+    _setToUpdateFlag_CONTAINER_ITEM(item, item->next);
+}
+
+void update_FLAGS_CONTAINER_STACK_RPGE() {
+    if (_CONTAINER_STACK->top == NULL) return;
+    // update toRenders.
+    _update_FLAGS_CONTAINER_STACK_RPGE(_CONTAINER_STACK->top);
+}

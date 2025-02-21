@@ -1,6 +1,7 @@
 #include "RPGE_UI_text.h"
 #include "RPGE_E_time.h"
 #include "RPGE_G_assetsheet.h"
+#include "RPGE_U_math.h"
 #include "RPGE_U_vec.h"
 #include "log.h"
 #include <SDL3/SDL.h>
@@ -9,7 +10,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "RPGE_U_math.h"
 
 int getAlphabetIndex_UI_RPGE(char c)
 {
@@ -425,16 +425,15 @@ Vec2D _calc_vTableSize_TEXT_NARROW_UI_RPGE(Assetsheet_RPGE *asset, Assetsheet_RP
     }
 
     int xPreTable = vTextTable.x * vSubPatchSize.x / font->vPatchSize.x;
-    if (vTextTable.x * vSubPatchSize.x % font->vPatchSize.x != 0) {
+    if (vTextTable.x * vSubPatchSize.x % font->vPatchSize.x != 0)
+    {
         xPreTable++;
     }
 
     int yPreTable = vTextTable.y * vSubPatchSize.y / font->vPatchSize.y;
 
-    return (Vec2D){
-        .x = xPreTable + 2 + (vPaddingHorizontal.x + vPaddingHorizontal.y),
-        .y = yPreTable + 2 + (vPaddingVertical.x + vPaddingVertical.y)
-    };
+    return (Vec2D){.x = xPreTable + 2 + (vPaddingHorizontal.x + vPaddingHorizontal.y),
+                   .y = yPreTable + 2 + (vPaddingVertical.x + vPaddingVertical.y)};
 }
 
 Vec2D _calc_vTextTable_TEXT_UI_RPGE(char *textBuffer)
@@ -459,6 +458,7 @@ Vec2D _calc_vTextTable_TEXT_UI_RPGE(char *textBuffer)
     return (Vec2D){.x = maxColSize, .y = maxRowSize};
 }
 
-Vec2D _calc_vTextCoordinates_TEXT_UI_RPGE(Assetsheet_RPGE* asset, Vec2D vCoordinates) {
+Vec2D _calc_vTextCoordinates_TEXT_UI_RPGE(Assetsheet_RPGE *asset, Vec2D vCoordinates)
+{
     return (Vec2D){.x = vCoordinates.x + asset->vPatchSize.x, .y = vCoordinates.y + asset->vPatchSize.y};
 }
