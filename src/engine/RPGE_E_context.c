@@ -90,10 +90,10 @@ CONTEXT_RPGE *init_RPGE(bool (*fupdatePtr)(struct CONTEXT_RPGE *eContext),
     eContext->_TARGET_FPS = TARGET_FPS;
 
     // load default ressouces
-    eContext->defaultFont = load_Assetsheet_JSON_RPGE(eContext->renderer, defaultFontPathJSON);
+    eContext->defaultFont = load_JSON_Assetsheet_G_RPGE(eContext->renderer, defaultFontPathJSON);
     if (eContext->defaultFont == NULL)
         return NULL;
-    eContext->menuAsset = load_Assetsheet_JSON_RPGE(eContext->renderer, defaultMenuPathJSON);
+    eContext->menuAsset = load_JSON_Assetsheet_G_RPGE(eContext->renderer, defaultMenuPathJSON);
     if (eContext->menuAsset == NULL)
         return NULL;
 
