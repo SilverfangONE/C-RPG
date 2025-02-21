@@ -16,6 +16,6 @@ int _update_World_C_RPGE(void* world);
 int render_World_C_RPGE(SDL_Renderer* renderer, World_C_RPGE* world);
 int _render_World_C_RPGE(SDL_Renderer* renderer, void* world);
 
-int destroy_World_C_RPGE(World_C_RPGE* world);
-int _destroy_World_C_RPGE(void* world);
+void destroy_World_C_RPGE(World_C_RPGE* world);
+void _destroy_World_C_RPGE(void* world);
 #endif

@@ -17,7 +17,7 @@ typedef struct ContainerWrapper_RPGE {
     void* container;
     int (*fupdate)(void*);
     int (*frender)(SDL_Renderer* renderer, void*);
-    int (*fdestroy)(void*);
+    void (*fdestroy)(void*);
 } ContainerWrapper_RPGE;
 
 typedef struct ContainerItem_RPGE {
@@ -34,7 +34,7 @@ typedef struct ContainerStack_RPGE {
 } ContainerStack_RPGE;
 
 // entry and exit point.
-int INIT_CONTAINER_STACK_RPGE();
+ContainerStack_RPGE* INIT_CONTAINER_STACK_RPGE();
 void QUIT_CONTAINER_STACK_RPGE();
 
 // manage stack.
