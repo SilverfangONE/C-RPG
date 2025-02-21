@@ -5,7 +5,6 @@
 #include "RPGE_E_context.h"
 #include <stdbool.h>
 
-bool update_EDITOR(struct CONTEXT_RPGE *eContext);
-bool render_EDITOR(struct CONTEXT_RPGE *eContext);
-
+bool update_EDIT(struct CONTEXT_RPGE *eContext);
+bool render_EDIT(struct CONTEXT_RPGE *eContext);
 #endif
