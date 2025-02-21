@@ -21,7 +21,7 @@ typedef struct Wrapper_Obj_RPGE {
     ObjType_RPGE type;
     void* obj;
     int (*fupdate)(void*);
-    int (*frender)(void*);
+    int (*frender)(SDL_Renderer*, void*);
     void (*fdestroy)(void*);
 } Wrapper_Obj_RPGE;
 
