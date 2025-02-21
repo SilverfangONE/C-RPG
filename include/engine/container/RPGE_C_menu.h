@@ -27,8 +27,8 @@ typedef struct Menu_C_RPGE {
     _UI_COMP_C_RPGE* _uiComps;
     int _sizeUIComps;
     int activeUICompIndex;
-    int (*fupdate)(Menu_C_RPGE* menu);
-    int (*frender)(SDL_Renderer* renderer, Menu_C_RPGE* menu);
+    int (*fupdate)(struct Menu_C_RPGE* menu);
+    int (*frender)(SDL_Renderer* renderer, struct Menu_C_RPGE* menu);
 } Menu_C_RPGE;
 
 Menu_C_RPGE* build_Menu_C_RPGE();
@@ -41,4 +41,5 @@ int _render_Menu_C_RPGE(SDL_Renderer* renderer, void* menu);
 
 void destroy_Menu_C_RPGE(Menu_C_RPGE* room);
 void _destroy_Menu_C_RPGE(void* room);
+
 #endif

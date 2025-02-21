@@ -18,7 +18,7 @@ int render_Combat_C_RPGE(SDL_Renderer* renderer, Combat_C_RPGE* Combat)
     // TODO: impl
     return 0;    
 }
-int _render_Combat_C_REPGE(SDL_Renderer* renderer, void* combat)
+int _render_Combat_C_RPGE(SDL_Renderer* renderer, void* combat)
 {
     // TODO: impl
     return 0;    

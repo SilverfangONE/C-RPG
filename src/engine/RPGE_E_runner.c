@@ -53,7 +53,6 @@ int run_RPGE(CONTEXT_RPGE *eContext)
         }
         _update_TIME_RPGE();
     }
-    QUIT_TIME_RPGE();
     return 0;
 }
 

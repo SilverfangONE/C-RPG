@@ -3,7 +3,7 @@
 #include <errno.h>
 #include <stdlib.h>
 #include <string.h>
-
+/*
 Tilemap_RPGE *create_Tilemap_G_RPGE(Assetsheet_RPGE *asset, Vec2D vTableSize, char *ID, int *m_indices, bool *m_solid)
 {
     Tilemap_RPGE *tilemap = (Tilemap_RPGE *)malloc(sizeof(Tilemap_RPGE));
@@ -104,3 +104,4 @@ bool getSolid_Tilemap_G_RPGE(Tilemap_RPGE *map, int x, int y)
     }
     return -1;
 }
+*/

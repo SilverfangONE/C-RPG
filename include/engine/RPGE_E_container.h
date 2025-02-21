@@ -24,7 +24,7 @@ typedef struct ContainerItem_RPGE {
     bool _prio;
     bool toRender;
     bool toUpdate;
-    ContainerItem_RPGE* next;
+    struct ContainerItem_RPGE* next;
     ContainerWrapper_RPGE* cw;
 } ContainerItem_RPGE;
 
@@ -41,7 +41,7 @@ void QUIT_CONTAINER_STACK_RPGE();
 int push_CONTAINER_STACK_RPGE(bool prio, void* container, enum ContainerType_RPGE type);
 int pop_CONTAINER_STACK_RPGE();
 int _check_CONTAINER_STACK_RPGE();
-ContainerItem_RPGE *_create_CONTAINER_WRAPPER(void *container, enum ContainerType_RPGE type);
+ContainerWrapper_RPGE *_create_CONTAINER_WRAPPER_RPGE(void *container, enum ContainerType_RPGE type);
 bool _isContainerType_STACK_RPGE(ContainerType_RPGE type);
 
 // lifecycle.

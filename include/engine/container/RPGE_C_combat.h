@@ -13,8 +13,8 @@ typedef struct Combat_C_RPGE {
 int update_Combat_C_RPGE(Combat_C_RPGE* combat);
 int _update_Combat_C_RPGE(void* combat);
 int render_Combat_C_RPGE(SDL_Renderer* renderer, Combat_C_RPGE* Combat);
-int _render_Combat_C_REPGE(SDL_Renderer* renderer, void* combat);
+int _render_Combat_C_RPGE(SDL_Renderer* renderer, void* combat);
 
-int destroy_Combat_C_RPGE(Combat_C_RPGE* combat);
-int _destroy_Combat_C_RPGE(void* combat);
+void destroy_Combat_C_RPGE(Combat_C_RPGE* combat);
+void _destroy_Combat_C_RPGE(void* combat);
 #endif

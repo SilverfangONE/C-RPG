@@ -12,7 +12,9 @@ static ContainerStack_RPGE *_CONTAINER_STACK;
 
 ContainerStack_RPGE* INIT_CONTAINER_STACK_RPGE()
 {
-    ContainerStack_RPGE* _CONTAINER_STACK = (ContainerStack_RPGE*)(sizeof(ContainerStack_RPGE));
+    log_warn("crea conainter stack");
+    ContainerStack_RPGE* _CONTAINER_STACK = (ContainerStack_RPGE*) malloc(sizeof(ContainerStack_RPGE));
+    if (_CONTAINER_STACK == NULL) return NULL;
     _CONTAINER_STACK->top = NULL;
     _CONTAINER_STACK->length = 0;
     log_trace("[Created _CONTAINER_STACK {length=%d}]", _CONTAINER_STACK->length);
@@ -67,7 +69,7 @@ int _check_CONTAINER_STACK_RPGE()
     return 0;
 }
 
-ContainerItem_RPGE *_create_CONTAINER_WRAPPER(void *container, enum ContainerType_RPGE type)
+ContainerWrapper_RPGE* _create_CONTAINER_WRAPPER_RPGE(void *container, enum ContainerType_RPGE type)
 {
     ContainerWrapper_RPGE *cw = malloc(sizeof(ContainerWrapper_RPGE));
     // validate values.
@@ -75,13 +77,13 @@ ContainerItem_RPGE *_create_CONTAINER_WRAPPER(void *container, enum ContainerTyp
         return NULL;
     if (!_isContainerType_STACK_RPGE(type))
     {
-        log_error("_create_CONTAINER_WRAPPER(): type {%d} is undefined");
+        log_error("_create_CONTAINER_WRAPPER_RPGE(): type {%d} is undefined");
         errno = EINVAL;
         return NULL;
     }
     if (container == NULL)
     {
-        log_error("_create_CONTAINER_WRAPPER(): container is NULL");
+        log_error("_create_CONTAINER_WRAPPER_RPGE(): container is NULL");
         errno = EINVAL;
         return NULL;
     }
@@ -96,7 +98,7 @@ ContainerItem_RPGE *_create_CONTAINER_WRAPPER(void *container, enum ContainerTyp
         break;
     case COMBAT_CT_RPGE:
         cw->fupdate = &_update_Combat_C_RPGE;
-        cw->frender = &_render_Combat_C_REPGE;
+        cw->frender = &_render_Combat_C_RPGE;
         cw->fdestroy = &_destroy_Combat_C_RPGE;
         break;
     case WORLD_CT_RPGE:
@@ -126,7 +128,7 @@ int push_CONTAINER_STACK_RPGE(bool prio, void *container, enum ContainerType_RPG
     ContainerItem_RPGE *conItem = malloc(sizeof(ContainerItem_RPGE));
     if (conItem == NULL)
         return 1;
-    conItem->cw = _create_CONTAINER_ITEM(prio, container, type);
+    conItem->cw = _create_CONTAINER_WRAPPER_RPGE(container, type);
     if (conItem->cw == NULL)
         return 1;
     
@@ -148,7 +150,7 @@ int push_CONTAINER_STACK_RPGE(bool prio, void *container, enum ContainerType_RPG
 
 int pop_CONTAINER_STACK_RPGE()
 {
-    if (_CONTAINER_STACK < 1)
+    if (_CONTAINER_STACK->length < 1)
         return 1;
     
     // remove element.
@@ -159,7 +161,7 @@ int pop_CONTAINER_STACK_RPGE()
     _CONTAINER_STACK->top->toUpdate = true;
 
     // clear up.
-    _destroy_ContainerItem_RPGE(conItem);
+    destroy_ContainerItem_RPGE(conItem);
     _CONTAINER_STACK->length--;
 
     // update toRender and toUpdate flags.

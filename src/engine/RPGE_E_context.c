@@ -121,6 +121,8 @@ void terminate_RPGE(CONTEXT_RPGE *eContext, int _Code)
     SDL_DestroyWindow(eContext->window);
     SDL_DestroyRenderer(eContext->renderer);
     SDL_Quit();
+    QUIT_TIME_RPGE();
+    QUIT_CONTAINER_STACK_RPGE();
     free(eContext->timeManager);
     free(eContext);
     switch (_Code)

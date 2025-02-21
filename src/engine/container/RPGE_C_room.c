@@ -18,7 +18,7 @@ int render_Room_C_RPGE(SDL_Renderer* renderer, Room_C_RPGE* room)
     // TODO: impl
     return 0;    
 }
-int _render_Room_C_REPGE(SDL_Renderer* renderer, void* room)
+int _render_Room_C_RPGE(SDL_Renderer* renderer, void* room)
 {
     // TODO: impl
     return 0;    

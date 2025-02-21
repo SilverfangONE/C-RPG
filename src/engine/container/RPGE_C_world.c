@@ -18,7 +18,7 @@ int render_World_C_RPGE(SDL_Renderer* renderer, World_C_RPGE* world)
     // TODO: impl
     return 0;    
 }
-int _render_World_C_REPGE(SDL_Renderer* renderer, void* world)
+int _render_World_C_RPGE(SDL_Renderer* renderer, void* world)
 {
     // TODO: impl
     return 0;    
