@@ -12,7 +12,6 @@ static ContainerStack_RPGE *_CONTAINER_STACK;
 
 ContainerStack_RPGE* INIT_CONTAINER_STACK_RPGE()
 {
-    log_warn("crea conainter stack");
     ContainerStack_RPGE* _CONTAINER_STACK = (ContainerStack_RPGE*) malloc(sizeof(ContainerStack_RPGE));
     if (_CONTAINER_STACK == NULL) return NULL;
     _CONTAINER_STACK->top = NULL;
@@ -33,7 +32,6 @@ void QUIT_CONTAINER_STACK_RPGE()
         destroy_ContainerItem_RPGE(item);
         item = temp;
     }
-    
     free(_CONTAINER_STACK);
 }
 

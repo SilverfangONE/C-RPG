@@ -98,9 +98,8 @@ CONTEXT_RPGE *init_RPGE(bool (*fupdatePtr)(struct CONTEXT_RPGE *eContext),
         return NULL;
 
     // Time Manager.
-    eContext->timeManager = _create_TimerManager_TIME_RPGE();
     // 3600 tics = 60 sec;
-    INIT_TIME_RPGE(eContext->timeManager, eContext->_TARGET_FPS, 3600);
+    eContext->timeManager = INIT_TIME_RPGE(eContext->_TARGET_FPS, 3600);
     // Container Stack.
     eContext->_containerStack = INIT_CONTAINER_STACK_RPGE();
 

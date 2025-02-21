@@ -5,20 +5,14 @@
 
 static TimerManager_TIME_RPGE *_timerManager;
 
-int INIT_TIME_RPGE(TimerManager_TIME_RPGE *manager, int FPS, int tickSizeCap)
+TimerManager_TIME_RPGE* INIT_TIME_RPGE(int FPS, int tickSizeCap)
 {
-    if (manager == NULL)
-    {
-        log_error("setTimerManager_TIME(): manager%s is invalid", manager);
-        errno = EINVAL;
-        return 1;
-    }
-    _timerManager = manager;
+    _timerManager = _create_TimerManager_TIME_RPGE();
     _timerManager->tickSizeCap = tickSizeCap;
     _timerManager->FPS = FPS;
     log_debug("[set new _timerManager {FPS=%d, slotSize=%d, tickSizeCap=%d}]", _timerManager->FPS,
               _timerManager->length, _timerManager->tickSizeCap);
-    return 0;
+    return _timerManager;
 }
 
 void QUIT_TIME_RPGE()
