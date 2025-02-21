@@ -287,10 +287,10 @@ int render_Text_WIDE_UI_RPGE(SDL_Renderer *renderer, char *textBuffer, Vec2D vCo
         renderTile_Assetsheet_G_RPGE(renderer, font, index, cor);
         // logging after timer shit
         /*
-            if (checkTimer_TIME_RPGE(10))
+            if (checkTimer_TIME_RPGE("pText"))
             {
-                log_info("[Index=%d | literal: %c]", index, textBuffer[literal]);
-                log_info("[INDEX=%d | xTable=%d, yTable=%d | Vec2D {.x=%d, .y=%d}]", index, xTable, yTable, cor.x, cor.y);
+                log_trace("[Index=%d | literal: %c]", index, textBuffer[literal]);
+                log_trace("[INDEX=%d | xTable=%d, yTable=%d | Vec2D {.x=%d, .y=%d}]", index, xTable, yTable, cor.x, cor.y);
             }
         */
         xTable++;
@@ -356,11 +356,11 @@ int render_Text_NARROW_UI_RPGE(SDL_Renderer *renderer, char *textBuffer, Vec2D v
         renderTileV2_Assetsheet_G_RPGE(renderer, font, index, vCor, vSubPatchSize, vSubTileOffset);
         // logging after timer shit
         /*
-            if (checkTimer_TIME_RPGE(10))
+            if (checkTimer_TIME_RPGE("pText"))
             {
-                log_info("[Index=%d | literal: %c]", index, textBuffer[literal]);
-                log_info("[INDEX=%d | xTable=%d, yTable=%d | Vec2D {.x=%d, .y=%d}]", index, xTable, yTable, vCor.x, vCor.y);
-            } 
+                log_trace("[Index=%d | literal: %c]", index, textBuffer[literal]);
+                log_trace("[INDEX=%d | xTable=%d, yTable=%d | Vec2D {.x=%d, .y=%d}]", index, xTable, yTable, vCor.x, vCor.y);
+            }     
         */
        xTable++;
     }

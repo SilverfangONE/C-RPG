@@ -117,7 +117,7 @@ int render_Dialog_UI_RPGE(SDL_Renderer *renderer, Dialog_UI_RPGE *dialog)
         textDisplayBuffer[i] = dialog->textBuffer[dialog->nextDisplayCharIndex + i];
     }
     // check builded text buffer.
-    if (checkTimer_TIME_RPGE(10))
+    if (checkTimer_TIME_RPGE(SYSTEM_TIMER_ID))
     {
         log_trace("[textDisplayBuffer { textBuffer='%s', bufferSize=%d}]", textDisplayBuffer,
                   dialog->textDisplayBufferSize);

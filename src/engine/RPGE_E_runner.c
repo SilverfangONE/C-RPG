@@ -33,8 +33,8 @@ int run_RPGE(CONTEXT_RPGE *eContext)
 {
     log_info("Start RPG-ENGINE ...");
     int FRAME_TIME = 1000 / eContext->_TARGET_FPS;
+    // for logging system comps.
     // for context.
-    setTimerSec_TIME_RPGE(7, 7);
     while (true)
     {
         clock_t start_time = clock();

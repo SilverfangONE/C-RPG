@@ -102,7 +102,8 @@ CONTEXT_RPGE *init_RPGE(bool (*fupdatePtr)(struct CONTEXT_RPGE *eContext),
     eContext->timeManager = INIT_TIME_RPGE(eContext->_TARGET_FPS, 3600);
     // Container Stack.
     eContext->_containerStack = INIT_CONTAINER_STACK_RPGE();
-
+    
+    // system logging timer.
     log_debug("[Created CONTEXT_RPGE]");
     return eContext;
 }

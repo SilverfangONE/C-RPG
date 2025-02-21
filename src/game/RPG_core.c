@@ -11,7 +11,7 @@
 
 bool update_RPG(CONTEXT_RPGE *eContext)
 {
-    if (checkTimer_TIME_RPGE(7))
+    if (checkTimer_TIME_RPGE(SYSTEM_TIMER_ID))
         log_debug("[update_RPG()]");
     CONTEXT_RPG *pContext = (CONTEXT_RPG *)eContext->pContext;
     // update.
@@ -42,7 +42,7 @@ static int nextCharIndex = 0;
 
 bool render_RPG(CONTEXT_RPGE *eContext)
 {
-    if (checkTimer_TIME_RPGE(7))
+    if (checkTimer_TIME_RPGE(SYSTEM_TIMER_ID))
         log_debug("[render_RPG()]");
     CONTEXT_RPG *pContext = (CONTEXT_RPG *)eContext->pContext;
 
