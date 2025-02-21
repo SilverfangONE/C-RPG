@@ -10,17 +10,13 @@
 
 static ContainerStack_RPGE *_CONTAINER_STACK;
 
-int INIT_CONTAINER_STACK_RPGE(ContainerStack_RPGE *stack)
+ContainerStack_RPGE* INIT_CONTAINER_STACK_RPGE()
 {
-    if (stack == NULL)
-    {
-        log_error("set_ContainerStack_RPGE(): stack is NULL");
-        errno = EINVAL;
-        return 1;
-    }
-    _CONTAINER_STACK = stack;
+    ContainerStack_RPGE* _CONTAINER_STACK = (ContainerStack_RPGE*)(sizeof(ContainerStack_RPGE));
+    _CONTAINER_STACK->top = NULL;
+    _CONTAINER_STACK->length = 0;
     log_trace("[Created _CONTAINER_STACK {length=%d}]", _CONTAINER_STACK->length);
-    return 0;
+    return _CONTAINER_STACK;
 }
 
 void QUIT_CONTAINER_STACK_RPGE() 
@@ -28,10 +24,12 @@ void QUIT_CONTAINER_STACK_RPGE()
     if (_CONTAINER_STACK == NULL) return;
     log_trace("[Destroy _CONTAINER_STACK {length=%d}]", _CONTAINER_STACK->length);
     
+    // free all elements in stack.
     ContainerItem_RPGE* item = _CONTAINER_STACK->top;
     while(item != NULL) {
-        ContainerItem_RPGE* temp = item;
-        _destroy_ContainerItem_RPGE
+        ContainerItem_RPGE* temp = item->next;
+        destroy_ContainerItem_RPGE(item);
+        item = temp;
     }
     
     free(_CONTAINER_STACK);
@@ -51,7 +49,7 @@ bool _isContainerType_STACK_RPGE(ContainerType_RPGE type)
 }
 
 // destroy.
-void _destroy_ContainerItem_RPGE(ContainerItem_RPGE *item)
+void destroy_ContainerItem_RPGE(ContainerItem_RPGE *item)
 {
     item->cw->fdestroy(item->cw->container);
     free(item->cw);

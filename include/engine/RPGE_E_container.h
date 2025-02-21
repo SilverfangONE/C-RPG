@@ -34,7 +34,7 @@ typedef struct ContainerStack_RPGE {
 } ContainerStack_RPGE;
 
 // entry and exit point.
-int INIT_CONTAINER_STACK_RPGE(ContainerStack_RPGE* stack);
+int INIT_CONTAINER_STACK_RPGE();
 void QUIT_CONTAINER_STACK_RPGE();
 
 // manage stack.
@@ -52,5 +52,5 @@ int update_CONTAINER_STACK_RPGE();
 // flags
 void update_FLAGS_CONTAINER_STACK_RPGE();
 
-void _destroy_ContainerItem_RPGE(ContainerItem_RPGE *item);
+void destroy_ContainerItem_RPGE(ContainerItem_RPGE *item);
 #endif
