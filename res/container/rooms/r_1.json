@@ -1,0 +1,13 @@
+{
+    "ID": "GRASS_FIELD",
+    "vTable": {
+        "x": 60,
+        "y": 60
+    },
+    "tilemap": [
+
+    ],
+    "objectmap": [
+        
+    ] 
+}

@@ -2,10 +2,13 @@
 #define RPGE_C_ROOM
 
 #include "RPGE_G_tilemap.h"
+#include "RPGE_O_base.h"
 
 typedef struct Room_C_RPGE {
     int ID;
-    Tile_G_RPGE* tilemap;
+    Tilemap_G_RPGE* tilemap;
+    
+    
 } Room_C_RPGE;
 
 int update_Room_C_RPGE(Room_C_RPGE* room);
