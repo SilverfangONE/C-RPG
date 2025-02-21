@@ -33,20 +33,24 @@ typedef struct ContainerStack_RPGE {
     int length;
 } ContainerStack_RPGE;
 
-int set_CONTAINER_STACK_RPGE(ContainerStack_RPGE* stack);
-int push_CONTAINER_STACK_RPGE(
-    bool prio, 
-    void* container, 
-    enum ContainerType_RPGE type
-);
+// entry and exit point.
+int INIT_CONTAINER_STACK_RPGE(ContainerStack_RPGE* stack);
+void QUIT_CONTAINER_STACK_RPGE();
+
+// manage stack.
+int push_CONTAINER_STACK_RPGE(bool prio, void* container, enum ContainerType_RPGE type);
 int pop_CONTAINER_STACK_RPGE();
-int render_CONTAINER_STACK_RPGE();
+int _check_CONTAINER_STACK_RPGE();
+ContainerItem_RPGE *_create_CONTAINER_WRAPPER(void *container, enum ContainerType_RPGE type);
+bool _isContainerType_STACK_RPGE(ContainerType_RPGE type);
+
+// lifecycle.
+int render_CONTAINER_STACK_RPGE(SDL_Renderer* renderer);
 int update_CONTAINER_STACK_RPGE();
 
-ContainerItem_RPGE* _create_CONTAINER_WRAPPER_RPGE(bool prio, void* container, enum ContainerType_RPGE type);
 
-bool _isContainerType_STACK_RPGE();
-int _check_CONTAINER_STACK();
-bool _toRender_CONTAINER_STACK_RPGE(ContainerType_RPGE type);
-bool _toUpdate_CONTAINER_STACK_RPGE(ContainerType_RPGE type);
+// flags
+void update_FLAGS_CONTAINER_STACK_RPGE();
+
+void _destroy_ContainerItem_RPGE(ContainerItem_RPGE *item);
 #endif

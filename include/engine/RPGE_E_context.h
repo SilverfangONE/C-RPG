@@ -5,6 +5,7 @@
 #include <SDL3_image/SDL_image.h>
 #include <stdbool.h>
 #include "RPGE_E_display.h"
+#include "RPGE_E_container.h"
 #include "RPGE_G_assetsheet.h"
 #include "RPGE_E_keymap.h"
 #include "RPGE_E_time.h"
@@ -33,6 +34,8 @@ typedef struct CONTEXT_RPGE {
     // timer
     TimerManager_TIME_RPGE* timeManager;
     int _TARGET_FPS;
+    // container.
+    ContainerStack_RPGE* _containerStack;
 } CONTEXT_RPGE;
 
 void terminate_RPGE(CONTEXT_RPGE* eContext, int);

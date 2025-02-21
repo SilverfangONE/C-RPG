@@ -10,6 +10,33 @@
 
 static ContainerStack_RPGE *_CONTAINER_STACK;
 
+int INIT_CONTAINER_STACK_RPGE(ContainerStack_RPGE *stack)
+{
+    if (stack == NULL)
+    {
+        log_error("set_ContainerStack_RPGE(): stack is NULL");
+        errno = EINVAL;
+        return 1;
+    }
+    _CONTAINER_STACK = stack;
+    log_trace("[Created _CONTAINER_STACK {length=%d}]", _CONTAINER_STACK->length);
+    return 0;
+}
+
+void QUIT_CONTAINER_STACK_RPGE() 
+{
+    if (_CONTAINER_STACK == NULL) return;
+    log_trace("[Destroy _CONTAINER_STACK {length=%d}]", _CONTAINER_STACK->length);
+    
+    ContainerItem_RPGE* item = _CONTAINER_STACK->top;
+    while(item != NULL) {
+        ContainerItem_RPGE* temp = item;
+        _destroy_ContainerItem_RPGE
+    }
+    
+    free(_CONTAINER_STACK);
+}
+
 bool _isContainerType_STACK_RPGE(ContainerType_RPGE type)
 {
     switch (type)
@@ -24,13 +51,14 @@ bool _isContainerType_STACK_RPGE(ContainerType_RPGE type)
 }
 
 // destroy.
-static void _destroy_ContainerItem(ContainerItem_RPGE *conItem)
+void _destroy_ContainerItem_RPGE(ContainerItem_RPGE *item)
 {
-    free(conItem->cw);
-    free(conItem);
+    item->cw->fdestroy(item->cw->container);
+    free(item->cw);
+    free(item);
 }
 
-int _check_CONTAINER_STACK()
+int _check_CONTAINER_STACK_RPGE()
 {
     if (_CONTAINER_STACK == NULL)
     {
@@ -38,18 +66,6 @@ int _check_CONTAINER_STACK()
         errno = EPERM;
         return 1;
     }
-    return 0;
-}
-
-int set_CONTAINER_STACK_RPGE(ContainerStack_RPGE *stack)
-{
-    if (stack == NULL)
-    {
-        log_error("set_ContainerStack_RPGE(): stack is NULL");
-        errno = EINVAL;
-        return 1;
-    }
-    _CONTAINER_STACK = stack;
     return 0;
 }
 
@@ -105,7 +121,7 @@ ContainerItem_RPGE *_create_CONTAINER_WRAPPER(void *container, enum ContainerTyp
 int push_CONTAINER_STACK_RPGE(bool prio, void *container, enum ContainerType_RPGE type)
 {
     // check if stack exists.
-    if (_check_CONTAINER_STACK())
+    if (_check_CONTAINER_STACK_RPGE())
         return 1;
     
     // create a ContainerItem to push container on stack.
@@ -145,7 +161,7 @@ int pop_CONTAINER_STACK_RPGE()
     _CONTAINER_STACK->top->toUpdate = true;
 
     // clear up.
-    _destroy_ContainerItem(conItem);
+    _destroy_ContainerItem_RPGE(conItem);
     _CONTAINER_STACK->length--;
 
     // update toRender and toUpdate flags.
@@ -170,7 +186,7 @@ static int _render_CONTAINER_STACK(SDL_Renderer *renderer, ContainerItem_RPGE *c
 int render_CONTAINER_STACK_RPGE(SDL_Renderer *renderer)
 {
     // render from buttom to top.
-    if (_check_CONTAINER_STACK())
+    if (_check_CONTAINER_STACK_RPGE())
         return 1;
     if (_CONTAINER_STACK->length < 1)
     {
@@ -195,7 +211,7 @@ static int _update_CONTAINER_STACK(ContainerItem_RPGE *conItem)
 int update_CONTAINER_STACK_RPGE()
 {
     // update from top to buttom.
-    if (_check_CONTAINER_STACK())
+    if (_check_CONTAINER_STACK_RPGE())
         return 1;
     if (_CONTAINER_STACK->length < 1)
     {
