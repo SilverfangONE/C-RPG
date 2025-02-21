@@ -10,7 +10,7 @@ game:
 	cp lib/SDL3_image-3.1.1/x86_64-w64-mingw32/bin/SDL3_image.dll .
 
 editor:
-	gcc -o rpg_editor.exe src/RPGE_EDITOR_main.c src/lib/*.c src/engine/*.c src/game/*.c src/editor/*.c src/util/*.c -I include/game/ -I include/util/ -I include/ -I include/editor/ -I include/engine/ -I include/lib/ -I lib/SDL3-3.2.0/x86_64-w64-mingw32/include/ -I lib/SDL3_image-3.1.1/x86_64-w64-mingw32/include/ -L lib/SDL3-3.2.0/x86_64-w64-mingw32/lib/  -L lib/SDL3_image-3.1.1/x86_64-w64-mingw32/lib/ -lSDL3 -lSDL3_image -mconsole -DLOG_USE_COLOR
+	gcc -o rpg_editor.exe src/RPGE_EDITOR_main.c src/editor/*.c src/editor/menus/*.c src/lib/*.c src/engine/*.c src/engine/container/*.c  src/engine/objects/*.c src/engine/decoder_engine/json/*.c src/engine/graphics/*.c src/engine/graphics/ui_elements/*.c src/game/*.c src/game/objects/*.c src/util/*.c -I include/ -I include/editor/ -I include/editor/menus/  -I include/engine/ -I include/engine/objects/ -I include/engine/container -I include/engine/decoder_engine/json/ -I include/engine/graphics/ui_elements -I include/engine/graphics/ -I include/game/ -I include/game/objects/ -I include/util/ -I include/lib/ -I lib/SDL3-3.2.0/x86_64-w64-mingw32/include/ -I lib/SDL3_image-3.1.1/x86_64-w64-mingw32/include/ -L lib/SDL3-3.2.0/x86_64-w64-mingw32/lib/  -L lib/SDL3_image-3.1.1/x86_64-w64-mingw32/lib/ -lSDL3 -lSDL3_image -mconsole -DLOG_USE_COLOR
 	cp lib/SDL3-3.2.0/x86_64-w64-mingw32/bin/SDL3.dll .
 	cp lib/SDL3_image-3.1.1/x86_64-w64-mingw32/bin/SDL3_image.dll .
 

@@ -1,1 +1,1 @@
-#include "RPGE_EDITOR_core.c"
+#include "RPGE_EDIT_core.h"
