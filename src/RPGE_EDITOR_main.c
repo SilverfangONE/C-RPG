@@ -4,8 +4,8 @@
 #include "RPGE_UI_dialog.h"
 #include "RPGE_UI_label.h"
 #include "RPG_context.h"
-#include "RPGE_EDIT_core.h"
-#include "RPGE_EDIT_context.h"
+#include "EDIT_core.h"
+#include "EDIT_context.h"
 #include "log.h"
 #include <errno.h>
 #include <stdlib.h>

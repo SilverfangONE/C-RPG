@@ -2,12 +2,12 @@
 #include <stdlib.h>
 #include "log.h"
 #include "RPGE_E_context.h"
-#include "RPGE_EDIT_core.h"
+#include "EDIT_core.h"
 
 /**
  * @return if true is returned the program loop should stop, false it can go on.
  */
-bool update_EDITOR(CONTEXT_RPGE* eContext) {
+bool update_EDIT(CONTEXT_RPGE* eContext) {
     log_trace("UPDATE: EDITOR_CONTEXT");
     return 0;
 }
@@ -15,7 +15,7 @@ bool update_EDITOR(CONTEXT_RPGE* eContext) {
 /**
  * @return if true is returned the program loop should stop, false it can go on.
  */
-bool render_EDITOR(CONTEXT_RPGE* eContext) {
+bool render_EDIT(CONTEXT_RPGE* eContext) {
     log_trace("UPDATE: EDITOR_CONTEXT");
     return 0;
 }

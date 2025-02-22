@@ -1,7 +1,6 @@
-#ifndef RPGE_EDIT_CONTEXT
-#define RPGE_EDIT_CONTEXT
+#ifndef EDIT_CONTEXT
+#define EDIT_CONTEXT
 
-#include "RPGE_E_context.h"
 #include "RPGE_UI_label.h"
 
 typedef struct CONTEXT_EDIT {
@@ -12,7 +11,7 @@ typedef struct CONTEXT_EDIT {
     Label_UI_RPGE* label;
 } CONTEXT_EDIT;
 
-CONTEXT_EDIT* init_EDIT();
+CONTEXT_EDIT* init_EDIT(char* );
 void destory_CONTEXT_EDIT(CONTEXT_EDIT* );
 void destory_VOID_CONTEXT_EDIT(void* );
 
