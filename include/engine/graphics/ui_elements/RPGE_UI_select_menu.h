@@ -28,10 +28,13 @@ typedef struct SelectMenu_UI_RPGE {
 // api.
 SelectMenu_UI_RPGE* create_RootSelectMenu_UI_RPGE(Vec2D vCoodinates, Vec2D vEntryTableSize);
 SelectMenu_UI_RPGE* build_SelectMenu_UI_RPGE(SelectMenu_UI_RPGE* menu);
-int add_SelectMenu_UI_RPGE(SelectMenu_UI_RPGE* menu, char* label, unsigned int ID, int (*fonclick)(CONTEXT_RPGE* eContext));
+SelectMenu_UI_RPGE* add_SelecMenu_UI_RPGE(SelectMenu_UI_RPGE* rootMenu, char* label, unsigned int ID, int (*fonclick)(CONTEXT_RPGE* eContext));
 
 int render_SelectMenu_UI_RPGE(SelectMenu_UI_RPGE* menu);
 int update_SelectMenu_UI_RPGE(SelectMenu_UI_RPGE* menu);
+
+// system.
+int _getFreeSlot_SelectMenu_UI_RPGE(SelectMenu_UI_RPGE* menu, unsigned int ID);
 
 // lifecylce.
 void destroy_SelectMenu_UI_RPGE(SelectMenu_UI_RPGE* menu);

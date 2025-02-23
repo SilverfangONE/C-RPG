@@ -60,3 +60,11 @@ int *create_ARRAY2D_UTIL(Vec2D vTable, int defaultValue)
     }
     return arr;
 }
+
+void setNull_ArrayPtr_UTIL (void** arrPtr, int length) 
+{
+    for (int i = 0; i < length; i++) 
+    {
+        arrPtr[i] = NULL;
+    }
+}
