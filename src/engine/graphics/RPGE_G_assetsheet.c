@@ -103,7 +103,7 @@ int renderTileV2_Assetsheet_G_RPGE(SDL_Renderer *renderer, Assetsheet_RPGE *asse
                                    Vec2D vSubPatchSize, Vec2D vSubTileOffset)
 {
     // NULL CHECKS.
-    if (renderer == NULL) 
+    if (renderer == NULL)
     {
         log_error("renderTileV2_Assetsheet_G_RPGE(): renderer is NULL");
         errno = EINVAL;
