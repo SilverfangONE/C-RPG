@@ -8,6 +8,10 @@
 #include "log.h"
 #include <stdbool.h>
 #include <stdlib.h>
+#include "RPGE_UI_textfield.h"
+
+#include <SDL3/SDL.h>
+#include <SDL3_image/SDL_image.h>
 
 bool update_RPG(CONTEXT_RPGE *eContext)
 {
@@ -15,7 +19,7 @@ bool update_RPG(CONTEXT_RPGE *eContext)
         log_debug("[update_RPG()]");
     CONTEXT_RPG *pContext = (CONTEXT_RPG *)eContext->pContext;
     // update.
-    update_Dialog_UI_RPGE(pContext->dialog, eContext->keymap);
+    // update_Dialog_UI_RPGE(pContext->dialog, eContext->keymap);
     return 0;
 }
 
@@ -68,15 +72,20 @@ bool render_RPG(CONTEXT_RPGE *eContext)
     {
         nextCharIndex++;
     }
-
-    if (render_Label_UI_RPGE(eContext->renderer, pContext->label))
+    /*
+        if (render_Label_UI_RPGE(eContext->renderer, pContext->label))
+        {
+            return 1;
+        }
+        if (render_Dialog_UI_RPGE(eContext->renderer, pContext->dialog))
+        {
+            // something is happing in there that dont work.
+            return 1;
+        }
+    */
+    if (render_TextField_UI_RPGE(eContext->renderer, pContext->textField)) 
     {
         return 1;
-    }
-    if (render_Dialog_UI_RPGE(eContext->renderer, pContext->dialog))
-    {
-        // something is happing in there that dont work.
-        // return 1;
     }
 
     // counter shit.

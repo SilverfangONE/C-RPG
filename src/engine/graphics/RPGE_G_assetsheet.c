@@ -102,6 +102,20 @@ int renderTile_Assetsheet_G_RPGE(SDL_Renderer *renderer, Assetsheet_RPGE *asset,
 int renderTileV2_Assetsheet_G_RPGE(SDL_Renderer *renderer, Assetsheet_RPGE *asset, int tileIndex, Vec2D vCoordinates,
                                    Vec2D vSubPatchSize, Vec2D vSubTileOffset)
 {
+    // NULL CHECKS.
+    if (renderer == NULL) 
+    {
+        log_error("renderTileV2_Assetsheet_G_RPGE(): renderer is NULL");
+        errno = EINVAL;
+        return 1;
+    }
+    if (asset == NULL)
+    {
+        log_error("renderTileV2_Assetsheet_G_RPGE(): asset is NULL");
+        errno = EINVAL;
+        return 1;
+    }
+
     if (vSubPatchSize.x > asset->vPatchSize.x || vSubPatchSize.y > asset->vPatchSize.y)
     {
         log_error("renderTileV2_Assetsheet_G_RPGE: vSubPatch { .x=%d, y.=%d, width=%d, height=%d} is bigger than "

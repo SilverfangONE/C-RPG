@@ -2,6 +2,7 @@
 #include "RPGE_E_runner.h"
 #include "RPGE_E_system_infos.h"
 #include "RPGE_UI_dialog.h"
+#include "RPGE_UI_textfield.h"
 #include "RPGE_UI_label.h"
 #include "RPG_context.h"
 #include "RPG_core.h"
@@ -36,16 +37,23 @@ int main()
         onError();
         return EXIT_FAILURE;
     }
-    // setup.
-    Dialog_UI_RPGE *dialog = build_Dialog_UI_RPGE(
-        eContext->defaultFont, eContext->menuAsset,
-        "Das Abenteuer, das RPG-Spiele auf Super Nintendo revolutioniert hat, hat seinen ersten Auftritt in Europa! ",
-        (Vec2D){55, 55}, (Vec2D){22, 6});
-    pContext->dialog = dialog;
-
-    Label_UI_RPGE *label =
+    // create test comps.
+    /*
+        Dialog_UI_RPGE *dialog = build_Dialog_UI_RPGE(
+            eContext->defaultFont, eContext->menuAsset,
+            "Das Abenteuer, das RPG-Spiele auf Super Nintendo revolutioniert hat, hat seinen ersten Auftritt in Europa! ",
+            (Vec2D){55, 55}, (Vec2D){50, 100});
+        pContext->dialog = dialog;
+        
+        Label_UI_RPGE *label =
         build_Label_UI_RPGE(eContext->defaultFont, eContext->menuAsset, "Hello\n W\norld", (Vec2D){10, 10});
-    pContext->label = label;
+        pContext->label = label;
+    */
+
+    TextField_UI_RPGE* textField = build_TextField_UI_RPGE(eContext->defaultFont, "Hello\n W\norld", (Vec2D) {30, 30});
+    log_warn("textfield = {'%s'}", textField);
+    pContext->textField = textField;
+
     // configure timer
     setTimerSec_TIME_RPGE(10, 10);
 
@@ -53,7 +61,8 @@ int main()
     run_RPGE(eContext);
 
     // clean up.
-    destory_Label_UI_RPGE(label);
-    destory_Dialog_UI_RPGE(dialog);
+    destroy_TextField_UI_RPGE(textField);
+    // destory_Label_UI_RPGE(label);
+    // destory_Dialog_UI_RPGE(dialog);
     return 0;
 }
