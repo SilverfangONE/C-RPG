@@ -286,7 +286,7 @@ int render_Text_WIDE_UI_RPGE(SDL_Renderer *renderer, char *textBuffer, Vec2D vCo
         Vec2D cor = {.x = vCoordinates.x + xTable * dest.w, .y = vCoordinates.y + yTable * dest.h};
         renderTile_Assetsheet_G_RPGE(renderer, font, index, cor);
         // logging after timer shit
-        if (checkTimer_TIME_RPGE(10))
+        if (checkTimer_TIME_RPGE(SYSTEM_TIMER_ID))
         {
             log_info("[Index=%d | literal: %c]", index, textBuffer[literal]);
             log_info("[INDEX=%d | xTable=%d, yTable=%d | Vec2D {.x=%d, .y=%d}]", index, xTable, yTable, cor.x, cor.y);
@@ -354,7 +354,7 @@ int render_Text_NARROW_UI_RPGE(SDL_Renderer *renderer, char *textBuffer, Vec2D v
         Vec2D vCor = {.x = vCoordinates.x + xTable * dest.w, .y = vCoordinates.y + yTable * dest.h};
         renderTileV2_Assetsheet_G_RPGE(renderer, font, index, vCor, vSubPatchSize, vSubTileOffset);
         // logging after timer shit
-        if (checkTimer_TIME_RPGE(10))
+        if (checkTimer_TIME_RPGE(SYSTEM_TIMER_ID))
         {
             log_info("[Index=%d | literal: %c]", index, textBuffer[literal]);
             log_info("[INDEX=%d | xTable=%d, yTable=%d | Vec2D {.x=%d, .y=%d}]", index, xTable, yTable, vCor.x, vCor.y);
