@@ -3,8 +3,10 @@
 
 #include <stdbool.h>
 
+extern const char SYSTEM_TIMER_ID[];
+
 typedef struct Timer_RPGE {
-    unsigned int ID;
+    char ID[50];
     int countTicks;
     int limitTicks;
     bool toReset;
@@ -24,7 +26,7 @@ typedef struct TimerManager_TIME_RPGE {
  * @param FPS frams per second of running program 
  * @return 0 if no error occured
  */
-int INIT_TIME_RPGE(TimerManager_TIME_RPGE* manager, int FPS, int tickSizeCap);
+TimerManager_TIME_RPGE* INIT_TIME_RPGE(int FPS, int tickSizeCap);
 
 /**
  * Creates Timer_RPGE struct which is managed by TimerManager_TIME_RPGE _timerManager struct.
@@ -32,7 +34,7 @@ int INIT_TIME_RPGE(TimerManager_TIME_RPGE* manager, int FPS, int tickSizeCap);
  * @param limitTicks sets the limit of tickets until timer is finished.
  * @return pointer of created Timer_RPGE struct 
  */
-Timer_RPGE* setTimerTicks_TIME_RPGE(unsigned int ID, int limitTicks);
+Timer_RPGE* setTimerTicks_TIME_RPGE(const char* ID, int limitTicks);
 
 /**
  * Creates Timer_RPGE struct which is managed by TimerManager_TIME_RPGE _timerManager struct.
@@ -40,7 +42,7 @@ Timer_RPGE* setTimerTicks_TIME_RPGE(unsigned int ID, int limitTicks);
  * @param sec sets the limit of sec until timer is finished.
  * @return pointer of created Timer_RPGE struct 
  */
-Timer_RPGE* setTimerSec_TIME_RPGE(unsigned int ID, int sec);
+Timer_RPGE* setTimerSec_TIME_RPGE(const char* ID, int sec);
 
 /**
  * Checks if timer has reached limitTicks.
@@ -48,7 +50,7 @@ Timer_RPGE* setTimerSec_TIME_RPGE(unsigned int ID, int sec);
  * @param ID of target Timer
  * @return true if timer is finished
  */
-bool checkTimer_TIME_RPGE(unsigned int ID);
+bool checkTimer_TIME_RPGE(const char* ID);
 
 /**
  * Frees TimerManger_RPGE struct from heap.
@@ -73,7 +75,7 @@ int _addTimer_TimerManager_TIME_RPGE(Timer_RPGE* timer);
  * @param ID of target Timer
  * @return 0 if target has been found, otherwise 1
  */
-int removeTimer_TIME_RPGE(unsigned int ID);
+int removeTimer_TIME_RPGE(const char* ID);
 
 /**
  * update _timeManager tick
@@ -81,8 +83,8 @@ int removeTimer_TIME_RPGE(unsigned int ID);
 void _update_TIME_RPGE();
 
 TimerManager_TIME_RPGE* _create_TimerManager_TIME_RPGE();
-Timer_RPGE* _create_TimerTicks_TIME_RPGE(unsigned int ID, int sec);
-Timer_RPGE* _create_TimerSec_TIME_RPGE(unsigned int ID, int sec, int FPS);
+Timer_RPGE* _create_TimerTicks_TIME_RPGE(const char* ID, int sec);
+Timer_RPGE* _create_TimerSec_TIME_RPGE(const char* ID, int sec, int FPS);
 
 
 #endif
