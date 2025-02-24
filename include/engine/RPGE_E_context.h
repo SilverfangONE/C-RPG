@@ -33,6 +33,8 @@ typedef struct CONTEXT_RPGE {
     // timer
     TimerManager_TIME_RPGE* timeManager;
     int _TARGET_FPS;
+    // container stack.
+    ContainerStack_RPGE* _containerStack;
 } CONTEXT_RPGE;
 
 void terminate_RPGE(CONTEXT_RPGE* eContext, int);
