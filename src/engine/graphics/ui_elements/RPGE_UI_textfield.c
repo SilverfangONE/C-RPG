@@ -165,7 +165,6 @@ int render_TextField_UI_RPGE(SDL_Renderer* renderer, TextField_UI_RPGE *text_UI_
             }
         }
     
-        xPixelCor += getAlphabetSubTileVec2D_UI_RPGE(text_UI_RPGE->textBuffer[literal]).x;
         
         // calc base coordinate
         Vec2D vCor = {
@@ -174,6 +173,8 @@ int render_TextField_UI_RPGE(SDL_Renderer* renderer, TextField_UI_RPGE *text_UI_
         };
         
         renderTileV2_Assetsheet_G_RPGE(renderer, text_UI_RPGE->font, index, vCor, vSubPatchSize, vSubTileOffset);
+        
+        xPixelCor += getAlphabetSubTileVec2D_UI_RPGE(text_UI_RPGE->textBuffer[literal]).x;
         
         if (checkTimer_TIME_RPGE(10)) {
             log_warn("Literal : %c", text_UI_RPGE->textBuffer[literal]);
