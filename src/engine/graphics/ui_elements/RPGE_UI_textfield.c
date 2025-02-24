@@ -1,7 +1,7 @@
 #include "RPGE_UI_textfield.h"
-#include "RPGE_UI_text.h"
 #include "RPGE_E_time.h"
 #include "RPGE_G_assetsheet.h"
+#include "RPGE_UI_text.h"
 
 #include "log.h"
 
@@ -25,7 +25,7 @@ Vec2D getAlphabetSubTileVec2D_UI_RPGE(char c)
     }
 }
 
-TextField_UI_RPGE *build_TextField_UI_RPGE(Assetsheet_RPGE* asset, char *text, Vec2D vCor)
+TextField_UI_RPGE *build_TextField_UI_RPGE(Assetsheet_RPGE *asset, char *text, Vec2D vCor)
 {
     TextField_UI_RPGE *textField = (TextField_UI_RPGE *)malloc(sizeof(TextField_UI_RPGE));
     // NULL CHECKS.
@@ -90,10 +90,10 @@ void destroy_TextField_UI_RPGE(TextField_UI_RPGE *text_UI_RPGE)
     free(text_UI_RPGE);
 }
 
-int render_TextField_UI_RPGE(SDL_Renderer* renderer, TextField_UI_RPGE *text_UI_RPGE)
+int render_TextField_UI_RPGE(SDL_Renderer *renderer, TextField_UI_RPGE *text_UI_RPGE)
 {
     // NULL CHECKS.
-    if (text_UI_RPGE == NULL) 
+    if (text_UI_RPGE == NULL)
     {
         log_error("render_TextField_UI_RPGE(): text_UI_RPGE is NULL");
         errno = EINVAL;
@@ -102,7 +102,7 @@ int render_TextField_UI_RPGE(SDL_Renderer* renderer, TextField_UI_RPGE *text_UI_
     if (renderer == NULL)
     {
         log_error("render_TextField_UI_RPGE(): renderer is NULL");
-        errno = EINVAL; 
+        errno = EINVAL;
         return 1;
     }
 
@@ -164,20 +164,19 @@ int render_TextField_UI_RPGE(SDL_Renderer* renderer, TextField_UI_RPGE *text_UI_
                 return 1;
             }
         }
-    
+
         xPixelCor += getAlphabetSubTileVec2D_UI_RPGE(text_UI_RPGE->textBuffer[literal]).x;
-        
+
         // calc base coordinate
-        Vec2D vCor = {
-            .x = text_UI_RPGE->vCor.x + xPixelCor, 
-            .y = text_UI_RPGE->vCor.y + yTable * dest.h
-        };
-        
+        Vec2D vCor = {.x = text_UI_RPGE->vCor.x + xPixelCor, .y = text_UI_RPGE->vCor.y + yTable * dest.h};
+
         renderTileV2_Assetsheet_G_RPGE(renderer, text_UI_RPGE->font, index, vCor, vSubPatchSize, vSubTileOffset);
-        
-        if (checkTimer_TIME_RPGE(SYSTEM_TIMER_ID)) {
+
+        if (checkTimer_TIME_RPGE(SYSTEM_TIMER_ID))
+        {
             log_warn("Literal : %c", text_UI_RPGE->textBuffer[literal]);
-            log_info("Literals : %s | lastIndex = %d | length = %d", text_UI_RPGE->textBuffer, literal, strnlen(text_UI_RPGE->textBuffer, sizeof(text_UI_RPGE->textBuffer) - 1));
+            log_info("Literals : %s | lastIndex = %d | length = %d", text_UI_RPGE->textBuffer, literal,
+                     strnlen(text_UI_RPGE->textBuffer, sizeof(text_UI_RPGE->textBuffer) - 1));
         }
 
         xTable++;

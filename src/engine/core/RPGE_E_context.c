@@ -5,6 +5,7 @@
 #include "RPGE_E_time.h"
 #include "RPGE_G_assetsheet.h"
 #include "RPGE_JSON_D_assetsheet.h"
+#include "RPGE_E_container.h"
 #include "log.h"
 #include <errno.h>
 #include <stdlib.h>
@@ -101,7 +102,7 @@ CONTEXT_RPGE *init_RPGE(bool (*fupdatePtr)(struct CONTEXT_RPGE *eContext),
     // 3600 tics = 60 sec;
     eContext->timeManager = INIT_TIME_RPGE(eContext->_TARGET_FPS, 3600);
     // Container Stack.
-    // eContext->_containerStack = INIT_CONTAINER_STACK_RPGE();
+    eContext->_containerStack = INIT_CONTAINER_STACK_RPGE();
     
     // system logging timer.
     log_debug("[Created CONTEXT_RPGE]");
@@ -122,7 +123,7 @@ void terminate_RPGE(CONTEXT_RPGE *eContext, int _Code)
     SDL_DestroyRenderer(eContext->renderer);
     SDL_Quit();
     QUIT_TIME_RPGE();
-    // QUIT_CONTAINER_STACK_RPGE();
+    QUIT_CONTAINER_STACK_RPGE();
     free(eContext->timeManager);
     free(eContext);
     switch (_Code)
