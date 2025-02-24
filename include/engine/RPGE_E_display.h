@@ -16,5 +16,5 @@ typedef struct Display_RPGE {
 } Display_RPGE;
 
 void destroy_Display_RPGE(Display_RPGE*);
-Display_RPGE* create_Display_RPGE(SDL_Renderer*, enum SYSTEM_RPGE, const int, const int);
+Display_RPGE* create_Display_RPGE(SDL_Renderer* renderer, enum SYSTEM_RPGE, const int, const int);
 #endif

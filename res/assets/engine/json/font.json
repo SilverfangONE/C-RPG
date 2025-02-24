@@ -1,0 +1,12 @@
+{
+    "ID": "8_BIT_FONT",
+    "pathIMG": "./res/assets/engine/img/font.png",
+    "vTableSize": {
+        "x" : 15,
+        "y" : 7        
+    },
+    "vPatchSize": {
+        "x" : 8,
+        "y" : 8
+    }
+}

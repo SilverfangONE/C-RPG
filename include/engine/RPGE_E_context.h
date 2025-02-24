@@ -5,7 +5,9 @@
 #include <SDL3_image/SDL_image.h>
 #include <stdbool.h>
 #include "RPGE_E_display.h"
+#include "RPGE_G_assetsheet.h"
 #include "RPGE_E_keymap.h"
+#include "RPGE_E_time.h"
 
 /**
  * Global Context for the RPG-ENGINE
@@ -25,6 +27,12 @@ typedef struct CONTEXT_RPGE {
     Display_RPGE* display;
     SDL_Window* window;
     SDL_Renderer* renderer;  
+    // resouces.
+    Assetsheet_RPGE* defaultFont;
+    Assetsheet_RPGE* menuAsset;
+    // timer
+    TimerManager_TIME_RPGE* timeManager;
+    int _TARGET_FPS;
 } CONTEXT_RPGE;
 
 void terminate_RPGE(CONTEXT_RPGE* eContext, int);
@@ -36,6 +44,9 @@ CONTEXT_RPGE* init_RPGE (
     const int WINDOW_WIDTH,
     const int WINDOW_HEIGHT,
     enum SYSTEM_RPGE system,
-    const char* pName
+    const char* pName,
+    const char* defaultFontPathJSON,
+    const char* defaultMenuPathJSON,
+    int TARGET_FPS
 );
 #endif

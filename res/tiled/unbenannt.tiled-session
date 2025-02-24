@@ -1,0 +1,34 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "",
+    "expandedProjectPaths": [
+        "."
+    ],
+    "file.lastUsedOpenFilter": "Alle Dateien (*)",
+    "fileStates": {
+        "tilesheet-base-1.0.0.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        }
+    },
+    "last.exportedFilePath": "C:/Users/luisb/git/C-RPG/res/tiled",
+    "last.imagePath": "C:/Users/luisb/git/C-RPG/res/texture_atlas/tilesheets",
+    "map.lastUsedExportFilter": "CSV-Dateien (*.csv)",
+    "map.tileHeight": 16,
+    "map.tileWidth": 16,
+    "openFiles": [
+        "tilesheet-base-1.0.0.tsx"
+    ],
+    "project": "unbenannt.tiled-project",
+    "recentFiles": [
+        "tilesheet-base-1.0.0.tsx"
+    ],
+    "tileset.lastUsedFormat": "tsx",
+    "tileset.tileSize": {
+        "height": 16,
+        "width": 16
+    }
+}
