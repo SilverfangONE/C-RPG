@@ -1,5 +1,5 @@
 #include "RPGE_G_assetsheet.h"
-#include "RPGE_JSON_assetsheet.h"
+#include "RPGE_JSON_D_assetsheet.h"
 #include "RPGE_U_files.h"
 #include "RPGE_U_json.h"
 #include "cJSON.h"
@@ -7,11 +7,11 @@
 #include <SDL3/SDL.h>
 #include <SDL3_image/SDL_image.h>
 
-Assetsheet_RPGE *load_Assetsheet_JSON_RPGE(SDL_Renderer *renderer, const char *pathJSON)
+Assetsheet_RPGE *load_JSON_Assetsheet_G_RPGE(SDL_Renderer *renderer, const char *pathJSON)
 {
     if (pathJSON == NULL)
     {
-        log_error("load_Assetsheet_JSON_RPGE(): pathJSON is Invalid");
+        log_error("load_JSON_Assetsheet_G_RPGE(): pathJSON is Invalid");
         errno = EINVAL;
         return NULL;
     }
