@@ -54,9 +54,6 @@ int main()
     log_warn("textfield = {'%s'}", textField);
     pContext->textField = textField;
 
-    // configure timer
-    setTimerSec_TIME_RPGE(10, 10);
-
     // start.
     run_RPGE(eContext);
 

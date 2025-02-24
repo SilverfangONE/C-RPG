@@ -107,7 +107,7 @@ int render_TextField_UI_RPGE(SDL_Renderer* renderer, TextField_UI_RPGE *text_UI_
     }
 
     // log
-    if (checkTimer_TIME_RPGE(10))
+    if (checkTimer_TIME_RPGE(SYSTEM_TIMER_ID))
     {
         log_warn("TableSize: %d", text_UI_RPGE->vTable.x * text_UI_RPGE->vTable.y);
     }
@@ -175,7 +175,7 @@ int render_TextField_UI_RPGE(SDL_Renderer* renderer, TextField_UI_RPGE *text_UI_
         
         renderTileV2_Assetsheet_G_RPGE(renderer, text_UI_RPGE->font, index, vCor, vSubPatchSize, vSubTileOffset);
         
-        if (checkTimer_TIME_RPGE(10)) {
+        if (checkTimer_TIME_RPGE(SYSTEM_TIMER_ID)) {
             log_warn("Literal : %c", text_UI_RPGE->textBuffer[literal]);
             log_info("Literals : %s | lastIndex = %d | length = %d", text_UI_RPGE->textBuffer, literal, strnlen(text_UI_RPGE->textBuffer, sizeof(text_UI_RPGE->textBuffer) - 1));
         }

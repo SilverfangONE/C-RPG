@@ -4,7 +4,7 @@
 #include "RPGE_E_system_infos.h"
 #include "RPGE_E_time.h"
 #include "RPGE_G_assetsheet.h"
-#include "RPGE_JSON_assetsheet.h"
+#include "RPGE_JSON_D_assetsheet.h"
 #include "log.h"
 #include <errno.h>
 #include <stdlib.h>
@@ -90,17 +90,20 @@ CONTEXT_RPGE *init_RPGE(bool (*fupdatePtr)(struct CONTEXT_RPGE *eContext),
     eContext->_TARGET_FPS = TARGET_FPS;
 
     // load default ressouces
-    eContext->defaultFont = load_Assetsheet_JSON_RPGE(eContext->renderer, defaultFontPathJSON);
+    eContext->defaultFont = load_JSON_Assetsheet_G_RPGE(eContext->renderer, defaultFontPathJSON);
     if (eContext->defaultFont == NULL)
         return NULL;
-    eContext->menuAsset = load_Assetsheet_JSON_RPGE(eContext->renderer, defaultMenuPathJSON);
+    eContext->menuAsset = load_JSON_Assetsheet_G_RPGE(eContext->renderer, defaultMenuPathJSON);
     if (eContext->menuAsset == NULL)
         return NULL;
 
     // Time Manager.
-    eContext->timeManager = _create_TimerManager_TIME_RPGE();
     // 3600 tics = 60 sec;
-    INIT_TIME_RPGE(eContext->timeManager, eContext->_TARGET_FPS, 3600);
+    eContext->timeManager = INIT_TIME_RPGE(eContext->_TARGET_FPS, 3600);
+    // Container Stack.
+    // eContext->_containerStack = INIT_CONTAINER_STACK_RPGE();
+    
+    // system logging timer.
     log_debug("[Created CONTEXT_RPGE]");
     return eContext;
 }
@@ -118,6 +121,8 @@ void terminate_RPGE(CONTEXT_RPGE *eContext, int _Code)
     SDL_DestroyWindow(eContext->window);
     SDL_DestroyRenderer(eContext->renderer);
     SDL_Quit();
+    QUIT_TIME_RPGE();
+    // QUIT_CONTAINER_STACK_RPGE();
     free(eContext->timeManager);
     free(eContext);
     switch (_Code)
