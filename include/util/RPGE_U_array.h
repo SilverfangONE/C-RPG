@@ -1,6 +1,13 @@
 #ifndef RPGE_U_ARRAY
 #define RPGE_U_ARRAY
 
-int* copy_Array_UTIL (int* src, int length);
+#include "RPGE_U_vec.h"
 
+/**
+ * @return NULL if erro occurd
+ */
+int* copy_Array_UTIL (int* src, int length);
+int getCell_ARRAY2D_UTIL(int* arr, Vec2D vTable, int x, int y);
+int setCell_ARRAY2D_UTIL(int* arr, Vec2D vTable, int x, int y, int value);
+int* create_ARRAY2D_UTIL(Vec2D vTable, int defaultValue);
 #endif

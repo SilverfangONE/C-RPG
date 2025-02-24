@@ -1,12 +1,15 @@
-#include <stdlib.h>
-#include <stdio.h> 
-#include "log.h"
 #include "RPGE_U_files.h"
+#include "log.h"
+#include <stdio.h>
+#include <stdlib.h>
 
-char* readFile_UTIL(const char* filename) {
+char *readFile_UTIL(const char *filename)
+{
     FILE *file = fopen(filename, "r");
-    if (!file) {
+    if (!file)
+    {
         log_error("Fehler: Datei %s konnte nicht geöffnet werden!\n", filename);
+        errno = EPERM;
         return NULL;
     }
 
@@ -15,7 +18,8 @@ char* readFile_UTIL(const char* filename) {
     fseek(file, 0, SEEK_SET);
 
     char *content = malloc(length + 1);
-    if (!content) {
+    if (!content)
+    {
         log_error("Fehler: Speicher konnte nicht allokiert werden!\n");
         fclose(file);
         return NULL;
@@ -24,5 +28,6 @@ char* readFile_UTIL(const char* filename) {
     fread(content, 1, length, file);
     content[length] = '\0'; // Null-terminieren
     fclose(file);
+    log_debug("Content of %s:\n%s", filename, content);
     return content;
 }
