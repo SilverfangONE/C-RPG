@@ -3,11 +3,9 @@
 
 #include <SDL3/SDL.h>
 #include <SDL3_image/SDL_image.h>
-#include "RPGE_G_tilemap.h"
 
 typedef struct Combat_C_RPGE {
     int ID;
-    Tilemap_G_RPGE* tilemap;
 } Combat_C_RPGE;
 
 int update_Combat_C_RPGE(Combat_C_RPGE* combat);

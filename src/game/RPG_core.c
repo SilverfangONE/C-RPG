@@ -4,11 +4,11 @@
 #include "RPGE_G_assetsheet.h"
 #include "RPGE_UI_dialog.h"
 #include "RPGE_UI_label.h"
+#include "RPGE_UI_textfield.h"
 #include "RPG_context.h"
 #include "log.h"
 #include <stdbool.h>
 #include <stdlib.h>
-#include "RPGE_UI_textfield.h"
 
 #include <SDL3/SDL.h>
 #include <SDL3_image/SDL_image.h>
@@ -83,7 +83,7 @@ bool render_RPG(CONTEXT_RPGE *eContext)
             return 1;
         }
     */
-    if (render_TextField_UI_RPGE(eContext->renderer, pContext->textField)) 
+    if (render_TextField_UI_RPGE(eContext->renderer, pContext->textField))
     {
         return 1;
     }
